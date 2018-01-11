@@ -1,2 +1,2 @@
 # alastria-dna
-Decentraliced node administrator for Alastria platform.
+Decentraliced network administration for Alastria platform.
