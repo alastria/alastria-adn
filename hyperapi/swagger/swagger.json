@@ -1,0 +1,325 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "beego Test API",
+        "description": "beego has a very cool tools to autogenerate documents for your API",
+        "version": "1.0.0",
+        "termsOfService": "http://beego.me/",
+        "contact": {
+            "email": "astaxie@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "basePath": "/v1",
+    "paths": {
+        "/luaChaincode/": {
+            "get": {
+                "tags": [
+                    "luaChaincode"
+                ],
+                "description": "get all luaChaincodes",
+                "operationId": "LuaChaincodeController.GetAll",
+                "responses": {
+                    "200": {
+                        "description": "{luaChaincode} models.LuaChaincode"
+                    },
+                    "403": {
+                        "description": ":luaChaincodeId is empty"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "luaChaincode"
+                ],
+                "description": "create luaChaincode",
+                "operationId": "LuaChaincodeController.Create",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The luaChaincode content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LuaChaincode"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} models.LuaChaincode.Id"
+                    },
+                    "403": {
+                        "description": "body is empty"
+                    }
+                }
+            }
+        },
+        "/luaChaincode/{luaChaincodeId}": {
+            "get": {
+                "tags": [
+                    "luaChaincode"
+                ],
+                "description": "find luaChaincode by luaChaincodeid",
+                "operationId": "LuaChaincodeController.Get",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "luaChaincodeId",
+                        "description": "the luaChaincodeid you want to get",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{luaChaincode} models.LuaChaincode"
+                    },
+                    "403": {
+                        "description": ":luaChaincodeId is empty"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "luaChaincode"
+                ],
+                "description": "update the luaChaincode",
+                "operationId": "LuaChaincodeController.Update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "luaChaincodeId",
+                        "description": "The luaChaincodeid you want to update",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LuaChaincode"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{luaChaincode} models.LuaChaincode"
+                    },
+                    "403": {
+                        "description": ":luaChaincodeId is empty"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "luaChaincode"
+                ],
+                "description": "delete the luaChaincode",
+                "operationId": "LuaChaincodeController.Delete",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "luaChaincodeId",
+                        "description": "The luaChaincodeId you want to delete",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} delete success!"
+                    },
+                    "403": {
+                        "description": "luaChaincodeId is empty"
+                    }
+                }
+            }
+        },
+        "/user/": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "description": "get all Users",
+                "operationId": "UserController.GetAll",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "create users",
+                "operationId": "UserController.CreateUser",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for user content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{int} models.User.Id"
+                    },
+                    "403": {
+                        "description": "body is empty"
+                    }
+                }
+            }
+        },
+        "/user/{uid}": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "description": "get user by uid",
+                "operationId": "UserController.Get",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uid",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "403": {
+                        "description": ":uid is empty"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "user"
+                ],
+                "description": "update the user",
+                "operationId": "UserController.Update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uid",
+                        "description": "The uid you want to update",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for user content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "403": {
+                        "description": ":uid is not int"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "user"
+                ],
+                "description": "delete the user",
+                "operationId": "UserController.Delete",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uid",
+                        "description": "The uid you want to delete",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} delete success!"
+                    },
+                    "403": {
+                        "description": "uid is empty"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.LuaChaincode": {
+            "title": "LuaChaincode",
+            "type": "object",
+            "properties": {
+                "LuaChaincodeId": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "SourceCode": {
+                    "type": "string"
+                },
+                "Targets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.User"
+                    }
+                },
+                "Validations": {
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "models.User": {
+            "title": "User",
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "luaChaincode",
+            "description": "Operations about luaChaincode\n"
+        },
+        {
+            "name": "user",
+            "description": "Operations about Users\n"
+        }
+    ]
+}
