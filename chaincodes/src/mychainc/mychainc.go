@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"strconv"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
@@ -72,6 +71,9 @@ func (t *ManagementChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Respon
 	if function == "getListCC" {
 		return t.getListCC(stub)
 	}
+	if function == "getCode" {
+		return t.getCode(stub, args)
+	}
 	return shim.Success([]byte("Invoke"))
 }
 func (t *ManagementChaincode) registrar(stub shim.ChaincodeStubInterface, args []string) pb.Response {
@@ -126,12 +128,9 @@ func (t *ManagementChaincode) getAlias(stub shim.ChaincodeStubInterface, args []
 
 func (t *ManagementChaincode) storeCode(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	guid := xid.New().String()
-	logger.Debug("GUUUUID", guid)
 	logger.Debug("[Management Chaincode][StoreCode]Args ID", args[0])
 	logger.Debug("[Management Chaincode][StoreCode]Calling storeCode...")
-	//Get the transaction ID
-	txID := stub.GetTxID()
-	logger.Debug("[Management Chaincode][StoreCode]Transaction ID", txID)
+	//Process the input
 	rawIn := json.RawMessage(args[0])
 	bytes, err := rawIn.MarshalJSON()
 	if err != nil {
@@ -146,14 +145,8 @@ func (t *ManagementChaincode) storeCode(stub shim.ChaincodeStubInterface, args [
 	store.Source = request.Source
 	store.Approved = 0
 	store.Verified = false
-
-	i := 0
-	for i < len(request.Target) {
-		logger.Debug(request.Target[i])
-		i++
-	}
-	i = 0
 	store.Target = make(map[string]bool)
+	i := 0
 	for i < len(request.Target) {
 		store.Target[request.Target[i]] = false
 		i++
@@ -164,16 +157,32 @@ func (t *ManagementChaincode) storeCode(stub shim.ChaincodeStubInterface, args [
 		return shim.Error(err.Error())
 	}
 
-	guid3 := "K902902903"
-	stub.PutState(guid3, data)
-
+	//Store code in bc
+	stub.PutState(guid, data)
+	// Store contract ID in list
 	res := addToListCC(stub, guid)
 	if res == false {
 		return shim.Error(err.Error())
 
 	}
-	return shim.Success([]byte(strconv.Itoa(uniqueID)))
+	return shim.Success([]byte(guid))
 }
+func (t *ManagementChaincode) getCode(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	logger.Debug("[Management Chaincode][getCode]Get code with ID", args[0])
+	guid := string(args[0])
+
+	//Store code in bc
+	code, err := stub.GetState(guid)
+	// Store contract ID in list
+	if err != nil {
+		return shim.Error("[Management Chaincode][getCode]Error getting code with id" + guid)
+	}
+	return shim.Success(code)
+}
+
+/*
+* List the available targets in the network
+ */
 func addTarget(stub shim.ChaincodeStubInterface, newTarget string) bool {
 	state, err := stub.GetState("targetList")
 	if err != nil {
@@ -214,6 +223,9 @@ func addToListCC(stub shim.ChaincodeStubInterface, newCode string) bool {
 	return true
 }
 
+/*
+* List all the chaincodes in the network , chaincodes are identifier by a ID
+ */
 func (t *ManagementChaincode) getListCC(stub shim.ChaincodeStubInterface) pb.Response {
 	state, err := stub.GetState("codeList")
 	if err != nil {
