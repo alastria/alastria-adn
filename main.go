@@ -15,7 +15,6 @@ const (
 	orgAdmin  = "Admin"
 	ccID      = " "
 )
-const ExampleCCInitB = "200"
 
 var initArgs = [][]byte{[]byte("init")}
 
@@ -46,7 +45,7 @@ func main() {
 	// if err != nil {
 	// 	fmt.Print(err)
 	// }
-	// installCCReq := resmgmt.InstallCCRequest{Name: "mycc1", Path: "mychainc", Version: "2", Package: ccPkg}
+	// installCCReq := resmgmt.InstallCCRequest{Name: "mycc2", Path: "mychainc", Version: "2", Package: ccPkg}
 	// _, err = coreResMgmt.InstallCC(installCCReq)
 	// if err != nil {
 	// 	fmt.Println("Error al instalar")
@@ -61,7 +60,7 @@ func main() {
 	// }
 
 	// ccPolicy := cauthdsl.SignedByAnyMember([]string{"org1MSP", "coreAdmMSP"})
-	// instantciateCReq := resmgmt.InstantiateCCRequest{Name: "mycc1", Path: "mychainc", Version: "2", Args: initArgs, Policy: ccPolicy}
+	// instantciateCReq := resmgmt.InstantiateCCRequest{Name: "mycc2", Path: "mychainc", Version: "2", Args: initArgs, Policy: ccPolicy}
 	// err = org1ResMgmt.InstantiateCC("channel", instantciateCReq)
 	// if err != nil {
 	// 	fmt.Println(err)
@@ -71,59 +70,59 @@ func main() {
 	if err != nil {
 		fmt.Println("Failed to create new channel client for Org1 user: %s", err)
 	}
-	// invokeArgs := [][]byte{[]byte(`{"Name": "mycc1", "Source": "ks20230", "Target":["org1", "org2"]}`)}
-	// response, _, err := chClientCoreAdminUser.Execute(apitxn.Request{ChaincodeID: "mycc1", Fcn: "storeCode", Args: invokeArgs})
-	// if err != nil {
-	// 	fmt.Print("Failed to move funds: %s", err)
-	// }
-	// fmt.Printf(string(response[:]))
-	// //guid := string(response[:])
-	// getCodeArgs := [][]byte{[]byte("0")}
+	invokeArgs := [][]byte{[]byte(`{"Name": "mycc2", "Source": "ks20230", "Target":["org1", "org2"]}`)}
+	response, _, err := chClientCoreAdminUser.Execute(apitxn.Request{ChaincodeID: "mycc2", Fcn: "storeCode", Args: invokeArgs})
+	if err != nil {
+		fmt.Print("Failed to move funds: %s", err)
+	}
+	fmt.Printf(string(response[:]))
+	//guid := string(response[:])
+	getCodeArgs := [][]byte{[]byte("0")}
 
-	// response2, err := chClientCoreAdminUser.Query(apitxn.Request{ChaincodeID: "mycc1", Fcn: "getCode", Args: getCodeArgs})
-	// if err != nil {
-	// 	fmt.Print("Failed to move funds: %s", err)
-	// }
-	// fmt.Printf("Response ----->" + string(response2[:]))
+	response2, err := chClientCoreAdminUser.Query(apitxn.Request{ChaincodeID: "mycc2", Fcn: "getCode", Args: getCodeArgs})
+	if err != nil {
+		fmt.Print("Failed to move funds: %s", err)
+	}
+	fmt.Printf("Response ----->" + string(response2[:]))
 
-	response3, _, err := chClientCoreAdminUser.Execute(apitxn.Request{ChaincodeID: "mycc1", Fcn: "getListCC"})
+	response3, _, err := chClientCoreAdminUser.Execute(apitxn.Request{ChaincodeID: "mycc2", Fcn: "getAllTargets", Args: getCodeArgs})
 	if err != nil {
 		fmt.Print("Failed to move funds: %s", err)
 	}
 	fmt.Printf("Response ----->" + string(response3[:]))
 
-	// chClientorg1User, err := sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg("org1")).Channel("channel")
-	// if err != nil {
-	// 	fmt.Println("Failed to create new channel client for Org1 user: %s", err)
-	// }
-	// registrarOrg1 := [][]byte{[]byte(`org1`)}
+	chClientorg1User, err := sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg("org1")).Channel("channel")
+	if err != nil {
+		fmt.Println("Failed to create new channel client for Org1 user: %s", err)
+	}
+	registrarOrg1 := [][]byte{[]byte(`org1`)}
 
-	// response, _, err := chClientorg1User.Execute(apitxn.Request{ChaincodeID: "mycc1", Fcn: "registrar", Args: registrarOrg1})
-	// if err != nil {
-	// 	fmt.Print("Failed to move funds: %s", err)
-	// }
-	// fmt.Printf(string(response[:]))
+	response, _, err = chClientorg1User.Execute(apitxn.Request{ChaincodeID: "mycc2", Fcn: "registrar", Args: registrarOrg1})
+	if err != nil {
+		fmt.Print("Failed to move funds: %s", err)
+	}
+	fmt.Printf(string(response[:]))
 
-	// chClientorg2User, err := sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg("org2")).Channel("channel")
-	// if err != nil {
-	// 	fmt.Println("Failed to create new channel client for Org1 user: %s", err)
-	// }
-	// registrarOrg2 := [][]byte{[]byte(`org2`)}
-	// response, _, err = chClientorg2User.Execute(apitxn.Request{ChaincodeID: "mycc1", Fcn: "registrar", Args: registrarOrg2})
-	// if err != nil {
-	// 	fmt.Print("Failed to move funds: %s", err)
-	// }
-	// fmt.Printf(string(response[:]))
+	chClientorg2User, err := sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg("org2")).Channel("channel")
+	if err != nil {
+		fmt.Println("Failed to create new channel client for Org1 user: %s", err)
+	}
+	registrarOrg2 := [][]byte{[]byte(`org2`)}
+	response, _, err = chClientorg2User.Execute(apitxn.Request{ChaincodeID: "mycc2", Fcn: "registrar", Args: registrarOrg2})
+	if err != nil {
+		fmt.Print("Failed to move funds: %s", err)
+	}
+	fmt.Printf(string(response[:]))
 
-	// aproval2 := [][]byte{[]byte(guid)}
-	// response, _, err = chClientorg2User.Execute(apitxn.Request{ChaincodeID: "mycc1", Fcn: "approveCode", Args: aproval2})
-	// if err != nil {
-	// 	fmt.Print("Failed to move funds: %s", err)
-	// }
-	// fmt.Printf(string(response[:]))
-	// response, _, err = chClientorg1User.Execute(apitxn.Request{ChaincodeID: "mycc1", Fcn: "getCode", Args: getCodeArgs})
-	// if err != nil {
-	// 	fmt.Print("Failed to move funds: %s", err)
-	// }
-	// fmt.Printf(string(response[:]))
+	aproval2 := [][]byte{[]byte("1")}
+	response, _, err = chClientorg1User.Execute(apitxn.Request{ChaincodeID: "mycc2", Fcn: "approveCode", Args: aproval2})
+	if err != nil {
+		fmt.Print("Failed to move funds: %s", err)
+	}
+	fmt.Printf(string(response[:]))
+	response, _, err = chClientorg1User.Execute(apitxn.Request{ChaincodeID: "mycc2", Fcn: "getCode", Args: getCodeArgs})
+	if err != nil {
+		fmt.Print("Failed to move funds: %s", err)
+	}
+	fmt.Printf(string(response[:]))
 }
