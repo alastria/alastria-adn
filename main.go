@@ -4,12 +4,8 @@ import (
 	"fmt"
 
 	"github.com/hyperledger/fabric-sdk-go/api/apitxn"
-	"github.com/hyperledger/fabric-sdk-go/third_party/github.com/hyperledger/fabric/common/cauthdsl"
-
-	resmgmt "github.com/hyperledger/fabric-sdk-go/api/apitxn/resmgmtclient"
 
 	"github.com/hyperledger/fabric-sdk-go/pkg/config"
-	packager "github.com/hyperledger/fabric-sdk-go/pkg/fabric-client/ccpackager/gopackager"
 	"github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
 )
 
@@ -30,95 +26,104 @@ func main() {
 	if err != nil {
 		fmt.Print("Failed to create new SDK: %s", err)
 	}
-	fmt.Println("Creado el SDK")
-
-	// Creación del usuario para interactuar.
-	org1ResMgmt, err := sdk.NewClient(fabsdk.WithUser("Admin")).ResourceMgmt()
-	if err != nil {
-		fmt.Print("Failed to create new resource management client: %s", err)
-	}
-	fmt.Println("Creado el cliente")
-
-	// Crear el package para el chaincode
-	ccPkg, err := packager.NewCCPackage("mychainc", "chaincodes")
-	if err != nil {
-		fmt.Print(err)
-	}
-	fmt.Println("Creado el paquete")
-
-	installCCReq := resmgmt.InstallCCRequest{Name: "thecc", Path: "mychainc", Version: "2", Package: ccPkg}
-	fmt.Println("Creada request")
-	// Install example cc to Org1 peers
-	_, err = org1ResMgmt.InstallCC(installCCReq)
-	if err != nil {
-		fmt.Println("Error al instalar", err)
-	}
-	fmt.Println("Instalado chaincode en peer")
-
-	// Set up chaincode policy to 'any of two msps'
-	ccPolicy := cauthdsl.SignedByAnyMember([]string{"org1MSP", "coreAdmMSP"})
-
-	instantciateCReq := resmgmt.InstantiateCCRequest{Name: "thecc", Path: "mychainc", Version: "2", Args: initArgs, Policy: ccPolicy}
-	// Instanciación del chaincode
-	err = org1ResMgmt.InstantiateCC("channel", instantciateCReq)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println("Instanciado")
-
-	// //Query del valor B
-
-	chClientOrg1User, err := sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg("coreAdm")).Channel("channel")
-	if err != nil {
-		fmt.Println("Failed to create new channel client for Org1 user: %s", err)
-	}
-	// queryArgs := [][]byte{[]byte("b")}
-	// initialValue, err := chClientOrg1User.Query(apitxn.Request{ChaincodeID: "thecc", Fcn: "query", Args: queryArgs})
+	// coreResMgmt, err := sdk.NewClient(fabsdk.WithUser("Admin")).ResourceMgmt()
 	// if err != nil {
-	// 	fmt.Println("Failed to query funds: %s", err)
+	// 	fmt.Print("Failed to create new resource management client: %s", err)
 	// }
-	// fmt.Println("B value: ", string(initialValue))
-
-	// //invoke
-	invokeArgs := [][]byte{[]byte(`{"Name": "thecc", "Source": "ks20230", "Target":["bank1", "bank2"]}`)}
-
-	// Invoke chaincode
-	_, _, err = chClientOrg1User.Execute(apitxn.Request{ChaincodeID: "thecc", Fcn: "storeCode", Args: invokeArgs})
-	if err != nil {
-		fmt.Print("Failed to move funds: %s", err)
-	}
-
-	// // Invoke chaincode
-	// _, _, err = chClientOrg1User.Execute(apitxn.Request{ChaincodeID: "thecc", Fcn: "getListCC"})
+	// fmt.Println("Creado el cliente")
+	// //  Org2 resource management client
+	// org2ResMgmt, err := sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg("org2")).ResourceMgmt()
 	// if err != nil {
-	// 	fmt.Print("Failed to move funds: %s", err)
+	// 	fmt.Print("ERror")
 	// }
-	//QUERY de comprobación de invoke OK
-	// value, err := chClientOrg1User.Query(apitxn.Request{ChaincodeID: "thecc", Fcn: "query", Args: queryArgs})
+	// org1ResMgmt, err := sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg("org1")).ResourceMgmt()
 	// if err != nil {
-	// 	fmt.Println("Failed to query funds: %s", err)
+	// 	fmt.Print("ERror")
 	// }
-	// fmt.Println("B value: ", string(value))
 
-	// //Upgradeando el contrato
-	// installCCReq2 := resmgmt.InstallCCRequest{Name: "thecc", Path: "chaincode_example02", Version: "2", Package: ccPkg}
-	// fmt.Println("Creada request")
-	// // Install example cc to Org1 peers
-	// _, err = org1ResMgmt.InstallCC(installCCReq2)
+	// // // Crear el package para el chaincode
+	// ccPkg, err := packager.NewCCPackage("mychainc", "chaincodes")
 	// if err != nil {
-	// 	fmt.Println("Error al instalar", err)
+	// 	fmt.Print(err)
 	// }
-	// fmt.Println("Instalado")
+	// installCCReq := resmgmt.InstallCCRequest{Name: "mycc1", Path: "mychainc", Version: "2", Package: ccPkg}
+	// _, err = coreResMgmt.InstallCC(installCCReq)
+	// if err != nil {
+	// 	fmt.Println("Error al instalar")
+	// }
+	// _, err = org1ResMgmt.InstallCC(installCCReq)
+	// if err != nil {
+	// 	fmt.Println("Error al instalar")
+	// }
+	// _, err = org2ResMgmt.InstallCC(installCCReq)
+	// if err != nil {
+	// 	fmt.Println("Error al instalar")
+	// }
 
-	// // Set up chaincode policy to 'any of two msps'
-
-	// upgradeRq := resmgmt.UpgradeCCRequest{Name: "thecc", Path: "chaincode_example2", Version: "2", Args: initArgs, Policy: ccPolicy}
-
-	// // Org1 resource manager will instantiate 'example_cc' version 1 on 'orgchannel'
-	// err = org1ResMgmt.UpgradeCC("channel", upgradeRq)
+	// ccPolicy := cauthdsl.SignedByAnyMember([]string{"org1MSP", "coreAdmMSP"})
+	// instantciateCReq := resmgmt.InstantiateCCRequest{Name: "mycc1", Path: "mychainc", Version: "2", Args: initArgs, Policy: ccPolicy}
+	// err = org1ResMgmt.InstantiateCC("channel", instantciateCReq)
 	// if err != nil {
 	// 	fmt.Println(err)
 	// }
+	// /** Invocation */
+	chClientCoreAdminUser, err := sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg("coreAdm")).Channel("channel")
+	if err != nil {
+		fmt.Println("Failed to create new channel client for Org1 user: %s", err)
+	}
+	// invokeArgs := [][]byte{[]byte(`{"Name": "mycc1", "Source": "ks20230", "Target":["org1", "org2"]}`)}
+	// response, _, err := chClientCoreAdminUser.Execute(apitxn.Request{ChaincodeID: "mycc1", Fcn: "storeCode", Args: invokeArgs})
+	// if err != nil {
+	// 	fmt.Print("Failed to move funds: %s", err)
+	// }
+	// fmt.Printf(string(response[:]))
+	// //guid := string(response[:])
+	// getCodeArgs := [][]byte{[]byte("0")}
 
+	// response2, err := chClientCoreAdminUser.Query(apitxn.Request{ChaincodeID: "mycc1", Fcn: "getCode", Args: getCodeArgs})
+	// if err != nil {
+	// 	fmt.Print("Failed to move funds: %s", err)
+	// }
+	// fmt.Printf("Response ----->" + string(response2[:]))
+
+	response3, _, err := chClientCoreAdminUser.Execute(apitxn.Request{ChaincodeID: "mycc1", Fcn: "getListCC"})
+	if err != nil {
+		fmt.Print("Failed to move funds: %s", err)
+	}
+	fmt.Printf("Response ----->" + string(response3[:]))
+
+	// chClientorg1User, err := sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg("org1")).Channel("channel")
+	// if err != nil {
+	// 	fmt.Println("Failed to create new channel client for Org1 user: %s", err)
+	// }
+	// registrarOrg1 := [][]byte{[]byte(`org1`)}
+
+	// response, _, err := chClientorg1User.Execute(apitxn.Request{ChaincodeID: "mycc1", Fcn: "registrar", Args: registrarOrg1})
+	// if err != nil {
+	// 	fmt.Print("Failed to move funds: %s", err)
+	// }
+	// fmt.Printf(string(response[:]))
+
+	// chClientorg2User, err := sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg("org2")).Channel("channel")
+	// if err != nil {
+	// 	fmt.Println("Failed to create new channel client for Org1 user: %s", err)
+	// }
+	// registrarOrg2 := [][]byte{[]byte(`org2`)}
+	// response, _, err = chClientorg2User.Execute(apitxn.Request{ChaincodeID: "mycc1", Fcn: "registrar", Args: registrarOrg2})
+	// if err != nil {
+	// 	fmt.Print("Failed to move funds: %s", err)
+	// }
+	// fmt.Printf(string(response[:]))
+
+	// aproval2 := [][]byte{[]byte(guid)}
+	// response, _, err = chClientorg2User.Execute(apitxn.Request{ChaincodeID: "mycc1", Fcn: "approveCode", Args: aproval2})
+	// if err != nil {
+	// 	fmt.Print("Failed to move funds: %s", err)
+	// }
+	// fmt.Printf(string(response[:]))
+	// response, _, err = chClientorg1User.Execute(apitxn.Request{ChaincodeID: "mycc1", Fcn: "getCode", Args: getCodeArgs})
+	// if err != nil {
+	// 	fmt.Print("Failed to move funds: %s", err)
+	// }
+	// fmt.Printf(string(response[:]))
 }

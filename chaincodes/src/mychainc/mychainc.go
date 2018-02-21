@@ -2,10 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	"github.com/rs/xid"
 )
 
 var logger = shim.NewLogger("Management Chaincode")
@@ -39,6 +39,7 @@ type CodeStore struct {
 }
 
 var targetList []string
+var ccList []string
 var uniqueID int
 
 // Init to initiate the SimpleChaincode class
@@ -59,26 +60,30 @@ func (t *ManagementChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Respon
 	logger.Debug("[Management Chaincode][Invoke]Invoking chaincode...")
 	function, args := stub.GetFunctionAndParameters()
 	logger.Debug("[Management Chaincode][StoreCode]Args ID", args[0])
-	if function == "storeCode" {
-		return t.storeCode(stub, args)
-	}
 	if function == "registrar" {
 		return t.registrar(stub, args)
 	}
-	if function == "getAlias" {
-		return t.getAlias(stub, args)
-	}
-	if function == "getListCC" {
-		return t.getListCC(stub)
+	if function == "storeCode" {
+		return t.storeCode(stub, args)
 	}
 	if function == "getCode" {
 		return t.getCode(stub, args)
 	}
+	if function == "approveCode" {
+		return t.approveCode(stub, args)
+	}
+	if function == "getListCC" {
+		return t.getListCC(stub)
+	}
+	if function == "getAllTargets" {
+		return t.getAllTargets(stub)
+	}
+
 	return shim.Success([]byte("Invoke"))
 }
 func (t *ManagementChaincode) registrar(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 1 {
-		return shim.Error("Incorrect Argumetns")
+		return shim.Error("Incorrect Arguments")
 	}
 	logger.Debug("[Management Chaincode][Registrar]Calling registrar...")
 	//Get the transaction ID
@@ -103,31 +108,9 @@ func (t *ManagementChaincode) registrar(stub shim.ChaincodeStubInterface, args [
 
 	return shim.Success([]byte(caller))
 }
-
-func (t *ManagementChaincode) getAlias(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-
-	logger.Debug("[Management Chaincode][Registrar]Calling registrar...")
-	//Get the transaction ID
-	txID := stub.GetTxID()
-	logger.Debug("[Management Chaincode][StoreCode]Transaction ID", txID)
-	// Get certs from transaction sender
-	caller, err := stub.GetCreator()
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-
-	logger.Debug("[Management Chaincode][StoreCode]Getting alias from caller---", string(caller[:]))
-	state, err := stub.GetState(string(caller[:]))
-	if err != nil {
-		logger.Error("[Management Chaincode][addTarget]Problem adding new target..", err)
-		return shim.Error(err.Error())
-	}
-	logger.Debug("[Management Chaincode][StoreCode]State", string(state[:]))
-	return shim.Success([]byte(""))
-}
-
 func (t *ManagementChaincode) storeCode(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	guid := xid.New().String()
+	guid := strconv.Itoa(uniqueID)
+	logger.Debug("ID", guid)
 	logger.Debug("[Management Chaincode][StoreCode]Args ID", args[0])
 	logger.Debug("[Management Chaincode][StoreCode]Calling storeCode...")
 	//Process the input
@@ -139,7 +122,7 @@ func (t *ManagementChaincode) storeCode(stub shim.ChaincodeStubInterface, args [
 	var request Code
 	err = json.Unmarshal(bytes, &request)
 	//Value to store
-	logger.Debug("[Management Chaincode][StoreCode]Args ID", request)
+	logger.Debug("[Management Chaincode][StoreCode]Content to store", request)
 	store := CodeStore{}
 	store.Name = request.Name
 	store.Source = request.Source
@@ -159,12 +142,14 @@ func (t *ManagementChaincode) storeCode(stub shim.ChaincodeStubInterface, args [
 
 	//Store code in bc
 	stub.PutState(guid, data)
+	logger.Debug("[Management Chaincode][StoreCode] Code stored with ID and data"+guid, store)
 	// Store contract ID in list
 	res := addToListCC(stub, guid)
 	if res == false {
 		return shim.Error(err.Error())
 
 	}
+	uniqueID++
 	return shim.Success([]byte(guid))
 }
 func (t *ManagementChaincode) getCode(stub shim.ChaincodeStubInterface, args []string) pb.Response {
@@ -173,15 +158,109 @@ func (t *ManagementChaincode) getCode(stub shim.ChaincodeStubInterface, args []s
 
 	//Store code in bc
 	code, err := stub.GetState(guid)
+	logger.Debug(code)
 	// Store contract ID in list
 	if err != nil {
 		return shim.Error("[Management Chaincode][getCode]Error getting code with id" + guid)
 	}
+	if code == nil {
+		return shim.Error("[Management Chaincode][getCode]Code not exist" + guid)
+	}
 	return shim.Success(code)
 }
 
+func (t *ManagementChaincode) approveCode(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	logger.Debug("[Management Chaincode][approveCode]Approving code with ID", args[0])
+	//Process the input Getting Id
+	guid := string(args[0])
+	alias := getAlias(stub)
+	if alias == "" {
+		return shim.Error("[Management Chaincode][approveCode]Error getting alias")
+	}
+	//Get code from bc
+	code, err := stub.GetState(guid)
+	if err != nil {
+		return shim.Error("[Management Chaincode][approveCode]Error getting chaincode")
+	}
+	if code == nil {
+		return shim.Error("[Management Chaincode][approveCode]Code not exist" + guid)
+	}
+	var stored CodeStore
+	err = json.Unmarshal(code, &stored)
+	logger.Debug(stored)
+	if stored.Target[alias] != true {
+		stored.Target[alias] = true
+		stored.Approved++
+	}
+	if stored.Approved == len(stored.Target) {
+		stored.Verified = true
+	}
+	//Convert to bytes to stored the new state
+	//Index
+	data, err := json.Marshal(stored)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	err = stub.PutState(guid, data)
+	if err != nil {
+		return shim.Error("[Management Chaincode][approveCode]Error updating the approval")
+	}
+
+	return shim.Success([]byte("[Management Chaincode][approveCode]Approved chaincode from target " + alias))
+}
+
 /*
-* List the available targets in the network
+*  List all the available targets in the network
+ */
+func (t *ManagementChaincode) getAllTargets(stub shim.ChaincodeStubInterface) pb.Response {
+	state, err := stub.GetState("targetList")
+	if err != nil {
+		logger.Error("[Management Chaincode][addTarget]Problem adding new target..", err)
+		return shim.Error(err.Error())
+	}
+
+	return shim.Success(state)
+}
+
+/*
+* List all the chaincodes in the network , chaincodes are identifier by a ID
+ */
+func (t *ManagementChaincode) getListCC(stub shim.ChaincodeStubInterface) pb.Response {
+	state, err := stub.GetState("codeList")
+	if err != nil {
+		logger.Error("[Management Chaincode][getListCC]Problem listing Codes..", err)
+		return shim.Error(err.Error())
+	}
+	return shim.Success(state)
+}
+
+/************ UTILS************/
+/*Get an alias from a caller */
+func getAlias(stub shim.ChaincodeStubInterface) string {
+
+	logger.Debug("[Management Chaincode][Registrar]Calling registrar...")
+	//Get the transaction ID
+	txID := stub.GetTxID()
+	logger.Debug("[Management Chaincode][StoreCode]Transaction ID", txID)
+	// Get certs from transaction sender
+	caller, err := stub.GetCreator()
+	if err != nil {
+		return ""
+	}
+
+	logger.Debug("[Management Chaincode][StoreCode]Getting alias from caller---", string(caller[:]))
+	state, err := stub.GetState(string(caller[:]))
+	if err != nil {
+		logger.Error("[Management Chaincode][addTarget]Problem adding new target..", err)
+		return ""
+	}
+	logger.Debug("[Management Chaincode][StoreCode]State", string(state[:]))
+	return string(state[:])
+}
+
+/*
+*  Add an available target to the network
  */
 func addTarget(stub shim.ChaincodeStubInterface, newTarget string) bool {
 	state, err := stub.GetState("targetList")
@@ -190,6 +269,7 @@ func addTarget(stub shim.ChaincodeStubInterface, newTarget string) bool {
 		return false
 	}
 	json.Unmarshal(state, &targetList)
+	logger.Debug("[Management Chaincode][addTarget] Old state of the slice ..", targetList)
 	slice := append(targetList, newTarget)
 	logger.Debug("[Management Chaincode][addTarget] Actual state of the slice ..", slice)
 	toStore, err := json.Marshal(slice)
@@ -210,6 +290,8 @@ func addToListCC(stub shim.ChaincodeStubInterface, newCode string) bool {
 		return false
 	}
 	json.Unmarshal(state, &targetList)
+	logger.Debug("[Management Chaincode][addToListCC] Old state of the slice ..", state)
+
 	slice := append(targetList, newCode)
 	logger.Debug("[Management Chaincode][addToListCC] Actual state of the slice ..", slice)
 	toStore, err := json.Marshal(slice)
@@ -217,23 +299,12 @@ func addToListCC(stub shim.ChaincodeStubInterface, newCode string) bool {
 		return false
 	}
 	logger.Debug("[Management Chaincode][addToListCC] Updating the state...")
-	stub.PutState("targetList", toStore)
+	stub.PutState("codeList", toStore)
 	logger.Debug("[Management Chaincode][addToListCC] Updated the state")
 
 	return true
 }
 
-/*
-* List all the chaincodes in the network , chaincodes are identifier by a ID
- */
-func (t *ManagementChaincode) getListCC(stub shim.ChaincodeStubInterface) pb.Response {
-	state, err := stub.GetState("codeList")
-	if err != nil {
-		logger.Error("[Management Chaincode][getListCC]Problem adding new Code..", err)
-		return shim.Error(err.Error())
-	}
-	return shim.Success(state)
-}
 func main() {
 	err := shim.Start(new(ManagementChaincode))
 	if err != nil {
