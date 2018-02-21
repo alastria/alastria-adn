@@ -40,6 +40,8 @@ function RegulatorController($scope) {
   //   }
   // }
 
+  // $scope.asignCC = function () {
+  // };
   $scope.close = function () {
     // close the model without saving
     $scope.modal = false;

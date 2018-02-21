@@ -27,19 +27,19 @@ angular
                           '<tbody>' +
                             // '<tr ng-repeat="">' +
                             '<tr>' +
-                              '<td style="width:10%; text-align:center"><input type="checkbox" name="{{}}" id="{{}}"></td>' +
-                              '<td style="width:90%; margin-left:30px">el tipo que sea</td>' +
+                              '<td style="width:10%; text-align:center"><input type="checkbox" ng-model="" value="{{}}"></td>' +
+                              '<td style="width:90%; margin-left:30px">{{}}el tipo que sea</td>' +
                             '</tr>' +
                             '<tr>' +
-                              '<td style="width:10%; text-align:center"><input type="checkbox" name="{{}}" id="{{}}"></td>' +
-                              '<td style="width:90%; margin-left:30px">el tipo que sea</td>' +
+                              '<td style="width:10%; text-align:center"><input type="checkbox" ng-model="" value="{{}}"></td>' +
+                              '<td style="width:90%; margin-left:30px">{{}}el tipo que sea</td>' +
                             '</tr>' +
                           '</tbody>' +
                         '</table>' +
                       '</div>' +
                       '<div class="modal-footer">' +
-                      '<button type="button" ng-click="close()" class="btn btn-secondary" data-dismiss="modal">Close</button>' +
-                      '<button type="button" ng-click="createIssue()" class="btn btn-primary">Save changes</button>' +
+                        '<button type="button" ng-click="close()" class="btn btn-secondary" data-dismiss="modal">Close</button>' +
+                        '<button type="button" ng-click="" class="btn btn-primary">Assign ChainCode</button>' +
                       '</div>' +
                     '</div>' +
                   '</div>' +
