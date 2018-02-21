@@ -10,7 +10,7 @@ function routesConfig($stateProvider, $urlRouterProvider, $locationProvider) {
   $stateProvider
     .state('app', {
       url: '/index',
-      component: 'fountainTitle',
+      component: 'regulator',
       params: {data: null}
     });
 }
