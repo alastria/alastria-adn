@@ -24,13 +24,12 @@ func AddUser(u User) string {
 }
 
 func GetUser(uid string) (u *User, err error) {
-	if u, ok := UserList[uid]; ok {
-		return u, nil
-	}
-	return nil, errors.New("User not exists")
+    _ = fabric_query_user(uid)
+	return UserList["user_11111"], err
 }
 
 func GetAllUsers() map[string]*User {
+    _ = fabric_query_users()
 	return UserList
 }
 

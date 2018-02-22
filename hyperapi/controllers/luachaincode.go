@@ -77,16 +77,3 @@ func (o *LuaChaincodeController) Put() {
 	o.ServeJSON()
 }
 
-// @Title Delete
-// @Description delete the luaChaincode
-// @Param	luaChaincodeId		path 	string	true		"The luaChaincodeId you want to delete"
-// @Success 200 {string} delete success!
-// @Failure 403 luaChaincodeId is empty
-// @router /:luaChaincodeId [delete]
-func (o *LuaChaincodeController) Delete() {
-	luaChaincodeId := o.Ctx.Input.Param(":luaChaincodeId")
-	models.Delete(luaChaincodeId)
-	o.Data["json"] = "delete success!"
-	o.ServeJSON()
-}
-

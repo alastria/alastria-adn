@@ -45,7 +45,8 @@ func GetOne(LuaChaincodeId string) (luaChaincode *LuaChaincode, err error) {
 }
 
 func GetAll() map[string]*LuaChaincode {
-	return LuaChaincodes
+	fabric_query_codes()
+    return LuaChaincodes 
 }
 
 func Update(LuaChaincodeId string, targetId string, validation bool) (err error) {
