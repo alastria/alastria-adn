@@ -31,10 +31,24 @@ func checkRegistrar(t *testing.T, stub *shim.MockStub, name string, value string
 		t.FailNow()
 	}
 }
+func checkRegistrarFail(t *testing.T, stub *shim.MockStub, name string, value string) {
+	res := stub.MockInvoke("1", [][]byte{[]byte("registrar"), []byte(name), []byte(name)})
+	if res.Status == shim.OK {
+		fmt.Println("Registrar", name, "failed", string(res.Message))
+		t.FailNow()
+	}
+}
 
 func checkStoreCode(t *testing.T, stub *shim.MockStub, name string, value string) {
 	res := stub.MockInvoke("1", [][]byte{[]byte(name), []byte(value)})
 	if res.Status != shim.OK {
+		fmt.Println("StoreCode", name, "failed", string(res.Message))
+		t.FailNow()
+	}
+}
+func checkStoreCodeFail(t *testing.T, stub *shim.MockStub, name string, value string) {
+	res := stub.MockInvoke("1", [][]byte{[]byte(name), []byte(value), []byte("value")})
+	if res.Status == shim.OK {
 		fmt.Println("StoreCode", name, "failed", string(res.Message))
 		t.FailNow()
 	}
@@ -49,13 +63,61 @@ func checkGetCode(t *testing.T, stub *shim.MockStub, id string, value []byte) {
 		fmt.Println("Getcode", id, "failed to get value")
 		t.FailNow()
 	}
-
-	fmt.Println("value", []byte(value))
 	if string(res.Payload[:]) != string(value[:]) {
 		fmt.Println("Getcode", id, "value not expected")
 		t.FailNow()
 	}
 }
+func checkGetCodeFail(t *testing.T, stub *shim.MockStub, id string, value []byte) {
+	res := stub.MockInvoke("1", [][]byte{[]byte("getCode")})
+	if res.Status == shim.OK {
+		fmt.Println("Getcode", id, "failed", string(res.Message))
+		t.FailNow()
+	}
+
+}
+func checkListCC(t *testing.T, stub *shim.MockStub, expectedValue []byte) {
+	res := stub.MockInvoke("1", [][]byte{[]byte("getListCC"), []byte("")})
+	if res.Status != shim.OK {
+		fmt.Println("GetlistCC", "failed", string(res.Message))
+		t.FailNow()
+	}
+	if res.Payload == nil {
+		fmt.Println("GetlistCC", "failed", string(res.Message))
+		t.FailNow()
+	}
+
+	if string(res.Payload[:]) != string(expectedValue[:]) {
+		fmt.Println("Getcode", "value not expected")
+		t.FailNow()
+	}
+}
+func checkListCCFail(t *testing.T, stub *shim.MockStub, expectedValue []byte) {
+	res := stub.MockInvoke("1", [][]byte{[]byte("getListCC"), []byte("")})
+
+	if string(res.Payload[:]) == string(expectedValue[:]) {
+		fmt.Println("Getcode", "value not expected")
+		t.FailNow()
+	}
+}
+
+func checkApproveFail(t *testing.T, stub *shim.MockStub, idCC string) {
+	res := stub.MockInvoke("1", [][]byte{[]byte("approveCode"), []byte("")})
+
+	if res.Status == shim.OK {
+		fmt.Println("GetlistCC", "failed", string(res.Message))
+		t.FailNow()
+	}
+}
+func checkApprove(t *testing.T, stub *shim.MockStub, idCC string) {
+	res := stub.MockInvoke("1", [][]byte{[]byte("approveCode"), []byte("")})
+
+	if res.Status == shim.OK {
+		fmt.Println("GetlistCC", "failed", string(res.Message))
+		t.FailNow()
+	}
+}
+
 func ProcessCode(value string) []byte {
 	rawIn := json.RawMessage(value)
 	bytes, err := rawIn.MarshalJSON()
@@ -99,6 +161,8 @@ func Test_Registrar(t *testing.T) {
 	stub := shim.NewMockStub("ex02", scc)
 	checkInit(t, stub, [][]byte{[]byte("init")})
 	checkRegistrar(t, stub, "registrar", "bank1")
+	//FAIL
+	checkRegistrarFail(t, stub, "registrar", "bank1") //Incorrect Number of arguments
 }
 
 func Test_StoreCode(t *testing.T) {
@@ -106,6 +170,9 @@ func Test_StoreCode(t *testing.T) {
 	stub := shim.NewMockStub("ex02", scc)
 	checkInit(t, stub, [][]byte{[]byte("init")})
 	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc2", "Source": "ks20230", "Target":["org1", "org2"]}`)
+
+	//FAIL
+	checkStoreCodeFail(t, stub, "storeCode", `{"Name": "mycc2", "Source": "ks20230", "Target":["org1", "org2"]}`) //Incorrect Number of arguments
 }
 
 func Test_getCode(t *testing.T) {
@@ -115,13 +182,40 @@ func Test_getCode(t *testing.T) {
 	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc2", "Source": "ks20230", "Target":["org1", "org2"]}`)
 	codeProcessed := ProcessCode(`{"Name": "mycc2", "Source": "ks20230", "Target":["org1", "org2"]}`)
 	checkGetCode(t, stub, "0", codeProcessed)
+	checkGetCodeFail(t, stub, "0", codeProcessed)
 }
 
-func Test_getCode(t *testing.T) {
+func Test_getListCC(t *testing.T) {
 	scc := new(ManagementChaincode)
 	stub := shim.NewMockStub("ex02", scc)
+	//ACCEPTED
 	checkInit(t, stub, [][]byte{[]byte("init")})
-	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc2", "Source": "ks20230", "Target":["org1", "org2"]}`)
-	codeProcessed := ProcessCode(`{"Name": "mycc2", "Source": "ks20230", "Target":["org1", "org2"]}`)
-	checkGetCode(t, stub, "0", codeProcessed)
+	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc1", "Source": "aksdjladkjsladsks20230", "Target":["org1", "org2"]}`)
+	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc2", "Source": "aslaksñlaksñlkaks20230", "Target":["org1", "org2"]}`)
+	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc3", "Source": "asmasaslaskljaslkjasks20230", "Target":["org1", "org2"]}`)
+	expectedValue := []string{"0", "1", "2"}
+	sliceExpected, err := json.Marshal(expectedValue)
+	if err != nil {
+		fmt.Printf("Problem converting expected value to byte array")
+	}
+	checkListCC(t, stub, sliceExpected)
+
+	//FAILED
+	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc4", "Source": "asmasaslaskljaslkjasks20230", "Target":["org1", "org2"]}`)
+	checkListCCFail(t, stub, sliceExpected)
+}
+
+func Test_ApproveCode(t *testing.T) {
+	scc := new(ManagementChaincode)
+	stub2 := shim.NewMockStub("ex03", scc)
+	//FAIL
+	checkInit(t, stub2, [][]byte{[]byte("init")})
+	checkStoreCode(t, stub2, "storeCode", `{"Name": "mycc1a", "Source": "aksdjladkjsladsks20230", "Target":["org1", "org2"]}`)
+	checkApproveFail(t, stub2, "0") // target not registered yet
+
+	checkRegistrar(t, stub2, "registrar", "bank1")
+	codeProcessed := ProcessCode(`{"Name": "mycc1a", "Source": "aksdjladkjsladsks20230", "Target":["org1", "org2"]}`)
+	checkGetCode(t, stub2, "0", codeProcessed)
+	checkApprove(t, stub2, "0") // target not registered yet
+
 }

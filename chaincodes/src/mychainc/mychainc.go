@@ -82,7 +82,7 @@ func (t *ManagementChaincode) registrar(stub shim.ChaincodeStubInterface, args [
 	// Get certs from transaction sender
 	caller, err := stub.GetCreator()
 	if err != nil {
-		logger.Debug(err)
+		logger.Error("[Management Chaincode][Registrar] Problem getting caller ")
 		return shim.Error(err.Error())
 	}
 	//Get alias to store
@@ -100,7 +100,8 @@ func (t *ManagementChaincode) registrar(stub shim.ChaincodeStubInterface, args [
 }
 func (t *ManagementChaincode) storeCode(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 1 {
-		return shim.Error("[Management Chaincode][StoreCode]Incorrect Arguments")
+		logger.Error("[Management Chaincode][StoreCode]Incorrect Arguments")
+		return shim.Error("Error")
 	}
 	guid := strconv.Itoa(uniqueID)
 	logger.Debug("ID", guid)
@@ -110,6 +111,7 @@ func (t *ManagementChaincode) storeCode(stub shim.ChaincodeStubInterface, args [
 	rawIn := json.RawMessage(args[0])
 	bytes, err := rawIn.MarshalJSON()
 	if err != nil {
+		logger.Error("[Management Chaincode][StoreCode]Error Marshaling Object")
 		return shim.Error(err.Error())
 	}
 	var request Code
@@ -130,46 +132,58 @@ func (t *ManagementChaincode) storeCode(stub shim.ChaincodeStubInterface, args [
 	//Index
 	data, err := json.Marshal(store)
 	if err != nil {
+		logger.Error("[Management Chaincode][StoreCode]Error Marshaling Object")
 		return shim.Error(err.Error())
+	}
+	exists, error := stub.GetState(guid)
+	var stored CodeStore
+	err = json.Unmarshal(exists, &stored)
+	if stored.Name == "" {
+		res := addToListCC(stub, guid) //ADD TO LIST CC
+		if res == false {
+			logger.Error("[Management Chaincode][StoreCode]Error Addint to ListCC")
+			return shim.Error(err.Error())
+		}
+		if error != nil {
+			return shim.Error(err.Error())
+		}
 	}
 	//Store code in bc
 	err = stub.PutState(guid, data)
 	if err != nil {
-		return shim.Error("[Management Chaincode][StoreCode] Error storing code")
-	}
-	logger.Debug("[Management Chaincode][StoreCode] Code stored with ID and data"+guid, store)
-	// Store contract ID in list
-	res := addToListCC(stub, guid)
-	if res == false {
+		logger.Error("[Management Chaincode][StoreCode] Error storing code")
 		return shim.Error(err.Error())
-
 	}
+	logger.Debug("[Management Chaincode][StoreCode] Code stored with ID and data" + guid)
 	uniqueID++
 	return shim.Success([]byte(guid))
 }
 func (t *ManagementChaincode) getCode(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 1 {
+		logger.Error("[Management Chaincode][getCode]Incorrect Arguments")
 		return shim.Error("[Management Chaincode][getCode]Incorrect Arguments")
 	}
 	logger.Debug("[Management Chaincode][getCode]Get code with ID", args[0])
 	guid := string(args[0])
-
 	//Store code in bc
 	code, err := stub.GetState(guid)
 	logger.Debug(code)
 	// Store contract ID in list
 	if err != nil {
-		return shim.Error("[Management Chaincode][getCode]Error getting code with id" + guid)
+		logger.Error("[Management Chaincode][getCode]Error getting code with id" + guid)
+		return shim.Error(err.Error())
 	}
 	if code == nil {
-		return shim.Error("[Management Chaincode][getCode]Code not exist" + guid)
+		logger.Error("[Management Chaincode][getCode]Code not exist" + guid)
+		return shim.Error(err.Error())
 	}
 	return shim.Success(code)
 }
 
 func (t *ManagementChaincode) approveCode(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 1 {
-		return shim.Error("[Management Chaincode][approveCode]Incorrect Arguments")
+		logger.Error("[Management Chaincode][getCode]Incorrect Arguments")
+		return shim.Error("[Management Chaincode][getCode]Incorrect Arguments")
 	}
 	logger.Debug("[Management Chaincode][approveCode]Approving code with ID", args[0])
 	//Process the input Getting Id
@@ -183,11 +197,13 @@ func (t *ManagementChaincode) approveCode(stub shim.ChaincodeStubInterface, args
 	if err != nil {
 		return shim.Error("[Management Chaincode][approveCode]Error getting chaincode")
 	}
-	if code == nil {
-		return shim.Error("[Management Chaincode][approveCode]Code not exist" + guid)
-	}
 	var stored CodeStore
 	err = json.Unmarshal(code, &stored)
+
+	if stored.Name == "" {
+		logger.Error("[Management Chaincode][approveCode] Code not exist")
+		return shim.Error(err.Error())
+	}
 	logger.Debug(stored)
 	if stored.Target[alias] != true {
 		stored.Target[alias] = true
@@ -204,6 +220,7 @@ func (t *ManagementChaincode) approveCode(stub shim.ChaincodeStubInterface, args
 	}
 	err = stub.PutState(guid, data)
 	if err != nil {
+		logger.Error("[Management Chaincode][approveCode]Error updating the approval")
 		return shim.Error("[Management Chaincode][approveCode]Error updating the approval")
 	}
 	return shim.Success([]byte("[Management Chaincode][approveCode]Approved chaincode from target " + alias))
