@@ -14,12 +14,12 @@ type LuaChaincodeController struct {
 
 // @Title Create
 // @Description create luaChaincode
-// @Param	body		body 	models.LuaChaincode	true		"The luaChaincode content"
+// @Param	body		body 	models.LuaChaincodePost	true		"The luaChaincode content"
 // @Success 200 {string} models.LuaChaincode.Id
 // @Failure 403 body is empty
 // @router / [post]
 func (o *LuaChaincodeController) Post() {
-	var ob models.LuaChaincode
+	var ob models.LuaChaincodePost
 	json.Unmarshal(o.Ctx.Input.RequestBody, &ob)
 	luaChaincodeid := models.AddOne(ob)
 	o.Data["json"] = map[string]string{"LuaChaincodeId": luaChaincodeid}

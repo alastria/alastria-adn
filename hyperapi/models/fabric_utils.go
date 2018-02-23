@@ -2,6 +2,7 @@ package models
 
 import (
     "fmt"
+	"encoding/json"
     "strings"
     "os"
 	"github.com/astaxie/beego"
@@ -13,6 +14,14 @@ import (
 	packager "github.com/hyperledger/fabric-sdk-go/pkg/fabric-client/ccpackager/gopackager"
 )
 
+// extracted from chaincode
+type CodeStore struct {
+	Name     string
+	Source   string
+	Target   map[string]bool
+	Approved int  // autoincrement with the  approvement of a party
+	Verified bool // If approved == map.length -> TRUE
+}
 
 var initArgs = [][]byte{[]byte("init")}
 // initialize hyperledger sdk config
@@ -43,7 +52,8 @@ func init(){
     luaExecutorccID = beego.AppConfig.String("luaExecutorccID")
     sdk, _ = fabsdk.New(config.FromFile(hyperledger_config_yaml))
     chClient, _ = sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg(orgName)).Channel(channelID)
-    createChaincodeLuaExecutorFirstTime()
+    //createChaincodeFirstTime()
+    //createChaincodeLuaExecutorFirstTime()
 }
 
 func createChaincodeLuaExecutorFirstTime(){
@@ -144,24 +154,26 @@ func execute(){
     fmt.Print("res: %s", res)
 }
 
-func fabric_add_code(name string, source string, targets []string) []byte{
+func fabric_add_code(name string, source string, targets []string) string{
     invokeArgs := [][]byte{[]byte(`{"Name": "` + name + `", Source": "` + source + `", "Target": [` + strings.Join(targets[:],",") + `]}`)}
     value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "storeCode", Args: invokeArgs})
 	if err != nil {
 		fmt.Println("Failed to query values: %s", err)
 	}
 	fmt.Println("response value: ", string(value))
-    return value
+    return string(value)
 }
 
-func fabric_query_users() []byte{
+func fabric_query_users() []string{
+    var targetList []string
     invokeArgs := [][]byte{[]byte("")}
-    value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "getAlias", Args: invokeArgs})
+    value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "getAllTargets", Args: invokeArgs})
 	if err != nil {
 		fmt.Println("Failed to query values: %s", err)
 	}
+	json.Unmarshal(value, &targetList)
 	fmt.Println("response value: ", string(value))
-    return value
+    return targetList
 }
 
 func fabric_query_user(uid string) string{
@@ -169,12 +181,52 @@ func fabric_query_user(uid string) string{
     return "1"
 }
 
-func fabric_query_codes() []byte{
+func fabric_query_codes() []LuaChaincode{
+    var codeIds []string
+    var luaCodes []LuaChaincode
+    var luaCode LuaChaincode
     invokeArgs := [][]byte{[]byte("")}
     value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "getListCC", Args: invokeArgs})
 	if err != nil {
 		fmt.Println("Failed to query values: %s", err)
 	}
 	fmt.Println("response value: ", string(value))
-    return value
+	json.Unmarshal(value, &codeIds)
+    var i = 0 
+    for i < len(codeIds) {
+        luaCode = fabric_query_code(codeIds[i])
+        luaCodes = append(luaCodes, luaCode)
+        i++
+    }
+    return luaCodes 
+}
+
+func fabric_query_code(cid string) LuaChaincode{
+    var tempCode CodeStore
+    var code LuaChaincode
+    invokeArgs := [][]byte{[]byte("")}
+    value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "getListCC", Args: invokeArgs})
+	if err != nil {
+		fmt.Println("Failed to query values: %s", err)
+	}
+	fmt.Println("response value: ", string(value))
+	json.Unmarshal(value, &tempCode)
+    code.LuaChaincodeId = cid  
+    code.Name = tempCode.Name
+    code.SourceCode = tempCode.Source
+    for key, value := range tempCode.Target {
+        code.Targets = append(code.Targets, key)
+        code.Validations = append(code.Validations, value)
+    }
+    return code
+}
+
+func fabric_add_user(uid string) string{
+    invokeArgs := [][]byte{[]byte(uid)}
+    value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "registrar", Args: invokeArgs})
+	if err != nil {
+		fmt.Println("Failed to query values: %s", err)
+	}
+	fmt.Println("response value: ", string(value))
+    return string(value)
 }
