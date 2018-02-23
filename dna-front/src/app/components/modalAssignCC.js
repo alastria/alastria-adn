@@ -7,7 +7,7 @@ angular
   .directive('modalAssigncc', function () {
     return {
       restrict: 'E',
-      template: '<div class"fades" style="position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;display: block;overflow: hidden;-webkit-overflow-scrolling: touch;outline: 0; padding-top:10%; background-color:rgba(0, 0, 0, .5)" ng-show="modal">' + // ng-show="modal"
+      template: '<div class"fades" style="position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;display: block;overflow: hidden;-webkit-overflow-scrolling: touch;outline: 0; padding-top:10%; background-color:rgba(0, 0, 0, .5)" ng-show="modalAssign">' +
                   '<div class="modal-dialog" role="document">' +
                     '<div class="modal-content">' +
                       '<div class="modal-header">' +
@@ -27,11 +27,13 @@ angular
                           '<tbody>' +
                             // '<tr ng-repeat="">' +
                             '<tr>' +
-                              '<td style="width:10%; text-align:center"><input type="checkbox" ng-model="" value="{{}}"></td>' +
+                              // '<td style="width:10%; text-align:center"><input type="checkbox" ng-model="" value="{{}}"></td>' +
+                              '<td style="width:10%; text-align:center"><input type="checkbox"></td>' +
                               '<td style="width:90%; margin-left:30px">{{}}el tipo que sea</td>' +
                             '</tr>' +
                             '<tr>' +
-                              '<td style="width:10%; text-align:center"><input type="checkbox" ng-model="" value="{{}}"></td>' +
+                              // '<td style="width:10%; text-align:center"><input type="checkbox" ng-model="" value="{{}}"></td>' +
+                              '<td style="width:10%; text-align:center"><input type="checkbox"></td>' +
                               '<td style="width:90%; margin-left:30px">{{}}el tipo que sea</td>' +
                             '</tr>' +
                           '</tbody>' +

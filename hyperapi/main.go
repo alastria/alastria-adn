@@ -4,18 +4,18 @@ package main
 import (
     "os"
 	_ "hyperapi/routers"
-    "fmt"
+    //"fmt"
 
 	"github.com/astaxie/beego"
     
-	"github.com/hyperledger/fabric-sdk-go/api/apitxn"
-	"github.com/hyperledger/fabric-sdk-go/third_party/github.com/hyperledger/fabric/common/cauthdsl"
-    "github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
-	"github.com/hyperledger/fabric-sdk-go/pkg/config"
-	resmgmt "github.com/hyperledger/fabric-sdk-go/api/apitxn/resmgmtclient"
-	packager "github.com/hyperledger/fabric-sdk-go/pkg/fabric-client/ccpackager/gopackager"
+	//"github.com/hyperledger/fabric-sdk-go/api/apitxn"
+	//"github.com/hyperledger/fabric-sdk-go/third_party/github.com/hyperledger/fabric/common/cauthdsl"
+    //"github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
+	//"github.com/hyperledger/fabric-sdk-go/pkg/config"
+	//resmgmt "github.com/hyperledger/fabric-sdk-go/api/apitxn/resmgmtclient"
+	//packager "github.com/hyperledger/fabric-sdk-go/pkg/fabric-client/ccpackager/gopackager"
 )
-
+/*
 var initArgs = [][]byte{[]byte("init")}
 
 func createChaincodeFirstTime(){
@@ -143,6 +143,7 @@ func query(){
 	}
 	fmt.Println("B value: ", string(initialValue))
 }
+*/
 
 func main() {
     configFile := os.Args[1]
@@ -152,8 +153,8 @@ func main() {
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
     //createChaincodeFirstTime()
-    execute()
-    query()
+    //execute()
+    //query()
 	beego.Run()
 }
 

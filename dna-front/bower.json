@@ -6,7 +6,7 @@
     "bootstrap": "^3.3.7",
     "angular-ui-router": "1.0.0-beta.3",
     "angular-bootstrap": "^2.5.0",
-    "sweetalert2": "^7.0.3"
+    "sweetalert2": "^7.12.12"
   },
   "devDependencies": {
     "angular-mocks": "^1.6.2"

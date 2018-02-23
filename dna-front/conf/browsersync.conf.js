@@ -1,8 +1,8 @@
 const conf = require('./gulp.conf');
-// var proxyMiddleware = require('http-proxy-middleware');
+var proxyMiddleware = require('http-proxy-middleware');
 
 module.exports = function () {
-  // var middleware = proxyMiddleware('/', {target: 'http://localhost:8080/', changeOrigin: 'localhost'});
+  var middleware = proxyMiddleware('/v1', {target: 'http://localhost:8083/', changeOrigin: 'localhost'});
 
   return {
     server: {
@@ -10,7 +10,7 @@ module.exports = function () {
         conf.paths.tmp,
         conf.paths.src
       ],
-      // middleware: middleware,
+      middleware: middleware,
       routes: {
         '/bower_components': 'bower_components'
       }

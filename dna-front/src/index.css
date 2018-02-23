@@ -57,7 +57,7 @@ a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 82%;
+  height: 77%;
   padding: 1rem;
   background-color: #F2F2F2;
   overflow-y: auto;
@@ -78,6 +78,15 @@ a:hover {
   font-size: 2rem;
   margin: .5rem;
 }
+.bg-success {
+  background-color: #28a745 !important;
+}
+td.overflow{
+  max-width:18em;
+  overflow:hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .modalPosition {
  position: fixed;
   top: 0;
@@ -89,6 +98,9 @@ a:hover {
   overflow: hidden;
   -webkit-overflow-scrolling: touch;
   outline: 0;
+}
+.navHeight {
+  height: 5%;
 }
 
 .navIntervener {
