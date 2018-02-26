@@ -52,7 +52,7 @@ func init(){
     luaExecutorccID = beego.AppConfig.String("luaExecutorccID")
     sdk, _ = fabsdk.New(config.FromFile(hyperledger_config_yaml))
     chClient, _ = sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg(orgName)).Channel(channelID)
-    //createChaincodeFirstTime()
+    createChaincodeFirstTime()
     //createChaincodeLuaExecutorFirstTime()
 }
 
@@ -89,7 +89,6 @@ func createChaincodeLuaExecutorFirstTime(){
 
 	// Set up chaincode policy to 'any of two msps'
 	ccPolicy:= cauthdsl.SignedByAnyMember([]string{"org1MSP", "coreAdmMSP"})
-
 	instantciateCReq := resmgmt.InstantiateCCRequest{Name: luaExecutorccID, Path: luaExecutorPath, Version: version, Args: initArgs, Policy: ccPolicy}
 	// Instanciación del chaincode
 	err = clientResMgmt.InstantiateCC(channelID, instantciateCReq)
@@ -131,7 +130,9 @@ func createChaincodeFirstTime(){
 	// Set up chaincode policy to 'any of two msps'
 	ccPolicy:= cauthdsl.SignedByAnyMember([]string{"org1MSP", "coreAdmMSP"})
 
-	instantciateCReq := resmgmt.InstantiateCCRequest{Name: ccID, Path: path, Version: version, Args: initArgs, Policy: ccPolicy}
+    exeucuteLuaInitArgs := [][]byte{[]byte("init"), []byte(luaExecutorccID)}
+    fmt.Println(exeucuteLuaInitArgs)
+	instantciateCReq := resmgmt.InstantiateCCRequest{Name: ccID, Path: path, Version: version, Args: exeucuteLuaInitArgs, Policy: ccPolicy}
 	// Instanciación del chaincode
 	err = clientResMgmt.InstantiateCC(channelID, instantciateCReq)
 	if err != nil {
@@ -155,6 +156,10 @@ func execute(){
 
 func fabric_add_code(name string, source string, targets []string) string{
     invokeArgs := [][]byte{[]byte(`{"Name": "` + name + `", "Source": "` + source + `", "Target": ["` + strings.Join(targets[:],"\",\"") + `"]}`)}
+
+    fmt.Println(`{"Name": "` + name + `", "Source": "` + source + `", "Target": ["` + strings.Join(targets[:],"\",\"") + `"]}`)
+    fmt.Println(`{"Name": "` + name + `", "Source": "` + source + `", "Target": ["` + strings.Join(targets[:],"\",\"") + `"]}`)
+    fmt.Println(`{"Name": "` + name + `", "Source": "` + source + `", "Target": ["` + strings.Join(targets[:],"\",\"") + `"]}`)
     value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "storeCode", Args: invokeArgs})
 	if err != nil {
 		fmt.Println("Failed to query values: %s", err)
@@ -250,3 +255,15 @@ func fabric_validate_code(LuaChaincodeId string) string{
 
     return string(value)
 }
+
+func fabric_execute_code(LuaChaincodeId string) string{
+    invokeArgs := [][]byte{[]byte(LuaChaincodeId)}
+    value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "exectuteCC", Args: invokeArgs})
+	if err != nil {
+		fmt.Println("Failed to execute lua chaincode: %s", err)
+	}
+	fmt.Println("response value: ", string(value))
+
+    return string(value)
+}
+

@@ -37,6 +37,10 @@ func Update(LuaChaincodeId string) (err error) {
 	return nil
 }
 
+func Execute(LuaChaincodeId string) (result string) {
+    return fabric_execute_code(LuaChaincodeId)
+}
+
 func Delete(LuaChaincodeId string) {
 }
 

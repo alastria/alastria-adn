@@ -34,6 +34,9 @@ var uniqueID int
 
 // Init to initiate the SimpleChaincode class
 func (t *ManagementChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
+	var targetList []string
+	var ccList []string
+
 	uniqueID = 0
 	level, err := shim.LogLevel("DEBUG")
 	if err != nil {
@@ -43,8 +46,19 @@ func (t *ManagementChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response
 
 	logger.Debug("[Management Chaincode][Init]Instanciating chaincode...")
 
+    _, args := stub.GetFunctionAndParameters()
+	logger.Debug("[Management Chaincode][Init] ", len(args))
+    if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+    // Write the state to the ledger
+    err = stub.PutState("luaExecutorccID", []byte(args[0]))
+    if err != nil {
+		return shim.Error(err.Error())
+	}
+
 	logger.Debug("[Management Chaincode][Init] start empty target list..")
-	var targetList []string
 	toStore, err := json.Marshal(targetList)
 	if err != nil {
 		return shim.Error("Problems with inilizing states")
@@ -53,7 +67,6 @@ func (t *ManagementChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response
 	stub.PutState("targetList", toStore)
 
     logger.Debug("[Management Chaincode][Init] start empty code list..")
-	var ccList []string
 	toStore, err = json.Marshal(ccList)
 	if err != nil {
 		return shim.Error("Problems with inilizing states")
@@ -85,6 +98,9 @@ func (t *ManagementChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Respon
 	}
 	if function == "getAllTargets" {
 		return t.getAllTargets(stub)
+	}
+    if function == "exectuteCC" {
+		return t.exectuteCC(stub, args)
 	}
 	return shim.Success([]byte("Invoke"))
 }
@@ -180,6 +196,23 @@ func (t *ManagementChaincode) storeCode(stub shim.ChaincodeStubInterface, args [
 	uniqueID++
 	return shim.Success([]byte(guid))
 }
+
+func getCodeFromShim(stub shim.ChaincodeStubInterface, guid string) (code []byte, err error) {
+    //Store code in bc
+	code, err = stub.GetState(guid)
+	logger.Debug(code)
+	// Store contract ID in list
+	if err != nil {
+		logger.Error("[Management Chaincode][getCode]Error getting code with id" + guid)
+		return code, err
+	}
+	if code == nil {
+		logger.Error("[Management Chaincode][getCode]Code not exist" + guid)
+		return code, err
+	}
+    return code, nil
+
+}
 func (t *ManagementChaincode) getCode(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 1 {
 		logger.Error("[Management Chaincode][getCode]Incorrect Arguments")
@@ -187,25 +220,17 @@ func (t *ManagementChaincode) getCode(stub shim.ChaincodeStubInterface, args []s
 	}
 	logger.Debug("[Management Chaincode][getCode]Get code with ID", args[0])
 	guid := string(args[0])
-	//Store code in bc
-	code, err := stub.GetState(guid)
-	logger.Debug(code)
-	// Store contract ID in list
+    code, err := getCodeFromShim(stub, guid)
 	if err != nil {
-		logger.Error("[Management Chaincode][getCode]Error getting code with id" + guid)
 		return shim.Error(err.Error())
-	}
-	if code == nil {
-		logger.Error("[Management Chaincode][getCode]Code not exist" + guid)
-		return shim.Error(err.Error())
-	}
-	return shim.Success(code)
+    }
+    return shim.Success([]byte(code))
 }
 
 func (t *ManagementChaincode) approveCode(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 1 {
-		logger.Error("[Management Chaincode][getCode]Incorrect Arguments")
-		return shim.Error("[Management Chaincode][getCode]Incorrect Arguments")
+		logger.Error("[Management Chaincode][approveCode]Incorrect Arguments")
+		return shim.Error("[Management Chaincode][approveCode]Incorrect Arguments")
 	}
 	logger.Debug("[Management Chaincode][approveCode]Approving code with ID", args[0])
 	//Process the input Getting Id
@@ -348,6 +373,38 @@ func addToListCC(stub shim.ChaincodeStubInterface, newCode string) bool {
 	logger.Debug("[Management Chaincode][addToListCC] Updated the state")
 
 	return true
+}
+
+func (t *ManagementChaincode) exectuteCC(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+    if len(args) != 1 {
+		logger.Error("[Management Chaincode][exectuteCC]Incorrect Arguments")
+		return shim.Error("[Management Chaincode][exectuteCC]Incorrect Arguments")
+	}
+	logger.Debug("[Management Chaincode][exectuteCC]execute code with ID", args[0])
+	//Process the input Getting Id
+	guid := string(args[0])
+
+    code, err := getCodeFromShim(stub, guid)
+	if err != nil {
+		return shim.Error(err.Error())
+    }
+	var stored CodeStore
+	err = json.Unmarshal(code, &stored)
+    if err != nil {
+	    logger.Debug("[Management Chaincode][exectuteCC] error unpacking chaincode")
+		return shim.Error(err.Error())
+    }
+    if stored.Verified == false{
+		return shim.Error("Lua code not validated by all members")
+    }
+	luaCCcodeName, err := stub.GetState("luaExecutorccID")
+    if err != nil {
+		logger.Error("[Management Chaincode][executeCC]Problem getting luaExecuteor cc Code..", err)
+		return shim.Error(err.Error())
+	}
+
+    // channel is empty because we are in the same channel
+    return stub.InvokeChaincode(string(luaCCcodeName), [][]byte{[]byte("invoke"), []byte(stored.Source)}, string(""))
 }
 
 func main() {

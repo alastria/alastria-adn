@@ -3,6 +3,7 @@ package controllers
 import (
 	"hyperapi/models"
 	"encoding/json"
+    "fmt"
 
 	"github.com/astaxie/beego"
 )
@@ -21,6 +22,9 @@ type LuaChaincodeController struct {
 func (o *LuaChaincodeController) Post() {
 	var ob models.LuaChaincodePost
 	json.Unmarshal(o.Ctx.Input.RequestBody, &ob)
+    fmt.Println(o.Ctx.Input.RequestBody)
+    fmt.Println(ob.Name)
+    fmt.Println(ob.SourceCode)
 	luaChaincodeid := models.AddOne(ob)
 	o.Data["json"] = map[string]string{"LuaChaincodeId": luaChaincodeid}
 	o.ServeJSON()
@@ -72,4 +76,18 @@ func (o *LuaChaincodeController) Put() {
 	}
 	o.ServeJSON()
 }
+
+// @Title Execute
+// @Description excute the lua luaChaincode
+// @Param	luaChaincodeId		path 	string	true		"The luaChaincodeid you want to execute"
+// @Success 200 {luaChaincode} execution return 
+// @Failure 403 :luaChaincodeId is empty
+// @router /:luaChaincodeId [patch]
+func (o *LuaChaincodeController) Patch() {
+	luaChaincodeId := o.Ctx.Input.Param(":luaChaincodeId")
+	result := models.Execute(luaChaincodeId)
+    o.Data["json"] = result 
+	o.ServeJSON()
+}
+
 

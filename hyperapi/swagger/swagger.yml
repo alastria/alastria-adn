@@ -33,7 +33,7 @@ paths:
         description: The luaChaincode content
         required: true
         schema:
-          $ref: '#/definitions/models.LuaChaincodePost'
+          $ref: '#/definitions/.LuaChaincodePost'
       responses:
         "200":
           description: '{string} models.LuaChaincode.Id'
@@ -59,23 +59,33 @@ paths:
     put:
       tags:
       - luaChaincode
-      description: update the luaChaincode
+      description: update the luaChaincode, validate chaincode
       operationId: LuaChaincodeController.Update
       parameters:
       - in: path
         name: luaChaincodeId
-        description: The luaChaincodeid you want to update
+        description: The luaChaincodeid you want to validate
         required: true
         type: string
-      - in: body
-        name: body
-        description: The body
-        required: true
-        schema:
-          $ref: '#/definitions/models.LuaChaincode'
       responses:
         "200":
           description: '{luaChaincode} models.LuaChaincode'
+        "403":
+          description: :luaChaincodeId is empty
+    patch:
+      tags:
+      - luaChaincode
+      description: excute the lua luaChaincode
+      operationId: LuaChaincodeController.Execute
+      parameters:
+      - in: path
+        name: luaChaincodeId
+        description: The luaChaincodeid you want to execute
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{luaChaincode} execution return'
         "403":
           description: :luaChaincodeId is empty
   /user/:
@@ -88,7 +98,7 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/.User'
     post:
       tags:
       - user
@@ -100,7 +110,7 @@ paths:
         description: body for user content
         required: true
         schema:
-          $ref: '#/definitions/models.User'
+          $ref: '#/definitions/.User'
       responses:
         "200":
           description: '{int} models.User.Id'
@@ -122,7 +132,7 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/.User'
         "403":
           description: :uid is empty
     put:
@@ -141,12 +151,12 @@ paths:
         description: body for user content
         required: true
         schema:
-          $ref: '#/definitions/models.User'
+          $ref: '#/definitions/.User'
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/.User'
         "403":
           description: :uid is not int
     delete:
@@ -166,53 +176,10 @@ paths:
         "403":
           description: uid is empty
 definitions:
-  models.LuaChaincode:
-    title: LuaChaincode
-    required:
-    - LuaChaincodeId
-    - Name
-    - SourceCode
-    - Targets
-    - Validations
+  .LuaChaincodePost:
     type: object
-    properties:
-      LuaChaincodeId:
-        description: object id
-        type: string
-      Name:
-        description: name
-        type: string
-      SourceCode:
-        description: 'source code '
-        type: string
-      Targets:
-        description: target list
-        type: array
-        items:
-          type: string
-      Validations:
-        description: validation list
-        type: array
-        items:
-          type: boolean
-  models.LuaChaincodePost:
-    title: LuaChaincodePost
+  .User:
     type: object
-    properties:
-      Name:
-        type: string
-      SourceCode:
-        type: string
-      Targets:
-        type: array
-        items:
-          type: string
-  models.User:
-    title: User
-    type: object
-    properties:
-      Id:
-        type: string
 tags:
 - name: luaChaincode
   description: |
