@@ -42,6 +42,25 @@ func (t *ManagementChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response
 	logger.SetLevel(shim.LoggingLevel(level))
 
 	logger.Debug("[Management Chaincode][Init]Instanciating chaincode...")
+
+	logger.Debug("[Management Chaincode][Init] start empty target list..")
+	var targetList []string
+	toStore, err := json.Marshal(targetList)
+	if err != nil {
+		return shim.Error("Problems with inilizing states")
+	}
+	logger.Debug("[Management Chaincode][Init] Updating the state...")
+	stub.PutState("targetList", toStore)
+
+    logger.Debug("[Management Chaincode][Init] start empty code list..")
+	var ccList []string
+	toStore, err = json.Marshal(ccList)
+	if err != nil {
+		return shim.Error("Problems with inilizing states")
+	}
+	logger.Debug("[Management Chaincode][Init] Updating the state...")
+	stub.PutState("codeList", toStore)
+
 	return shim.Success([]byte("Init called"))
 }
 
@@ -95,7 +114,7 @@ func (t *ManagementChaincode) registrar(stub shim.ChaincodeStubInterface, args [
 	addTarget(stub, alias)
 	logger.Debug("[Management Chaincode][Registrar]Stored successful", args[0])
 
-	return shim.Success([]byte(caller))
+	return shim.Success([]byte(alias))
 }
 func (t *ManagementChaincode) storeCode(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 1 {
@@ -115,6 +134,10 @@ func (t *ManagementChaincode) storeCode(stub shim.ChaincodeStubInterface, args [
 	}
 	var request Code
 	err = json.Unmarshal(bytes, &request)
+    if err != nil {
+		logger.Error("[Management Chaincode][StoreCode]Error Unmarshaling request")
+		return shim.Error(err.Error())
+	}
 	//Value to store
 	logger.Debug("[Management Chaincode][StoreCode]Content to store", request)
 	store := CodeStore{}

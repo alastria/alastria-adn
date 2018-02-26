@@ -86,7 +86,6 @@ func createChaincodeLuaExecutorFirstTime(){
 	fmt.Println("Instalado chaincode en peer")
 	fmt.Println("Instalado chaincode en peer")
 	fmt.Println("Instalado chaincode en peer")
-	fmt.Println("Instalado chaincode en peer")
 
 	// Set up chaincode policy to 'any of two msps'
 	ccPolicy:= cauthdsl.SignedByAnyMember([]string{"org1MSP", "coreAdmMSP"})
@@ -155,7 +154,7 @@ func execute(){
 }
 
 func fabric_add_code(name string, source string, targets []string) string{
-    invokeArgs := [][]byte{[]byte(`{"Name": "` + name + `", Source": "` + source + `", "Target": [` + strings.Join(targets[:],",") + `]}`)}
+    invokeArgs := [][]byte{[]byte(`{"Name": "` + name + `", "Source": "` + source + `", "Target": ["` + strings.Join(targets[:],"\",\"") + `"]}`)}
     value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "storeCode", Args: invokeArgs})
 	if err != nil {
 		fmt.Println("Failed to query values: %s", err)
@@ -171,9 +170,14 @@ func fabric_query_users() []string{
 	if err != nil {
 		fmt.Println("Failed to query values: %s", err)
 	}
-	json.Unmarshal(value, &targetList)
 	fmt.Println("response value: ", string(value))
-    return targetList
+    if string(value) != "null"{
+	    json.Unmarshal(value, &targetList)
+        return targetList 
+    }else{
+        targetList = make([]string, 0)
+        return targetList  
+    }
 }
 
 func fabric_query_user(uid string) string{
@@ -191,21 +195,26 @@ func fabric_query_codes() []LuaChaincode{
 		fmt.Println("Failed to query values: %s", err)
 	}
 	fmt.Println("response value: ", string(value))
-	json.Unmarshal(value, &codeIds)
-    var i = 0 
-    for i < len(codeIds) {
-        luaCode = fabric_query_code(codeIds[i])
-        luaCodes = append(luaCodes, luaCode)
-        i++
+    if string(value) != "null"{
+	    json.Unmarshal(value, &codeIds)
+        var i = 0 
+        for i < len(codeIds) {
+            luaCode = fabric_query_code(codeIds[i])
+            luaCodes = append(luaCodes, luaCode)
+            i++
+        }
+        return luaCodes 
+    }else{
+        luaCodes = make([]LuaChaincode, 0)
+        return luaCodes 
     }
-    return luaCodes 
 }
 
 func fabric_query_code(cid string) LuaChaincode{
     var tempCode CodeStore
     var code LuaChaincode
-    invokeArgs := [][]byte{[]byte("")}
-    value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "getListCC", Args: invokeArgs})
+    invokeArgs := [][]byte{[]byte(cid)}
+    value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "getCode", Args: invokeArgs})
 	if err != nil {
 		fmt.Println("Failed to query values: %s", err)
 	}
@@ -228,5 +237,16 @@ func fabric_add_user(uid string) string{
 		fmt.Println("Failed to query values: %s", err)
 	}
 	fmt.Println("response value: ", string(value))
+    return string(value)
+}
+
+func fabric_validate_code(LuaChaincodeId string) string{
+    invokeArgs := [][]byte{[]byte(LuaChaincodeId)}
+    value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "approveCode", Args: invokeArgs})
+	if err != nil {
+		fmt.Println("Failed to query values: %s", err)
+	}
+	fmt.Println("response value: ", string(value))
+
     return string(value)
 }

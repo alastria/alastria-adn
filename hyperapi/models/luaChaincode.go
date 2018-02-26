@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 )
 
 type LuaChaincodePost struct {
@@ -11,11 +10,11 @@ type LuaChaincodePost struct {
 }
 
 type LuaChaincode struct {
-	LuaChaincodeId   string
-	Name string
-	SourceCode string
-	Targets []string
-	Validations []bool
+    LuaChaincodeId   string `required:"false" description:"object id"`
+    Name string `required:"true" description:"name"`
+	SourceCode string `required:"true" description:"source code "`
+    Targets []string `required:"true" description:"target list"`
+	Validations []bool `required:"true" description:"validation list"`
 }
 
 func init() {
@@ -33,8 +32,9 @@ func GetAll() []LuaChaincode {
 	return fabric_query_codes()
 }
 
-func Update(LuaChaincodeId string, targetId string, validation bool) (err error) {
-	return errors.New("LuaChaincodeId Not Exist")
+func Update(LuaChaincodeId string) (err error) {
+    fabric_validate_code(LuaChaincodeId)
+	return nil
 }
 
 func Delete(LuaChaincodeId string) {

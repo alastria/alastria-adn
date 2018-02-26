@@ -35,7 +35,7 @@
                 "tags": [
                     "luaChaincode"
                 ],
-                "description": "create luaChaincode",
+                "description": "create LuaChaincodePost",
                 "operationId": "LuaChaincodeController.Create",
                 "parameters": [
                     {
@@ -44,7 +44,7 @@
                         "description": "The luaChaincode content",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.LuaChaincode"
+                            "$ref": "#/definitions/models.LuaChaincodePost"
                         }
                     }
                 ],
@@ -113,30 +113,6 @@
                     },
                     "403": {
                         "description": ":luaChaincodeId is empty"
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "luaChaincode"
-                ],
-                "description": "delete the luaChaincode",
-                "operationId": "LuaChaincodeController.Delete",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "luaChaincodeId",
-                        "description": "The luaChaincodeId you want to delete",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{string} delete success!"
-                    },
-                    "403": {
-                        "description": "luaChaincodeId is empty"
                     }
                 }
             }
@@ -277,11 +253,47 @@
     "definitions": {
         "models.LuaChaincode": {
             "title": "LuaChaincode",
+            "required": [
+                "LuaChaincodeId",
+                "Name",
+                "SourceCode",
+                "Targets",
+                "Validations"
+            ],
             "type": "object",
             "properties": {
                 "LuaChaincodeId": {
+                    "description": "object id",
                     "type": "string"
                 },
+                "Name": {
+                    "description": "name",
+                    "type": "string"
+                },
+                "SourceCode": {
+                    "description": "source code ",
+                    "type": "string"
+                },
+                "Targets": {
+                    "description": "target list",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "Validations": {
+                    "description": "validation list",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "models.LuaChaincodePost": {
+            "title": "LuaChaincodePost",
+            "type": "object",
+            "properties": {
                 "Name": {
                     "type": "string"
                 },
@@ -291,13 +303,7 @@
                 "Targets": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.User"
-                    }
-                },
-                "Validations": {
-                    "type": "array",
-                    "items": {
-                        "type": "boolean"
+                        "type": "string"
                     }
                 }
             }

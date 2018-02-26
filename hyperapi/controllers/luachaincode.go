@@ -13,7 +13,7 @@ type LuaChaincodeController struct {
 }
 
 // @Title Create
-// @Description create luaChaincode
+// @Description create LuaChaincodePost	
 // @Param	body		body 	models.LuaChaincodePost	true		"The luaChaincode content"
 // @Success 200 {string} models.LuaChaincode.Id
 // @Failure 403 body is empty
@@ -57,18 +57,14 @@ func (o *LuaChaincodeController) GetAll() {
 }
 
 // @Title Update
-// @Description update the luaChaincode
-// @Param	luaChaincodeId		path 	string	true		"The luaChaincodeid you want to update"
-// @Param	body		body 	models.LuaChaincode	true		"The body"
+// @Description update the luaChaincode, validate chaincode
+// @Param	luaChaincodeId		path 	string	true		"The luaChaincodeid you want to validate"
 // @Success 200 {luaChaincode} models.LuaChaincode
 // @Failure 403 :luaChaincodeId is empty
 // @router /:luaChaincodeId [put]
 func (o *LuaChaincodeController) Put() {
 	luaChaincodeId := o.Ctx.Input.Param(":luaChaincodeId")
-	var user models.User
-	json.Unmarshal(o.Ctx.Input.RequestBody, &user)
-
-	err := models.Update(luaChaincodeId, user.Id, true)
+	err := models.Update(luaChaincodeId)
 	if err != nil {
 		o.Data["json"] = err.Error()
 	} else {
