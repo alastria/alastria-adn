@@ -30,8 +30,6 @@ type CodeStore struct {
 	Verified bool // If approved == map.length -> TRUE
 }
 
-var targetList []string
-var ccList []string
 var uniqueID int
 
 // Init to initiate the SimpleChaincode class
@@ -94,6 +92,7 @@ func (t *ManagementChaincode) registrar(stub shim.ChaincodeStubInterface, args [
 		logger.Error("[Management Chaincode][Registrar]Problem adding new target..", err)
 		return shim.Error(err.Error())
 	}
+	addTarget(stub, alias)
 	logger.Debug("[Management Chaincode][Registrar]Stored successful", args[0])
 
 	return shim.Success([]byte(caller))
@@ -284,37 +283,39 @@ func getAlias(stub shim.ChaincodeStubInterface) string {
 *  Add an available target to the network
  */
 func addTarget(stub shim.ChaincodeStubInterface, newTarget string) bool {
+	var targetList []string
 	state, err := stub.GetState("targetList")
 	if err != nil {
 		logger.Error("[Management Chaincode][addTarget]Problem adding new target..", err)
 		return false
 	}
 	json.Unmarshal(state, &targetList)
-	logger.Debug("[Management Chaincode][addTarget] Old state of the slice ..", targetList)
+	logger.Debug("[Management Chaincode][addTarget] Old state of the target list ..", targetList)
 	slice := append(targetList, newTarget)
-	logger.Debug("[Management Chaincode][addTarget] Actual state of the slice ..", slice)
+	logger.Debug("[Management Chaincode][addTarget] Actual state of the target list ..", slice)
 	toStore, err := json.Marshal(slice)
 	if err != nil {
 		return false
 	}
-	logger.Debug("[Management Chaincode][addTarget] Updating the state...")
+	logger.Debug("[Management Chaincode][addTarget] Updating the state of the target list...")
 	stub.PutState("targetList", toStore)
-	logger.Debug("[Management Chaincode][addTarget] Updated the state")
+	logger.Debug("[Management Chaincode][addTarget] Updated the state of the target list")
 
 	return true
 }
 
 func addToListCC(stub shim.ChaincodeStubInterface, newCode string) bool {
+	var ccList []string
 	state, err := stub.GetState("codeList")
 	if err != nil {
 		logger.Error("[Management Chaincode][addToListCC]Problem adding new Code..", err)
 		return false
 	}
-	json.Unmarshal(state, &targetList)
-	logger.Debug("[Management Chaincode][addToListCC] Old state of the slice ..", state)
+	json.Unmarshal(state, &ccList)
+	logger.Debug("[Management Chaincode][addToListCC] Old state of the listCC ..", state)
 
-	slice := append(targetList, newCode)
-	logger.Debug("[Management Chaincode][addToListCC] Actual state of the slice ..", slice)
+	slice := append(ccList, newCode)
+	logger.Debug("[Management Chaincode][addToListCC] Actual state of the listCC ..", slice)
 	toStore, err := json.Marshal(slice)
 	if err != nil {
 		return false

@@ -24,17 +24,17 @@ func checkInvoke(t *testing.T, stub *shim.MockStub, name string, value string) {
 	}
 }
 
-func checkRegistrar(t *testing.T, stub *shim.MockStub, name string, value string) {
-	res := stub.MockInvoke("1", [][]byte{[]byte("registrar"), []byte(name)})
+func checkRegistrar(t *testing.T, stub *shim.MockStub, value string) {
+	res := stub.MockInvoke("1", [][]byte{[]byte("registrar"), []byte(value)})
 	if res.Status != shim.OK {
-		fmt.Println("Registrar", name, "failed", string(res.Message))
+		fmt.Println("Registrar", value, "failed", string(res.Message))
 		t.FailNow()
 	}
 }
-func checkRegistrarFail(t *testing.T, stub *shim.MockStub, name string, value string) {
-	res := stub.MockInvoke("1", [][]byte{[]byte("registrar"), []byte(name), []byte(name)})
+func checkRegistrarFail(t *testing.T, stub *shim.MockStub, value string) {
+	res := stub.MockInvoke("1", [][]byte{[]byte("registrar"), []byte(value), []byte(value)})
 	if res.Status == shim.OK {
-		fmt.Println("Registrar", name, "failed", string(res.Message))
+		fmt.Println("Registrar", value, "failed", string(res.Message))
 		t.FailNow()
 	}
 }
@@ -169,9 +169,9 @@ func Test_Registrar(t *testing.T) {
 	scc := new(ManagementChaincode)
 	stub := shim.NewMockStub("ex02", scc)
 	checkInit(t, stub, [][]byte{[]byte("init")})
-	checkRegistrar(t, stub, "registrar", "bank1")
+	checkRegistrar(t, stub, "bank1")
 	//FAIL
-	checkRegistrarFail(t, stub, "registrar", "bank1") //Incorrect Number of arguments
+	checkRegistrarFail(t, stub, "bank1") //Incorrect Number of arguments
 }
 
 func Test_StoreCode(t *testing.T) {
@@ -222,7 +222,7 @@ func Test_ApproveCode(t *testing.T) {
 	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc1a", "Source": "aksdjladkjsladsks20230", "Target":["org1", "org2"]}`)
 	checkApproveFail(t, stub, "0") // target not registered yet
 
-	checkRegistrar(t, stub, "registrar", "bank1")
+	checkRegistrar(t, stub, "bank1")
 	codeProcessed := ProcessCode(`{"Name": "mycc1a", "Source": "aksdjladkjsladsks20230", "Target":["org1", "org2"]}`)
 	checkGetCode(t, stub, "0", codeProcessed)
 	checkApprove(t, stub, "0") // target not registered yet
@@ -233,7 +233,7 @@ func Test_AllTarget(t *testing.T) {
 	stub := shim.NewMockStub("ex03", scc)
 	//FAIL
 	checkInit(t, stub, [][]byte{[]byte("init")})
-	checkRegistrar(t, stub, "registrar", "bank1")
+	checkRegistrar(t, stub, "bank1")
 	expectedValue := []string{"bank1"}
 	value, err := json.Marshal(expectedValue)
 	if err != nil {
