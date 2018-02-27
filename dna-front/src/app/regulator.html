@@ -1,0 +1,78 @@
+<div class="title">
+
+
+    <!-- Antistress -->
+    <preloader></preloader>
+
+    <!-- modal LUA Code -->
+    <modal-luacode></modal-luacode>
+
+     <!-- modal Show code of ChainCode -->
+     <modal-showcode></modal-showcode>
+
+  <div class="container">
+    <div class="raw">
+      <div class="col-md-12">
+        <span>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </span>
+      </div>
+      <div class="col-md-12">
+        <p></p>
+      </div>
+
+      <!-- Upload File -->
+      <div class="col-md-12">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+          <button class="btn btn-primary" ng-click="uploadlLUA()">Upload LUA code</button>
+        </div>
+        <div class="col-md-1"></div>
+      </div>
+      
+      <!-- Table CC -->
+      <div class="col-md-12">
+        <div class="col-md-1"></div>
+
+        <!-- body -->
+        <div class="col-md-10">
+          <h1>{{countCC}} ChainCode</h1>
+          <div class="panel panel-primary">
+              <div class="panel-heading">
+            </div>
+            <div class="panel-body">
+              <table class="table" style="width:100%">
+                <thead>
+                  <tr>
+                    <th style="width:30%" scope="col">ChainCode ID</th>
+                    <th style="width:20%" scope="col">ChainCode Name</th>
+                    <th style="width:10%" scope="col">View</th>
+                    <th style="width:30%" scope="col">Progress</th>
+                    <th style="width:10%" scope="col">Execute</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="chaincode in chaincodes">
+                    <td style="width:30%" scope="row" style="padding-top: 15px;">{{chaincode.LuaChaincodeId}}</td>
+                    <td style="width:20%" scope="row" style="padding-top: 15px;">{{chaincode.Name}}</td>
+                    <td style="width:10%"><button class="btn btn-primary" ng-click="showCode(chaincode.LuaChaincodeId)">View code</button></td>
+                    <td style="padding-top: 15px; width:30%" class="overflow">
+                      <div class="progress active">
+                        <div ng-if="chaincode.progress !== 100" class="progress-bar progress-bar-striped" role="progressbar" style="width: {{chaincode.progress}}%" aria-valuemin="0" aria-valuemax="100">{{chaincode.progress}}%</div>
+                        <div ng-if="chaincode.progress === 100" class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{chaincode.progress}}%" aria-valuemin="0" aria-valuemax="100">{{chaincode.progress}}%</div>
+                      </div>
+                    </td>
+                    <td style="width:10%"><button class="btn btn-primary" ng-disabled="chaincode.progress !== 100">Execute</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- end body -->
+
+        <div class="col-md-1"></div>
+      </div>
+    </div>
+  </div>
+</div>
