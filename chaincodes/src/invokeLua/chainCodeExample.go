@@ -20,41 +20,50 @@ package main
 //hard-coding.
 
 import (
+	"encoding/json"
 	"fmt"
-    "encoding/json"
+	"io/ioutil"
+	"net/http"
+
 	"github.com/yuin/gopher-lua"
-    "net/http"
-    "io/ioutil"
 	//"strconv"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 )
 
+var logger = shim.NewLogger("Management Chaincode")
+
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
 }
 
 type customEvent struct {
-    Type        string `json:"type"`
-    Description string `json:"description"`
+	Type        string `json:"type"`
+	Description string `json:"description"`
 }
 
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("ex02 Init")
 	_, args := stub.GetFunctionAndParameters()
-    fmt.Printf("%s", args)
+	fmt.Printf("%s", args)
 	var err error
+	level, err := shim.LogLevel("DEBUG")
+	if err != nil {
+		return shim.Error("Problems with loggin level")
+	}
+	logger.SetLevel(shim.LoggingLevel(level))
 
+	logger.Debug("[Management Chaincode][Init]Instanciating chaincode...")
 	if len(args) != 0 {
 		return shim.Error("Incorrect number of arguments. Expecting 0")
 	}
 
 	// Write the state to the ledger
 	err = stub.PutState("LuaResult", []byte("hola"))
-    var event = customEvent{"putState", "Successfully put state Lua code: empty string"}
-    eventBytes, err := json.Marshal(&event)
-    err = stub.SetEvent("evtSender", eventBytes)
+	var event = customEvent{"putState", "Successfully put state Lua code: empty string"}
+	eventBytes, err := json.Marshal(&event)
+	err = stub.SetEvent("evtSender", eventBytes)
 
 	if err != nil {
 		return shim.Error(err.Error())
@@ -64,6 +73,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 }
 
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
+	logger.Debug("[Lua Execution Chaincode][Invoke]Invoking chaincode...")
 	function, args := stub.GetFunctionAndParameters()
 	if function == "invoke" {
 		// execute lua code in chaincode
@@ -81,28 +91,32 @@ func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string
 	var err error
 
 	if len(args) < 1 {
+		logger.Error("[Lua Execution Chaincode][invoke]Error with arguments...")
 		return shim.Error("Incorrect number of arguments. Expecting at least 1")
 	}
 
-    luaFuncCode := args[0]
-    L := lua.NewState()
+	luaFuncCode := args[0]
+	L := lua.NewState()
 	defer L.Close()
-    L.SetGlobal("ServiceCall", L.NewFunction(ServiceCall)) 
+	L.SetGlobal("ServiceCall", L.NewFunction(ServiceCall))
 	if err := L.DoString(luaFuncCode); err != nil {
-	    panic(err)
+		logger.Error("[Lua Execution Chaincode][invoke]Error storing new function...")
+		panic(err)
 	}
 
-    if err := L.CallByParam(lua.P{
+	if err := L.CallByParam(lua.P{
 		Fn:      L.GetGlobal("execute"), // name of Lua function
-		NRet:    1,     // number of returned values 
-		Protect: true,                  // return err or panic
-    }); err != nil {
+		NRet:    1,                      // number of returned values
+		Protect: true,                   // return err or panic
+	}); err != nil {
+		logger.Error("[Lua Execution Chaincode][invoke]Error executing lua code")
 		panic(err)
 	}
 
 	// Get the returned value from the stack and cast it to a lua.LString
-    luaFuncResult, ok := L.Get(-1).(lua.LString);
+	luaFuncResult, ok := L.Get(-1).(lua.LString)
 	if ok {
+		logger.Debug("[Lua Execution Chaincode][invoke] Execution OK")
 		//fmt.Println(luaFuncResult)
 	}
 
@@ -110,25 +124,26 @@ func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string
 	// Write the state back to the ledger
 	err = stub.PutState("LuaResult", []byte(luaFuncResult))
 
-    /*
-    var event = customEvent{"putState", "Successfully put state lua func result: " + string(luaFuncResult)}
-    eventBytes, err := json.Marshal(&event)
-    err = stub.SetEvent("evtSender", eventBytes)
-    */
+	/*
+	   var event = customEvent{"putState", "Successfully put state lua func result: " + string(luaFuncResult)}
+	   eventBytes, err := json.Marshal(&event)
+	   err = stub.SetEvent("evtSender", eventBytes)
+	*/
 
 	if err != nil {
+		logger.Error("[Lua Execution Chaincode][invoke]Error storing result...")
 		return shim.Error(err.Error())
 	}
-    jsonResp := "{" + "LuaResult\":\"" + string(luaFuncResult) + "\"}"
-	fmt.Printf("Query Response:%s\n", jsonResp)
+	jsonResp := "{" + "LuaResult\":\"" + string(luaFuncResult) + "\"}"
+	logger.Debug("[Lua Execution Chaincode][invoke]Query Response:%s\n", jsonResp)
 
 	return shim.Success([]byte(jsonResp))
 }
 
 // Deletes an entity from state
 func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-    // Do nothing
-    return shim.Success(nil)
+	// Do nothing
+	return shim.Success(nil)
 }
 
 // query callback representing the query of a chaincode
@@ -138,41 +153,44 @@ func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string)
 	// Get the state from the ledger
 	LuaResult, err := stub.GetState("LuaResult")
 	if err != nil {
-		jsonResp := "{\"Error\":\"Failed to get state for " + "LuaResult"+ "\"}"
+		logger.Error("[Lua Execution Chaincode][query]Error querying result...")
+		jsonResp := "{\"Error\":\"Failed to get state for " + "LuaResult" + "\"}"
 		return shim.Error(jsonResp)
 	}
 
 	if LuaResult == nil {
+		logger.Error("[Lua Execution Chaincode][query]Nil amount for LuaResult.")
 		jsonResp := "{\"Error\":\"Nil amount for LuaResult\"}"
 		return shim.Error(jsonResp)
 	}
 
 	jsonResp := "{" + "LuaResult\":\"" + string(LuaResult) + "\"}"
-	fmt.Printf("Query Response:%s\n", jsonResp)
+	logger.Debug("[Lua Execution Chaincode][invoke]Query Response:%s\n", jsonResp)
 	return shim.Success([]byte(jsonResp))
 }
 
 func ServiceCall(L *lua.LState) int {
-    url := L.ToString(1)
-    method := L.ToString(2)
-    if method == "GET" {
-        response, _ := http.Get(url)
-        defer response.Body.Close()
-        contents, _ := ioutil.ReadAll(response.Body)
-        L.Push(lua.LString(contents))
-    }
-    if method == "POST" {
-        response, _ := http.Get(url)
-        defer response.Body.Close()
-        contents, _ := ioutil.ReadAll(response.Body)
-        L.Push(lua.LString(contents))
-    }
-    return 1
+	logger.Debug("[Lua Execution Chaincode][ServiceCall]Calling to function ")
+	url := L.ToString(1)
+	method := L.ToString(2)
+	if method == "GET" {
+		response, _ := http.Get(url)
+		defer response.Body.Close()
+		contents, _ := ioutil.ReadAll(response.Body)
+		L.Push(lua.LString(contents))
+	}
+	if method == "POST" {
+		response, _ := http.Get(url)
+		defer response.Body.Close()
+		contents, _ := ioutil.ReadAll(response.Body)
+		L.Push(lua.LString(contents))
+	}
+	return 1
 }
 
 func main() {
 	err := shim.Start(new(SimpleChaincode))
 	if err != nil {
-		fmt.Printf("Error starting Simple chaincode: %s", err)
+		logger.Error("Error starting Simple chaincode: %s", err)
 	}
 }

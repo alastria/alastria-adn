@@ -155,20 +155,20 @@ func ProcessCode(value string) []byte {
 func Test_Init(t *testing.T) {
 	scc := new(ManagementChaincode)
 	stub := shim.NewMockStub("ex02", scc)
-	checkInit(t, stub, [][]byte{[]byte("init")})
+	checkInit(t, stub, [][]byte{[]byte("init"), []byte("lua")})
 }
 
 func Test_Invoke(t *testing.T) {
 	scc := new(ManagementChaincode)
 	stub := shim.NewMockStub("ex02", scc)
-	checkInit(t, stub, [][]byte{[]byte("init")})
+	checkInit(t, stub, [][]byte{[]byte("init"), []byte("lua")})
 	checkInvoke(t, stub, "registrar", "bank1")
 }
 
 func Test_Registrar(t *testing.T) {
 	scc := new(ManagementChaincode)
 	stub := shim.NewMockStub("ex02", scc)
-	checkInit(t, stub, [][]byte{[]byte("init")})
+	checkInit(t, stub, [][]byte{[]byte("init"), []byte("lua")})
 	checkRegistrar(t, stub, "bank1")
 	//FAIL
 	checkRegistrarFail(t, stub, "bank1") //Incorrect Number of arguments
@@ -177,7 +177,7 @@ func Test_Registrar(t *testing.T) {
 func Test_StoreCode(t *testing.T) {
 	scc := new(ManagementChaincode)
 	stub := shim.NewMockStub("ex02", scc)
-	checkInit(t, stub, [][]byte{[]byte("init")})
+	checkInit(t, stub, [][]byte{[]byte("init"), []byte("lua")})
 	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc2", "Source": "ks20230", "Target":["org1", "org2"]}`)
 
 	//FAIL
@@ -187,7 +187,7 @@ func Test_StoreCode(t *testing.T) {
 func Test_getCode(t *testing.T) {
 	scc := new(ManagementChaincode)
 	stub := shim.NewMockStub("ex02", scc)
-	checkInit(t, stub, [][]byte{[]byte("init")})
+	checkInit(t, stub, [][]byte{[]byte("init"), []byte("lua")})
 	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc2", "Source": "ks20230", "Target":["org1", "org2"]}`)
 	codeProcessed := ProcessCode(`{"Name": "mycc2", "Source": "ks20230", "Target":["org1", "org2"]}`)
 	checkGetCode(t, stub, "0", codeProcessed)
@@ -198,7 +198,7 @@ func Test_getListCC(t *testing.T) {
 	scc := new(ManagementChaincode)
 	stub := shim.NewMockStub("ex02", scc)
 	//ACCEPTED
-	checkInit(t, stub, [][]byte{[]byte("init")})
+	checkInit(t, stub, [][]byte{[]byte("init"), []byte("lua")})
 	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc1", "Source": "aksdjladkjsladsks20230", "Target":["org1", "org2"]}`)
 	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc2", "Source": "aslaksñlaksñlkaks20230", "Target":["org1", "org2"]}`)
 	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc3", "Source": "asmasaslaskljaslkjasks20230", "Target":["org1", "org2"]}`)
@@ -218,7 +218,7 @@ func Test_ApproveCode(t *testing.T) {
 	scc := new(ManagementChaincode)
 	stub := shim.NewMockStub("ex03", scc)
 	//FAIL
-	checkInit(t, stub, [][]byte{[]byte("init")})
+	checkInit(t, stub, [][]byte{[]byte("init"), []byte("lua")})
 	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc1a", "Source": "aksdjladkjsladsks20230", "Target":["org1", "org2"]}`)
 	checkApproveFail(t, stub, "0") // target not registered yet
 
@@ -232,7 +232,7 @@ func Test_AllTarget(t *testing.T) {
 	scc := new(ManagementChaincode)
 	stub := shim.NewMockStub("ex03", scc)
 	//FAIL
-	checkInit(t, stub, [][]byte{[]byte("init")})
+	checkInit(t, stub, [][]byte{[]byte("init"), []byte("lua")})
 	checkRegistrar(t, stub, "bank1")
 	expectedValue := []string{"bank1"}
 	value, err := json.Marshal(expectedValue)
