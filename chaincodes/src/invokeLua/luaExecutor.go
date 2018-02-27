@@ -32,10 +32,10 @@ import (
 	pb "github.com/hyperledger/fabric/protos/peer"
 )
 
-var logger = shim.NewLogger("Management Chaincode")
+var logger = shim.NewLogger("Lua Execution Chaincode")
 
 // SimpleChaincode example simple Chaincode implementation
-type SimpleChaincode struct {
+type LExecutionChaincode struct {
 }
 
 type customEvent struct {
@@ -43,7 +43,7 @@ type customEvent struct {
 	Description string `json:"description"`
 }
 
-func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
+func (t *LExecutionChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("ex02 Init")
 	_, args := stub.GetFunctionAndParameters()
 	fmt.Printf("%s", args)
@@ -72,7 +72,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	return shim.Success(nil)
 }
 
-func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
+func (t *LExecutionChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	logger.Debug("[Lua Execution Chaincode][Invoke]Invoking chaincode...")
 	function, args := stub.GetFunctionAndParameters()
 	if function == "invoke" {
@@ -87,7 +87,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 }
 
 // Transaction makes payment of X units from A to B
-func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *LExecutionChaincode) invoke(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var err error
 
 	if len(args) < 1 {
@@ -101,7 +101,8 @@ func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string
 	L.SetGlobal("ServiceCall", L.NewFunction(ServiceCall))
 	if err := L.DoString(luaFuncCode); err != nil {
 		logger.Error("[Lua Execution Chaincode][invoke]Error storing new function...")
-		panic(err)
+		return shim.Error("Error executing lua codes")
+
 	}
 
 	if err := L.CallByParam(lua.P{
@@ -110,7 +111,7 @@ func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string
 		Protect: true,                   // return err or panic
 	}); err != nil {
 		logger.Error("[Lua Execution Chaincode][invoke]Error executing lua code")
-		panic(err)
+		return shim.Error("Error executing lua codes")
 	}
 
 	// Get the returned value from the stack and cast it to a lua.LString
@@ -135,19 +136,13 @@ func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string
 		return shim.Error(err.Error())
 	}
 	jsonResp := "{" + "LuaResult\":\"" + string(luaFuncResult) + "\"}"
-	logger.Debug("[Lua Execution Chaincode][invoke]Query Response:%s\n", jsonResp)
+	logger.Debug("[Lua Execution Chaincode][invoke]Query Response:\n", jsonResp)
 
 	return shim.Success([]byte(jsonResp))
 }
 
-// Deletes an entity from state
-func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	// Do nothing
-	return shim.Success(nil)
-}
-
 // query callback representing the query of a chaincode
-func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *LExecutionChaincode) query(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var err error
 
 	// Get the state from the ledger
@@ -165,7 +160,7 @@ func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string)
 	}
 
 	jsonResp := "{" + "LuaResult\":\"" + string(LuaResult) + "\"}"
-	logger.Debug("[Lua Execution Chaincode][invoke]Query Response:%s\n", jsonResp)
+	logger.Debug("[Lua Execution Chaincode][query]Query Response:\n", jsonResp)
 	return shim.Success([]byte(jsonResp))
 }
 
@@ -189,7 +184,7 @@ func ServiceCall(L *lua.LState) int {
 }
 
 func main() {
-	err := shim.Start(new(SimpleChaincode))
+	err := shim.Start(new(LExecutionChaincode))
 	if err != nil {
 		logger.Error("Error starting Simple chaincode: %s", err)
 	}
