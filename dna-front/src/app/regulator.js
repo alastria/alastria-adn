@@ -48,10 +48,7 @@ function RegulatorController($scope, $log, remresRegulator) {
     var sendBody = {
       'Name': name,
       'SourceCode': luaCode.replace("\n"," "),
-      'Targets': saveTargets(),
-      "Validations": [ // solo para desarrollo
-        true
-      ]
+      'Targets': saveTargets()
     };
     return sendBody
   };
