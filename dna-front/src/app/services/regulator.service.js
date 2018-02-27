@@ -32,5 +32,32 @@ angular
       return promise;
     };
 
+    regulatorService.createLuaChaincode = function (objectData) {
+      var promise = $http({
+        method: 'POST',
+        url: '/v1/luaChaincode/',
+        data: objectData
+      })
+      .then(function (response) {
+        return response.data;
+      }, function (error) {
+        return error.data;
+      });
+      return promise;
+    };
+
+    regulatorService.getAllUsers = function () {
+      var promise = $http({
+        method: 'GET',
+        url: '/v1/user/'
+      })
+      .then(function (response) {
+        return response.data;
+      }, function (error) {
+        return error.data;
+      });
+      return promise;
+    };
+
     return regulatorService;
   });

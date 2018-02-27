@@ -7,6 +7,7 @@ function RegulatorController($scope, $log, remresRegulator) {
   $scope.dataLoaded = false;
   $scope.antistress = false;
   $scope.modalAssign = false;
+  $scope.modalShowCode = false;
   $scope.modalLUA = false;
   $scope.btnExecute = true;
   $scope.countCC = '';
@@ -18,9 +19,54 @@ function RegulatorController($scope, $log, remresRegulator) {
   $scope.openModal = function (element) {
     // Obtains the file name, save it in a variable and open a modal to assign the ChainCode
     $scope.$apply(function ($scope) {
-      $scope.chaincode = element.files[0].name;
+      $scope.myChaincode = element.files[0].name;
       $scope.modalAssign = true;
     });
+  };
+
+  function getTargets() {
+    remresRegulator.getAllUsers()
+    .then(function (allTargets) {
+      $scope.targets = allTargets;
+    }, function (err) {
+      $log.error('Error -> ' + err)
+    })
+  };
+
+  function saveTargets() {
+    $scope.targetArray = [];
+
+    angular.forEach($scope.targets, function(target) {
+      if (target.selected) {
+        $scope.targetArray.push(target.Id)
+      };
+    });
+    return $scope.targetArray;
+  };
+  
+  function composeSendData(name, luaCode) {
+    var sendBody = {
+      'Name': name,
+      'SourceCode': luaCode.replace("\n"," "),
+      'Targets': saveTargets(),
+      "Validations": [ // solo para desarrollo
+        true
+      ]
+    };
+    return sendBody
+  };
+
+  $scope.sendLUACode = function (name, luaCode) {
+    remresRegulator.createLuaChaincode(composeSendData(name, luaCode))
+    .then(function (Id) {
+      console.log(Id);
+
+      getLUAChainCodes();
+      $scope.modalLUA = false;
+    }, function(err){
+      $log.error('Error -> ' + err)
+    })
+    
   };
 
   function getLUAChainCodes() {
@@ -31,7 +77,7 @@ function RegulatorController($scope, $log, remresRegulator) {
       $scope.countCC = Object.keys(LUAList).length; // obtain number of chaincodes
       $scope.chaincodes = LUAList;
     }, function (err) {
-      $log.error('Getting LUA ChainCode´s list');
+      $log.error('Error -> ' + err);
     });
   };
 
@@ -40,16 +86,10 @@ function RegulatorController($scope, $log, remresRegulator) {
     remresRegulator.getChainCode(chaincodeId)
     .then( function (chaincodeData) {
       console.log(chaincodeData);
-      swal({
-        title: '<u style="text-align:left">' + chaincodeData.Name + '</u>',
-        html:
-          'Code: ' +
-          '<textarea class="form-control">' + chaincodeData.SourceCode + '</textarea>',
-        showCloseButton: true,
-      });
+      $scope.chaincode = chaincodeData;
+      $scope.modalShowCode = true;
     }, function (error) {
-      console.log(error);
-      
+      $log.error('Error -> ' + err);
     })
   };
 
@@ -69,19 +109,20 @@ function RegulatorController($scope, $log, remresRegulator) {
     }
   };
 
-  $scope.openModalLUA = function () {
+  $scope.uploadlLUA = function () {
     // Open Uploader of LUA code
+    getTargets();
     $scope.modalLUA = true;
   };
 
-  // $scope.asignCC = function () {
-  // };
   $scope.close = function () {
     // close model without saving
-    if ($scope.modalLUA === true){
+    if ($scope.modalLUA === true) {
       $scope.modalLUA = false;
     } else if ($scope.modalAssign === true) {
       $scope.modalAssign = false;
+    } else if ($scope.modalShowCode === true) {
+      $scope.modalShowCode = false;
     }
   };
 }
