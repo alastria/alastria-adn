@@ -27,7 +27,10 @@ function RegulatorController($scope, $log, remresRegulator) {
   function getTargets() {
     remresRegulator.getAllUsers()
     .then(function (allTargets) {
-      $scope.targets = allTargets;
+      $scope.targets = []
+      for(var i=0; i<allTargets.length; i++){
+        $scope.targets.push({Id: allTargets[i]});
+      }
     }, function (err) {
       $log.error('Error -> ' + err)
     })
