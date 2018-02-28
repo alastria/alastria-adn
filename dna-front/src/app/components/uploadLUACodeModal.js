@@ -17,8 +17,8 @@ angular
                       '</button>' +
                       '</div>' +
                       '<div class="modal-body">' +
-                        '<label for="fileName">File name:</label>' +
-                        '<input id="fileName" type="text" class="form-control" ng-model="LUAname" placeholder="File name"><br/>' +
+                        '<label for="fileName">Code name:</label>' +
+                        '<input id="fileName" type="text" class="form-control" ng-model="LUAname"placeholder="Code name"><br/>' +
                         '<table class="table">' +
                           '<thead>' +
                           '<tr>' +
