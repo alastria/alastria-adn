@@ -3,6 +3,7 @@ package controllers
 import (
 	"hyperapi/models"
 	"encoding/json"
+    "fmt"
 
 	"github.com/astaxie/beego"
 )
@@ -13,14 +14,17 @@ type LuaChaincodeController struct {
 }
 
 // @Title Create
-// @Description create luaChaincode
-// @Param	body		body 	models.LuaChaincode	true		"The luaChaincode content"
+// @Description create LuaChaincodePost	
+// @Param	body		body 	models.LuaChaincodePost	true		"The luaChaincode content"
 // @Success 200 {string} models.LuaChaincode.Id
 // @Failure 403 body is empty
 // @router / [post]
 func (o *LuaChaincodeController) Post() {
-	var ob models.LuaChaincode
+	var ob models.LuaChaincodePost
 	json.Unmarshal(o.Ctx.Input.RequestBody, &ob)
+    fmt.Println(o.Ctx.Input.RequestBody)
+    fmt.Println(ob.Name)
+    fmt.Println(ob.SourceCode)
 	luaChaincodeid := models.AddOne(ob)
 	o.Data["json"] = map[string]string{"LuaChaincodeId": luaChaincodeid}
 	o.ServeJSON()
@@ -57,18 +61,14 @@ func (o *LuaChaincodeController) GetAll() {
 }
 
 // @Title Update
-// @Description update the luaChaincode
-// @Param	luaChaincodeId		path 	string	true		"The luaChaincodeid you want to update"
-// @Param	body		body 	models.LuaChaincode	true		"The body"
+// @Description update the luaChaincode, validate chaincode
+// @Param	luaChaincodeId		path 	string	true		"The luaChaincodeid you want to validate"
 // @Success 200 {luaChaincode} models.LuaChaincode
 // @Failure 403 :luaChaincodeId is empty
 // @router /:luaChaincodeId [put]
 func (o *LuaChaincodeController) Put() {
 	luaChaincodeId := o.Ctx.Input.Param(":luaChaincodeId")
-	var user models.User
-	json.Unmarshal(o.Ctx.Input.RequestBody, &user)
-
-	err := models.Update(luaChaincodeId, user.Id, true)
+	err := models.Update(luaChaincodeId)
 	if err != nil {
 		o.Data["json"] = err.Error()
 	} else {
@@ -77,16 +77,17 @@ func (o *LuaChaincodeController) Put() {
 	o.ServeJSON()
 }
 
-// @Title Delete
-// @Description delete the luaChaincode
-// @Param	luaChaincodeId		path 	string	true		"The luaChaincodeId you want to delete"
-// @Success 200 {string} delete success!
-// @Failure 403 luaChaincodeId is empty
-// @router /:luaChaincodeId [delete]
-func (o *LuaChaincodeController) Delete() {
+// @Title Execute
+// @Description excute the lua luaChaincode
+// @Param	luaChaincodeId		path 	string	true		"The luaChaincodeid you want to execute"
+// @Success 200 {luaChaincode} execution return 
+// @Failure 403 :luaChaincodeId is empty
+// @router /:luaChaincodeId [patch]
+func (o *LuaChaincodeController) Patch() {
 	luaChaincodeId := o.Ctx.Input.Param(":luaChaincodeId")
-	models.Delete(luaChaincodeId)
-	o.Data["json"] = "delete success!"
+	result := models.Execute(luaChaincodeId)
+    o.Data["json"] = result 
 	o.ServeJSON()
 }
+
 

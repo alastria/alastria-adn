@@ -35,7 +35,7 @@
                 "tags": [
                     "luaChaincode"
                 ],
-                "description": "create luaChaincode",
+                "description": "create LuaChaincodePost",
                 "operationId": "LuaChaincodeController.Create",
                 "parameters": [
                     {
@@ -44,7 +44,7 @@
                         "description": "The luaChaincode content",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.LuaChaincode"
+                            "$ref": "#/definitions/.LuaChaincodePost"
                         }
                     }
                 ],
@@ -87,24 +87,15 @@
                 "tags": [
                     "luaChaincode"
                 ],
-                "description": "update the luaChaincode",
+                "description": "update the luaChaincode, validate chaincode",
                 "operationId": "LuaChaincodeController.Update",
                 "parameters": [
                     {
                         "in": "path",
                         "name": "luaChaincodeId",
-                        "description": "The luaChaincodeid you want to update",
+                        "description": "The luaChaincodeid you want to validate",
                         "required": true,
                         "type": "string"
-                    },
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "The body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.LuaChaincode"
-                        }
                     }
                 ],
                 "responses": {
@@ -116,27 +107,27 @@
                     }
                 }
             },
-            "delete": {
+            "patch": {
                 "tags": [
                     "luaChaincode"
                 ],
-                "description": "delete the luaChaincode",
-                "operationId": "LuaChaincodeController.Delete",
+                "description": "excute the lua luaChaincode",
+                "operationId": "LuaChaincodeController.Execute",
                 "parameters": [
                     {
                         "in": "path",
                         "name": "luaChaincodeId",
-                        "description": "The luaChaincodeId you want to delete",
+                        "description": "The luaChaincodeid you want to execute",
                         "required": true,
                         "type": "string"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "{string} delete success!"
+                        "description": "{luaChaincode} execution return"
                     },
                     "403": {
-                        "description": "luaChaincodeId is empty"
+                        "description": ":luaChaincodeId is empty"
                     }
                 }
             }
@@ -152,7 +143,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/.User"
                         }
                     }
                 }
@@ -170,7 +161,7 @@
                         "description": "body for user content",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/.User"
                         }
                     }
                 ],
@@ -204,7 +195,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/.User"
                         }
                     },
                     "403": {
@@ -232,7 +223,7 @@
                         "description": "body for user content",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/.User"
                         }
                     }
                 ],
@@ -240,7 +231,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/.User"
                         }
                     },
                     "403": {
@@ -275,41 +266,11 @@
         }
     },
     "definitions": {
-        "models.LuaChaincode": {
-            "title": "LuaChaincode",
-            "type": "object",
-            "properties": {
-                "LuaChaincodeId": {
-                    "type": "string"
-                },
-                "Name": {
-                    "type": "string"
-                },
-                "SourceCode": {
-                    "type": "string"
-                },
-                "Targets": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.User"
-                    }
-                },
-                "Validations": {
-                    "type": "array",
-                    "items": {
-                        "type": "boolean"
-                    }
-                }
-            }
+        ".LuaChaincodePost": {
+            "type": "object"
         },
-        "models.User": {
-            "title": "User",
-            "type": "object",
-            "properties": {
-                "Id": {
-                    "type": "string"
-                }
-            }
+        ".User": {
+            "type": "object"
         }
     },
     "tags": [

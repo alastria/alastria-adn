@@ -1,44 +1,13 @@
-
-#
-# Copyright SecureKey Technologies Inc. All Rights Reserved.
-#
-# SPDX-License-Identifier: Apache-2.0
-#
-#
-# The network connection profile provides client applications the information about the target
-# blockchain network that are necessary for the applications to interact with it. These are all
-# knowledge that must be acquired from out-of-band sources. This file provides such a source.
-#
 name: "global-trade-network"
-
-
-#
 x-type: "hlfv1"
 x-loggingLevel: info
-
-#
-# Describe what the target network is/does.
-#
 description: "The network to be in if you want to stay in the global trade business"
-
-#
-# Schema version of the content. Used by the SDK to apply the corresponding parsing rules.
-#
 version: 1.0.0
 
-#
-# The client section used by GO SDK.
-#
 client:
-
-  # Which organization does this application instance belong to? The value must be the name of an org
-  # defined under "organizations"
   organization: coreAdm
-
   logging:
     level: debug
-
-# Global configuration for peer, event service and orderer timeouts
   peer:
     timeout:
       connection: 3s
@@ -57,24 +26,11 @@ client:
   # Needed to load users crypto keys and certs.
   cryptoconfig:
     path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config
-
-  # Some SDKs support pluggable KV stores, the properties under "credentialStore"
-  # are implementation specific
   credentialStore:
-    # [Optional]. Not used by Go SDK. Others SDKs may use it if using an alternative impl
-    # Could be used if SDK would require an object for properties like url, db name, etc.
     path: "/tmp/hfc-kvs"
-
-    # [Optional]. Specific to the CryptoSuite implementation used by GO SDK. Software-based implementations
-    # requiring a key store. PKCS#11 based implementations does not.
     cryptoStore:
-      # Specific to the underlying KeyValueStore that backs the crypto key store.
       path: /tmp/msp
-
-    # [Optional]. Specific to Composer environment. Not used by SDK Go.
     wallet: wallet-name
-
-   # BCCSP config for the client. Used by GO SDK.
   BCCSP:
     security:
      enabled: true
@@ -86,85 +42,53 @@ client:
      level: 256
 
 channels:
-  # name of the channel
   channel:
-    # Required. list of orderers designated by the application to use for transactions on this
-    # channel. This list can be a result of access control ("org1" can only access "ordererA"), or
-    # operational decisions to share loads from applications among the orderers.  The values must
-    # be "names" of orgs defined under "organizations/peers"
     orderers:
       - orderer.alastria.com
-
-    # Required. list of peers from participating orgs
     peers:
       peer0.coreAdm.alastria.com:
-        # [Optional]. will this peer be sent transaction proposals for endorsement? The peer must
-        # have the chaincode installed. The app can also use this property to decide which peers
-        # to send the chaincode install request. Default: true
         endorsingPeer: true
-
-        # [Optional]. will this peer be sent query proposals? The peer must have the chaincode
-        # installed. The app can also use this property to decide which peers to send the
-        # chaincode install request. Default: true
         chaincodeQuery: true
-
-        # [Optional]. will this peer be sent query proposals that do not require chaincodes, like
-        # queryBlock(), queryTransaction(), etc. Default: true
         ledgerQuery: true
-
-        # [Optional]. will this peer be the target of the SDK's listener registration? All peers can
-        # produce events but the app typically only needs to connect to one to listen to events.
-        # Default: true
         eventSource: true
-#
+      peer0.org1.alastria.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+      peer0.org2.alastria.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
 # list of participating organizations in this network
 #
 organizations:
   coreAdm:
     mspid: coreAdmMSP
-
-    # Needed to load users crypto keys and certs for this org (absolute path or relative to global crypto path, DEV mode)
     cryptoPath:  peerOrganizations/coreAdm.alastria.com/users/Admin@coreAdm.alastria.com/msp
-
     peers:
       - peer0.coreAdm.alastria.com
-
-    # [Optional]. Certificate Authorities issue certificates for identification purposes in a Fabric based
-    # network. Typically certificates provisioning is done in a separate process outside of the
-    # runtime network. Fabric-CA is a special certificate authority that provides a REST APIs for
-    # dynamic certificate management (enroll, revoke, re-enroll). The following section is only for
-    # Fabric-CA servers.
     certificateAuthorities:
       - ca_peerCoreAdm
-
-    # [Optional]. If the application is going to make requests that are reserved to organization
-    # administrators, including creating/updating channels, installing/instantiating chaincodes, it
-    # must have access to the admin identity represented by the private key and signing certificate.
-    # Both properties can be the PEM string or local path to the PEM file. Note that this is mainly for
-    # convenience in development mode, production systems should not expose sensitive information
-    # this way. The SDK should allow applications to set the org admin identity via APIs, and only use
-    # this route as an alternative when it exists.
     adminPrivateKey:
       path: "peerOrganizations/coreAdm.alastria.com/users/Admin@coreAdm.alastria.com/msp/keystore"
     signedCert:
       path: "peerOrganizations/coreAdm.alastria.com/users/Admin@coreAdm.alastria.com/msp/signcerts"
-
-  # the profile will contain public information about organizations other than the one it belongs to.
-  # These are necessary information to make transaction lifecycles work, including MSP IDs and
-  # peers with a public URL to send transaction proposals. The file will not contain private
-  # information reserved for members of the organization, such as admin key and certificate,
-  # fabric-ca registrar enroll ID and secret, etc.
   org1:
     mspid: org1MSP
-
-    # Needed to load users crypto keys and certs for this org (absolute path or relative to global crypto path, DEV mode)
     cryptoPath:  peerOrganizations/org1.alastria.com/users/Admin@org1.alastria.com/msp
-
     peers:
       - peer0.org1.alastria.com
-
     certificateAuthorities:
       - ca_peerOrg1
+  org2:
+    mspid: org2MSP
+    cryptoPath:  peerOrganizations/org2.alastria.com/users/Admin@org2.alastria.com/msp
+    peers:
+      - peer0.org2.alastria.com
+    certificateAuthorities:
+      - ca_peerOrg2
 
   # Orderer Org name
   ordererorg:
@@ -173,25 +97,13 @@ organizations:
 
       # Needed to load users crypto keys and certs for this org (absolute path or relative to global crypto path, DEV mode)
       cryptoPath: ordererOrganizations/alastria.com/users/Admin@alastria.com/msp
-
-
-#
-# List of orderers to send transaction and channel create/update requests to. For the time
-# being only one orderer is needed. If more than one is defined, which one get used by the
-# SDK is implementation specific. Consult each SDK's documentation for its handling of orderers.
-#
 orderers:
   orderer.alastria.com:
     url: grpcs://127.0.0.1:7050
-
-    # these are standard properties defined by the gRPC library
-    # they will be passed in as-is to gRPC client constructor
     grpcOptions:
       ssl-target-name-override: orderer.alastria.com
       grpc-max-send-message-length: 15
-
     tlsCACerts:
-      # Certificate location absolute path
       path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/ordererOrganizations/alastria.com/tlsca/tlsca.alastria.com-cert.pem
 
 #
@@ -200,27 +112,28 @@ orderers:
 #
 peers:
   peer0.coreAdm.alastria.com:
-    # this URL is used to send endorsement and query requests
     url: grpcs://127.0.0.1:7051
-
-    # this URL is used to connect the EventHub and registering event listeners
     eventUrl: grpcs://127.0.0.1:7053
-
     grpcOptions:
       ssl-target-name-override: peer0.coreAdm.alastria.com
       grpc.http2.keepalive_time: 15
-
     tlsCACerts:
-      # Certificate location absolute path
       path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/coreAdm.alastria.com/tlsca/tlsca.coreAdm.alastria.com-cert.pem
 
-  # peer0.org1.alastria.com:
-  #   url: grpcs://127.0.0.1:8051
-  #   eventUrl: grpcs://127.0.0.1:8053
-  #   grpcOptions:
-  #     ssl-target-name-override: peer0.org1.alastria.com
-  #   tlsCACerts:
-  #     path: ${GOPATH}/hf-2orgs/crypto-config/peerOrganizations/org1.alastria.com/tlsca/tlsca.org1.alastria.com-cert.pem
+  peer0.org2.alastria.com:
+    url: grpcs://127.0.0.1:9051
+    eventUrl: grpcs://127.0.0.1:9053
+    grpcOptions:
+      ssl-target-name-override: peer0.org2.alastria.com
+    tlsCACerts:
+      path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org2.alastria.com/tlsca/tlsca.org2.alastria.com-cert.pem
+  peer0.org1.alastria.com:
+    url: grpcs://127.0.0.1:8051
+    eventUrl: grpcs://127.0.0.1:8053
+    grpcOptions:
+      ssl-target-name-override: peer0.org1.alastria.com
+    tlsCACerts:
+      path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org1.alastria.com/tlsca/tlsca.org1.alastria.com-cert.pem
 
 #
 # Fabric-CA is a special kind of Certificate Authority provided by Hyperledger Fabric which allows
@@ -234,16 +147,6 @@ certificateAuthorities:
     # making the request to the Fabric-CA server
     httpOptions:
       verify: true
-    # tlsCACerts:
-    #   # Comma-Separated list of paths
-    #   path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/ca_root.pem
-    #   # Client key and cert for SSL handshake with Fabric CA
-    #   client:
-    #    keyfile: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/client/client_fabric_client-key.pem
-    #    certfile: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/client/client_fabric_client.pem
-
-    # Fabric-CA supports dynamic user enrollment via REST APIs. A "root" user, a.k.a registrar, is
-    # needed to enroll and invoke new users.
     registrar:
       enrollId: admin
       enrollSecret: adminpw
@@ -251,22 +154,17 @@ certificateAuthorities:
     caName: ca_peercoreAdm
   ca_peerOrg1:
     url: https://127.0.0.1:8054
-    # the properties specified under this object are passed to the 'http' client verbatim when
-    # making the request to the Fabric-CA server
     httpOptions:
       verify: true
-    # tlsCACerts:
-    #   # Comma-Separated list of paths
-    #   path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/ca_root.pem
-    #   # Client key and cert for SSL handshake with Fabric CA
-    #   client:
-    #    keyfile: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/client/client_fabric_client-key.pem
-    #    certfile: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/client/client_fabric_client.pem
-
-     # Fabric-CA supports dynamic user enrollment via REST APIs. A "root" user, a.k.a registrar, is
-     # needed to enroll and invoke new users.
     registrar:
       enrollId: admin
       enrollSecret: adminpw
-    # [Optional] The optional name of the CA.
     caName: ca_peerOrg1
+  ca_peerOrg2:
+    url: https://127.0.0.1:9054
+    httpOptions:
+      verify: true
+    registrar:
+      enrollId: admin
+      enrollSecret: adminpw
+    caName: ca_peerOrg2
