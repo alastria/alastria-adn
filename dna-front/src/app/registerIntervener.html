@@ -1,0 +1,39 @@
+<div class="title">
+  <div class="col-md-12">
+    <!-- <div class="col-md-12">
+      <div class="alert alert-success" role="alert" ng-show="user.uid">User <strong>{{user.uid}}</strong> created successfully</div>
+    </div> -->
+    <div class="alert alert-success" role="alert" ng-show="haveUser">
+        <button type="button" class="close" ng-click="close()" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        User <strong>{{user.uid}}</strong> created successfully
+      </div>
+    <div class="col-md-2"></div>
+
+    <!-- body -->
+    <div class="col-md-8">
+      <h1>Register new users</h1>
+      <div class="panel panel-primary">
+          <div class="panel-heading">
+        </div>
+        <div class="panel-body">
+          <div class="col-md-12" style="padding-bottom: 2em">
+            <form name="registerUser">
+            <div class="col-lg-12">
+              <label for="newUser">Name:</label>
+              <div class="input-group">
+                  <input id="newUser" type="text" class="form-control" ng-model="newUser" required>
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-primary" ng-click="registerIntervener(newUser)" ng-disabled="registerUser.$invalid">Register new User</button>
+                  </span>
+                </div><!-- /input-group -->
+              </div><!-- /.col-lg-10s -->
+            </form>
+          </div><!-- /.row -->
+        </div>
+      </div>
+    </div>
+    <!-- end body -->
+
+    <div class="col-md-2"></div>
+  </div>
+</div>

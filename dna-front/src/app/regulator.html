@@ -10,6 +10,9 @@
      <!-- modal Show code of ChainCode -->
      <modal-showcode></modal-showcode>
 
+     <!-- modal Modify code of ChainCode -->
+     <modal-modify></modal-modify>
+
   <div class="container">
     <div class="raw">
       <div class="col-md-12">
@@ -23,19 +26,19 @@
 
       <!-- Upload File -->
       <div class="col-md-12">
-        <div class="col-md-1"></div>
-        <div class="col-md-10">
+        <!-- <div class="col-md-1"></div> -->
+        <div class="col-md-12">
           <button class="btn btn-primary" ng-click="uploadlLUA()">Upload LUA code</button>
         </div>
-        <div class="col-md-1"></div>
+        <!-- <div class="col-md-1"></div> -->
       </div>
       
       <!-- Table CC -->
       <div class="col-md-12">
-        <div class="col-md-1"></div>
+        <!-- <div class="col-md-1"></div> -->
 
         <!-- body -->
-        <div class="col-md-10">
+        <div class="col-md-12">
           <h1>{{countCC}} ChainCode</h1>
           <div class="panel panel-primary">
               <div class="panel-heading">
@@ -47,6 +50,7 @@
                     <th style="width:30%" scope="col">ChainCode ID</th>
                     <th style="width:20%" scope="col">ChainCode Name</th>
                     <th style="width:10%" scope="col">View</th>
+                    <th style="width:10%" scope="col">Modify</th>
                     <th style="width:30%" scope="col">Progress</th>
                     <th style="width:10%" scope="col">Execute</th>
                   </tr>
@@ -55,7 +59,8 @@
                   <tr ng-repeat="chaincode in chaincodes">
                     <td style="width:30%" scope="row" style="padding-top: 15px;">{{chaincode.LuaChaincodeId}}</td>
                     <td style="width:20%" scope="row" style="padding-top: 15px;">{{chaincode.Name}}</td>
-                    <td style="width:10%"><button class="btn btn-primary" ng-click="showCode(chaincode.LuaChaincodeId)">View code</button></td>
+                    <td style="width:5%"><button class="btn btn-primary" ng-click="getInfoChaincode(chaincode.LuaChaincodeId)">View code</button></td>
+                    <!-- <td style="width:5%"><button class="btn btn-primary" ng-click="openModifyModal(chaincode.LuaChaincodeId)">Modify</button></td> -->
                     <td style="padding-top: 15px; width:30%" class="overflow">
                       <div class="progress active">
                         <div ng-if="chaincode.progress !== 100" class="progress-bar progress-bar-striped" role="progressbar" style="width: {{chaincode.progress}}%" aria-valuemin="0" aria-valuemax="100">{{chaincode.progress}}%</div>
@@ -71,7 +76,7 @@
         </div>
         <!-- end body -->
 
-        <div class="col-md-1"></div>
+        <!-- <div class="col-md-1"></div> -->
       </div>
     </div>
   </div>

@@ -17,5 +17,10 @@ function routesConfig($stateProvider, $urlRouterProvider, $locationProvider) {
       url: '/intervener',
       component: 'intervener',
       params: {data: null}
+    })
+    .state('register', {
+      url: '/register',
+      component: 'registerIntervener',
+      params: {data: null}
     });
 }

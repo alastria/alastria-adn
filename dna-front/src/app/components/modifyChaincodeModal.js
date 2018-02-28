@@ -1,13 +1,13 @@
-// uploadLUACodeModal.js
+// showCodeModal.js
 
 'use strict';
 
 angular
   .module('app')
-  .directive('modalLuacode', function () {
+  .directive('modalModify', function () {
     return {
       restrict: 'E',
-      template: '<div class"fades" style="position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;display: block;overflow-y: scroll;outline: 0; height: auto; padding-top:10%; background-color:rgba(0, 0, 0, .5);" ng-show="modalLUA">' +
+      template: '<div class"fades" style="position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;display: block;overflow-y: scroll;outline: 0; height: auto; padding-top:10%; background-color:rgba(0, 0, 0, .5);" ng-show="modalModifyCode">' +
                   '<div class="modal-dialog" role="document">' +
                     '<div class="modal-content">' +
                       '<div class="modal-header">' +
@@ -17,9 +17,11 @@ angular
                       '</button>' +
                       '</div>' +
                       '<div class="modal-body">' +
-                        '<label for="fileName">File name:</label>' +
-                        '<input id="fileName" type="text" class="form-control" ng-model="LUAname" placeholder="File name"><br/>' +
-                        '<table class="table">' +
+                        '<label for="idChaincode">Chaincode Id</label>' +
+                        '<input id="idChaincode" type="text" class="form-control" placeholder="Chaincode Id" value="{{chaincode.LuaChaincodeId}}" ng-if="chaincode.LuaChaincodeId" readonly><br/>' +
+                        '<label for="fileName">File Name</label>' +
+                        '<input id="fileName" type="text" class="form-control" placeholder="File name" ng-model="chaincode.Name" ng-if="chaincode.Name"><br/>' +
+                        '<table class="table" ng-if="targets">' +
                           '<thead>' +
                           '<tr>' +
                           '<th style="width:10%; text-align:center">Assigned</th>' +
@@ -33,16 +35,15 @@ angular
                             '</tr>' +
                           '</tbody>' +
                         '</table>' +
-                        '<label for="LUAcode" style="text-align:center">Code:</label>' +
-                        '<textarea rows="10" id="LUAcode" class="form-control" style="box-sizing: border-box;resize: vertical;" ng-model="LUAsource" placeholder="Insert LUA code here..."></textarea>' +
+                        '<label for="LUAcode" style="text-align:center" ng-if="chaincode.SourceCode">Code:</label>' +
+                        '<textarea rows="10" id="LUAcode" class="form-control" style="box-sizing: border-box;resize: none" ng-model="chaincode.SourceCode" placeholder="Insert LUA code here..." ng-if="chaincode.SourceCode"></textarea>' +
                       '</div>' +
                       '<div class="modal-footer">' +
                         '<button type="button" ng-click="close()" class="btn btn-secondary" data-dismiss="modal">Close</button>' +
-                        '<button type="button" ng-click="sendLUACode(LUAname, LUAsource)" class="btn btn-primary">Assign ChainCode</button>' +
+                        '<button type="button" ng-click="modifyChaincode(chaincode.LuaChaincodeId, chaincode.Name, chaincode.SourceCode)" class="btn btn-primary">Modify</button>' +
                       '</div>' +
                     '</div>' +
                   '</div>' +
                 '</div>'
-
     };
   });

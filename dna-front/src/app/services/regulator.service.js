@@ -46,6 +46,20 @@ angular
       return promise;
     };
 
+    // regulatorService.updateLuaChaincode = function (Id, objectData) {
+    //   var promise = $http({
+    //     method: 'PUT',
+    //     url: '/v1/luaChaincode/' + Id,
+    //     data: objectData
+    //   })
+    //   .then(function (response) {
+    //     return response.data;
+    //   }, function (error) {
+    //     return error.data;
+    //   });
+    //   return promise;
+    // };
+
     regulatorService.getAllUsers = function () {
       var promise = $http({
         method: 'GET',

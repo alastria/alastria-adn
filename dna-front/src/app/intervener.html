@@ -1,9 +1,13 @@
 <div class="title">
+
+  <!-- modal Show code of ChainCode -->
+  <modal-showcode></modal-showcode>
+  
     <div class="col-md-12">
-        <div class="col-md-2"></div>
+        <div class="col-md-1"></div>
 
         <!-- body -->
-        <div class="col-md-8">
+        <div class="col-md-10">
           <h1>1 ChainCode to approve</h1>
           <div class="panel panel-primary">
               <div class="panel-heading">
@@ -12,22 +16,18 @@
               <table class="table" style="width:100%">
                 <thead>
                   <tr>
-                    <th style="width:50%" scope="col">ChainCode ID</th>
-                    <th style="width:25%" scope="col">View</th>
-                    <th style="width:25%" scope="col">Execute</th>
+                    <th style="width:30%" scope="col">ChainCode ID</th>
+                    <th style="width:30%" scope="col">Chaincode Name</th>
+                    <th style="width:20%" scope="col">View</th>
+                    <th style="width:20%" scope="col">Execute</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- <tr ng-repeat=""> -->
-                  <tr>
-                    <td style="width:50%" scope="row" style="padding-top: 15px;">jkdbpisadjbkndfgnsdfñkjgndskeprh</td>
-                    <td style="width:25%"><button class="btn btn-primary">View code</button></td>
-                    <td style="width:25%"><button class="btn btn-primary">Approve</button></td>
-                  </tr>
-                  <tr>
-                    <td style="width:50%" scope="row" style="padding-top: 15px;">jkdbpisadjbkndfgnsdfñkjgndskeprh</td>
-                    <td style="width:25%"><button class="btn btn-primary">View code</button></td>
-                    <td style="width:25%"><button class="btn btn-primary">Approve</button></td>
+                  <tr ng-repeat="chaincode in chaincodes">
+                    <td style="width:30%" scope="row" style="padding-top: 15px;">{{chaincode.LuaChaincodeId}}</td>
+                    <td style="width:30%" scope="row" style="padding-top: 15px;">{{chaincode.Name}}</td>
+                    <td style="width:20%"><button class="btn btn-primary" ng-click="getInfoChaincode(chaincode.LuaChaincodeId)">View code</button></td>
+                    <td style="width:20%"><button class="btn btn-primary">Approve</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -36,6 +36,6 @@
         </div>
         <!-- end body -->
 
-        <div class="col-md-2"></div>
+        <div class="col-md-1"></div>
       </div>
 </div>
