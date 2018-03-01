@@ -33,7 +33,7 @@ client:
 
   # Which organization does this application instance belong to? The value must be the name of an org
   # defined under "organizations"
-  organization: org1
+  organization: org2
 
   logging:
     level: debug
@@ -97,7 +97,7 @@ channels:
 
     # Required. list of peers from participating orgs
     peers:
-      peer0.org1.alastria.com:
+      peer0.org2.alastria.com:
         # [Optional]. will this peer be sent transaction proposals for endorsement? The peer must
         # have the chaincode installed. The app can also use this property to decide which peers
         # to send the chaincode install request. Default: true
