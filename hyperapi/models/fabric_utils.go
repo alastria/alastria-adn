@@ -262,10 +262,10 @@ func fabric_validate_code(LuaChaincodeId string) string{
 func fabric_execute_code(LuaChaincodeId string) []ExecutionResponse{
     code := fabric_query_code(LuaChaincodeId)
     var executionResponse []ExecutionResponse
+    var execution ExecutionResponse
     var i = 0
     invokeArgs := [][]byte{[]byte(LuaChaincodeId)}
     for i < len(code.Targets) {
-        var execution ExecutionResponse
         peers, err := sdk.Config().PeersConfig(code.Targets[i])
         if err != nil {
             fmt.Println("Failed to get organization peers: %s", err)
@@ -279,9 +279,10 @@ func fabric_execute_code(LuaChaincodeId string) []ExecutionResponse{
             fmt.Println("Failed to execute lua chaincode: %s", err)
         }
         fmt.Println("response value: ", string(value))
-        execution.orgName = code.Targets[i]
-        execution.executionResult = string(value)
+        execution.OrgName = code.Targets[i]
+        execution.ExecutionResult = string(value)
         executionResponse = append(executionResponse , execution)
+        i++;
     }
 	return executionResponse 
 }

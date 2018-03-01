@@ -85,9 +85,9 @@ paths:
         type: string
       responses:
         "200":
-          description: '{luaChaincode} execution return'
+          description: '{executionResponse} models.ExecutionResponse'
         "403":
-          description: :luaChaincodeId is empty
+          description: :executionResponse is empty
   /user/:
     get:
       tags:

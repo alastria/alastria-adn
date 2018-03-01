@@ -101,7 +101,8 @@ func (t *LExecutionChaincode) invoke(stub shim.ChaincodeStubInterface, args []st
 	L.SetGlobal("ServiceCall", L.NewFunction(ServiceCall))
 	if err := L.DoString(luaFuncCode); err != nil {
 		logger.Error("[Lua Execution Chaincode][invoke]Error storing new function...")
-		return shim.Error("Error executing lua codes")
+		logger.Error(err.Error())
+        return shim.Error(err.Error())
 
 	}
 
@@ -111,7 +112,8 @@ func (t *LExecutionChaincode) invoke(stub shim.ChaincodeStubInterface, args []st
 		Protect: true,                   // return err or panic
 	}); err != nil {
 		logger.Error("[Lua Execution Chaincode][invoke]Error executing lua code")
-		return shim.Error("Error executing lua codes")
+		logger.Error(err.Error())
+        return shim.Error(err.Error())
 	}
 
 	// Get the returned value from the stack and cast it to a lua.LString
@@ -133,6 +135,7 @@ func (t *LExecutionChaincode) invoke(stub shim.ChaincodeStubInterface, args []st
 
 	if err != nil {
 		logger.Error("[Lua Execution Chaincode][invoke]Error storing result...")
+		logger.Error(err.Error())
 		return shim.Error(err.Error())
 	}
 	jsonResp := "{" + "LuaResult\":\"" + string(luaFuncResult) + "\"}"
@@ -159,7 +162,7 @@ func (t *LExecutionChaincode) query(stub shim.ChaincodeStubInterface, args []str
 		return shim.Error(jsonResp)
 	}
 
-	jsonResp := "{" + "LuaResult\":\"" + string(LuaResult) + "\"}"
+	jsonResp := "{\"LuaResult\":\"" + string(LuaResult) + "\"}"
 	logger.Debug("[Lua Execution Chaincode][query]Query Response:\n", jsonResp)
 	return shim.Success([]byte(jsonResp))
 }

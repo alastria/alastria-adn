@@ -80,13 +80,14 @@ func (o *LuaChaincodeController) Put() {
 // @Title Execute
 // @Description excute the lua luaChaincode
 // @Param	luaChaincodeId		path 	string	true		"The luaChaincodeid you want to execute"
-// @Success 200 {luaChaincode} execution return 
-// @Failure 403 :luaChaincodeId is empty
+// @Success 200 {ExecutionResponse} models.ExecutionResponse  
+// @Failure 403 :executionResponse is empty
 // @router /:luaChaincodeId [patch]
 func (o *LuaChaincodeController) Patch() {
 	luaChaincodeId := o.Ctx.Input.Param(":luaChaincodeId")
 	result := models.Execute(luaChaincodeId)
     o.Data["json"] = result 
+    fmt.Println(o.Data["json"])
 	o.ServeJSON()
 }
 

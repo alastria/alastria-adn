@@ -41,9 +41,9 @@ func init() {
 
 	beego.GlobalControllerRouter["hyperapi/controllers:LuaChaincodeController"] = append(beego.GlobalControllerRouter["hyperapi/controllers:LuaChaincodeController"],
 		beego.ControllerComments{
-			Method: "Delete",
+			Method: "Patch",
 			Router: `/:luaChaincodeId`,
-			AllowHTTPMethods: []string{"delete"},
+			AllowHTTPMethods: []string{"patch"},
 			MethodParams: param.Make(),
 			Params: nil})
 
