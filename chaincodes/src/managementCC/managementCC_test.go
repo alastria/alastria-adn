@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -136,6 +137,19 @@ func checkExecuteFail(t *testing.T, stub *shim.MockStub, idCC string) {
 		t.FailNow()
 	}
 }
+
+func checkGetAllCC(t *testing.T, stub *shim.MockStub, expectedValue string) {
+	res := stub.MockInvoke("1", [][]byte{[]byte("getAllChaincodes")})
+	if res.Status != shim.OK {
+		fmt.Println("GetlcheckGetAllCCistCC", "failed", string(res.Message))
+		t.FailNow()
+	}
+	if strings.TrimSpace(string(res.GetPayload()[:])) != strings.TrimSpace(expectedValue) {
+		fmt.Println(strings.TrimSpace(string(res.GetPayload()[:])))
+		fmt.Println(expectedValue)
+		t.FailNow()
+	}
+}
 func ProcessCode(value string) []byte {
 	rawIn := json.RawMessage(value)
 	bytes, err := rawIn.MarshalJSON()
@@ -250,5 +264,19 @@ func Test_AllTarget(t *testing.T) {
 		fmt.Println("Error")
 	}
 	checkgetAllTarget(t, stub, value)
+
+}
+
+func Test_GetAllCC(t *testing.T) {
+	scc := new(ManagementChaincode)
+	stub := shim.NewMockStub("ex03", scc)
+	//FAIL
+	checkInit(t, stub, [][]byte{[]byte("init"), []byte("lua")})
+	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc1a", "Source": "function execute()result = ServiceCall('http://35.176.99.163:8050/services/?token=yeahbaby23&database=0&command=manyrecords&index=0', 'GET')return result end ", "Target":["org1"]}`)
+	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc2a", "Source": "function execute()result = ServiceCall('http://35.176.99.163:8050/services/?token=yeahbaby23&database=0&command=manyrecords&index=0', 'GET')return result end ", "Target":["org1"]}`)
+	checkStoreCode(t, stub, "storeCode", `{"Name": "mycc3a", "Source": "function execute()result = ServiceCall('http://35.176.99.163:8050/services/?token=yeahbaby23&database=0&command=manyrecords&index=0', 'GET')return result end ", "Target":["org1"]}`)
+	expectedValue := `{"0":{"Name":"mycc1a","Source":"function execute()result = ServiceCall('http://35.176.99.163:8050/services/?token=yeahbaby23\u0026database=0\u0026command=manyrecords\u0026index=0', 'GET')return result end ","Target":{"org1":false},"Approved":0,"Verified":false},"1":{"Name":"mycc2a","Source":"function execute()result = ServiceCall('http://35.176.99.163:8050/services/?token=yeahbaby23\u0026database=0\u0026command=manyrecords\u0026index=0', 'GET')return result end ","Target":{"org1":false},"Approved":0,"Verified":false},"2":{"Name":"mycc3a","Source":"function execute()result = ServiceCall('http://35.176.99.163:8050/services/?token=yeahbaby23\u0026database=0\u0026command=manyrecords\u0026index=0', 'GET')return result end ","Target":{"org1":false},"Approved":0,"Verified":false}}`
+	valueExpected := strings.TrimSpace(expectedValue)
+	checkGetAllCC(t, stub, valueExpected)
 
 }

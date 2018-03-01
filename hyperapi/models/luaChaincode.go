@@ -17,6 +17,11 @@ type LuaChaincode struct {
 	Validations []bool `required:"true" description:"validation list"`
 }
 
+type ExecutionResponse struct {
+    orgName string
+    executionResult string
+}
+
 func init() {
 }
 
@@ -37,8 +42,9 @@ func Update(LuaChaincodeId string) (err error) {
 	return nil
 }
 
-func Execute(LuaChaincodeId string) (result string) {
-    return fabric_execute_code(LuaChaincodeId)
+func Execute(LuaChaincodeId string) []ExecutionResponse {
+    executions := fabric_execute_code(LuaChaincodeId)
+    return executions 
 }
 
 func Delete(LuaChaincodeId string) {
