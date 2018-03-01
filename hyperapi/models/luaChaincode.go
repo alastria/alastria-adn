@@ -18,8 +18,8 @@ type LuaChaincode struct {
 }
 
 type ExecutionResponse struct {
-    orgName string
-    executionResult string
+    OrgName string `json:"orgName"`
+    ExecutionResult string `json:"executionResult"`
 }
 
 func init() {
@@ -43,8 +43,8 @@ func Update(LuaChaincodeId string) (err error) {
 }
 
 func Execute(LuaChaincodeId string) []ExecutionResponse {
-    executions := fabric_execute_code(LuaChaincodeId)
-    return executions 
+    hola := fabric_execute_code(LuaChaincodeId)
+    return hola
 }
 
 func Delete(LuaChaincodeId string) {
