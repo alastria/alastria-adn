@@ -2,7 +2,7 @@
 
 'use strict';
 
-function RegulatorController($scope, $log, $state, remresRegulator) {
+function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
   var vm = this;
   $scope.dataLoaded = false;
   $scope.antistress = false;
@@ -12,11 +12,13 @@ function RegulatorController($scope, $log, $state, remresRegulator) {
   $scope.modalModifyCode = false;
   $scope.btnExecute = true;
   $scope.countCC = '';
+  var pooling;
 
   vm.$onInit = function () {
     changeClass();
     getLUAChainCodes();
     $scope.dataLoaded = true;
+    // pooling = $interval(getLUAChainCodes(), 3000);
   };
 
   function getTargets() {

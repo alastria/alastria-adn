@@ -2,13 +2,15 @@
 
 'use strict';
 
-function IntervenerController ($scope, $log, remresIntervener) {
+function IntervenerController ($scope, $log, $interval,remresIntervener) {
   var vm = this;
   $scope.antistress = false;
   $scope.msgApproved = false;
+  var pooling;
 
   vm.$onInit = function () {
     getLUAChainCodes();
+    // pooling = $interval(getLUAChainCodes(), 3000);
   }
 
   function getLUAChainCodes() {
