@@ -73,5 +73,18 @@ angular
       return promise;
     };
 
+    regulatorService.executeChaincode = function (chaincode) {
+      var promise = $http({
+        method: 'PATCH',
+        url: '/v1/luaChaincode/' + chaincode
+      })
+      .then(function (response) {
+        return response.data;
+      }, function (Error) {
+        return Error.data;
+      });
+      return promise;
+    };
+
     return regulatorService;
   });

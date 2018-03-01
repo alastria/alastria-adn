@@ -5,26 +5,45 @@
 function IntervenerController ($scope, $log, remresIntervener) {
   var vm = this;
   $scope.antistress = false;
-  $scope.dataLoaded = false;
+  $scope.msgApproved = false;
 
   vm.$onInit = function () {
     getLUAChainCodes();
-    $scope.antistress = false;
-    $scope.dataLoaded = true;
   }
 
   function getLUAChainCodes() {
-    $scope.antistress = true;
     $log.debug('Getting LUA ChainCode´s list');
+    $scope.antistress = true;
     remresIntervener.listLUAChainCode()
     .then(function (LUAList) {
-      $scope.chaincodes = LUAList;
-      $scope.antistress = false;
+      if (LUAList !== null){
+        $scope.countCC = Object.keys(LUAList).length; // obtain number of chaincodes
+        $scope.chaincodes = LUAList;
+        $scope.antistress = false;
+      } else {
+        $scope.countCC = 0;
+        $scope.antistress = false;
+      }
     }, function (err) {
       $scope.antistress = false;
       $log.error('Error -> ' + err);
     });
   }
+
+  $scope.approveChaincode = function (Id) {
+    $scope.antistress = true;
+    remresIntervener.valdateChaincode(Id)
+    .then(function (approved) {
+      if (approved === 'update success!' ) {
+        $scope.approve = 'Chaincode ' + Id + ' approved succesfully';
+      }
+      $scope.msgApproved = true;
+      $scope.antistress = false;
+    }, function(err) {
+      $scope.antistress = false;
+      $log.error('Error -> ' + err);
+    });
+  };
 
   $scope.getInfoChaincode = function (chaincodeId) {
     $scope.antistress = true;
@@ -41,9 +60,10 @@ function IntervenerController ($scope, $log, remresIntervener) {
   };
 
   $scope.close = function () {
-    // close model without saving
     if ($scope.modalShowCode === true) {
       $scope.modalShowCode = false;
+    } else if ($scope.msgApproved === true) {
+      $scope.msgApproved = false;
     }
   };
 

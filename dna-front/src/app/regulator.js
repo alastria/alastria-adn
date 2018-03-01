@@ -2,7 +2,7 @@
 
 'use strict';
 
-function RegulatorController($scope, $log, remresRegulator) {
+function RegulatorController($scope, $log, $state, remresRegulator) {
   var vm = this;
   $scope.dataLoaded = false;
   $scope.antistress = false;
@@ -14,8 +14,8 @@ function RegulatorController($scope, $log, remresRegulator) {
   $scope.countCC = '';
 
   vm.$onInit = function () {
+    changeClass();
     getLUAChainCodes();
-    $scope.antistress = false;
     $scope.dataLoaded = true;
   };
 
@@ -23,11 +23,18 @@ function RegulatorController($scope, $log, remresRegulator) {
     $scope.antistress = true;
     remresRegulator.getAllUsers()
     .then(function (allTargets) {
-      $scope.targets = []
-      for(var i=0; i<allTargets.length; i++){
-        $scope.targets.push({Id: allTargets[i]});
+      if (allTargets !== null) {
+        $scope.targets = []
+        for (var i=0; i<allTargets.length; i++) {
+          $scope.targets.push({Id: allTargets[i]});
+        }
+        $scope.antistress = false;
+      } else {
+        $scope.targets = []
+        $scope.antistress = false;
       }
     }, function (err) {
+      $scope.antistress = false;
       $log.error('Error -> ' + err);
     });
   }
@@ -45,7 +52,7 @@ function RegulatorController($scope, $log, remresRegulator) {
   function composeSendData(name, luaCode) {
     var sendBody = {
       Name: name,
-      SourceCode: luaCode.replace('\n', ' '),
+      SourceCode: luaCode.replace('\n', '\\n'),
       Targets: saveTargets()
     };
     return sendBody;
@@ -55,25 +62,35 @@ function RegulatorController($scope, $log, remresRegulator) {
     $scope.antistress = true;
     remresRegulator.createLuaChaincode(composeSendData(name, luaCode))
     .then(function (Id) {
-      $log.info('ID ' + Id + 'Created successfuly');
+      $log.info('ID ' + JSON.stringify(Id) + 'Created successfuly');
       getLUAChainCodes();
       $scope.modalLUA = false;
-      $scope.antistress = false;
     }, function (err) {
       $scope.antistress = false;
       $log.error('Error -> ' + err);
     });
   };
 
+  function changeClass() {
+    if ($state.router.urlRouter.location === '/regulator') {
+      $scope.class = 'noNav';
+    }
+  }
+
   function getLUAChainCodes() {
-    $scope.antistress = true;
     $log.debug('Getting LUA ChainCode´s list');
+    $scope.antistress = true;
     remresRegulator.listLUAChainCode()
     .then(function (LUAList) {
-      calculateProgress(LUAList);
-      $scope.countCC = Object.keys(LUAList).length; // obtain number of chaincodes
-      $scope.chaincodes = LUAList;
-      $scope.antistress = false;
+      if (LUAList !== null) {
+        calculateProgress(LUAList);
+        $scope.countCC = Object.keys(LUAList).length; // obtain number of chaincodes
+        $scope.chaincodes = LUAList;
+        $scope.antistress = false;
+      } else {
+        $scope.countCC = 0;
+        $scope.antistress = false;
+      }
     }, function (err) {
       $scope.antistress = false;
       $log.error('Error -> ' + err);
@@ -125,6 +142,18 @@ function RegulatorController($scope, $log, remresRegulator) {
     });
   };
 
+  $scope.executeChaincode = function (Id) {
+    $scope.antistress = true;
+    remresRegulator.executeChaincode(Id)
+    .then(function (executed) {
+      console.log(executed);
+      $scope.antistress = false;
+    }, function(err) {
+      $scope.antistress = false;
+      $log.error('Error -> ' + err);
+    })
+  };
+
   // $scope.modifyChaincode = function (ccID, ccName, ccCode) {
   //   var Id = ccID;
 
@@ -139,7 +168,6 @@ function RegulatorController($scope, $log, remresRegulator) {
     // Open Uploader of LUA code
     getTargets();
     $scope.modalLUA = true;
-    $scope.antistress = false;
   };
 
   $scope.close = function () {

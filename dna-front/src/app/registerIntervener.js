@@ -19,10 +19,6 @@ function IntervenerController($scope, $log, $state, remresIntervener) {
     })
   };
 
-  function setInputEmpty() {
-
-  }
-
   $scope.close = function () {
     $scope.haveUser = false;
   };

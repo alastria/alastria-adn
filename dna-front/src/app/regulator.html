@@ -1,4 +1,4 @@
-<div class="title">
+<div ng-class="class" ng-show="dataLoaded">
 
 
     <!-- Antistress -->
@@ -16,6 +16,10 @@
   <div class="container">
     <div class="raw">
       <div class="col-md-12">
+        <!-- <div class="alert alert-success" role="alert" ng-show="haveUser">
+          <button type="button" class="close" ng-click="close()" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          User <strong>{{user.uid}}</strong> created successfully
+        </div> -->
         <span>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         </span>
@@ -50,7 +54,7 @@
                     <th style="width:30%" scope="col">ChainCode ID</th>
                     <th style="width:20%" scope="col">ChainCode Name</th>
                     <th style="width:10%" scope="col">View</th>
-                    <th style="width:10%" scope="col">Modify</th>
+                    <!-- <th style="width:10%" scope="col">Modify</th> -->
                     <th style="width:30%" scope="col">Progress</th>
                     <th style="width:10%" scope="col">Execute</th>
                   </tr>
@@ -67,7 +71,7 @@
                         <div ng-if="chaincode.progress === 100" class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{chaincode.progress}}%" aria-valuemin="0" aria-valuemax="100">{{chaincode.progress}}%</div>
                       </div>
                     </td>
-                    <td style="width:10%"><button class="btn btn-primary" ng-disabled="chaincode.progress !== 100">Execute</button></td>
+                    <td style="width:10%"><button class="btn btn-primary" ng-click="executeChaincode(chaincode.LuaChaincodeId)" ng-disabled="chaincode.progress !== 100">Execute</button></td>
                   </tr>
                 </tbody>
               </table>
