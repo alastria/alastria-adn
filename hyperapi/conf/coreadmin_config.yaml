@@ -124,7 +124,7 @@ organizations:
     mspid: coreAdmMSP
 
     # Needed to load users crypto keys and certs for this org (absolute path or relative to global crypto path, DEV mode)
-    cryptoPath:  peerOrganizations/coreAdm.alastria.com/users/Admin@coreAdm.alastria.com/msp
+    cryptoPath:  "peerOrganizations/coreAdm.alastria.com/users/Admin@coreAdm.alastria.com/msp"
 
     peers:
       - peer0.coreAdm.alastria.com
@@ -165,6 +165,19 @@ organizations:
 
     certificateAuthorities:
       - ca_peerOrg1
+        
+  org2:
+    mspid: org2MSP
+
+    # Needed to load users crypto keys and certs for this org (absolute path or relative to global crypto path, DEV mode)
+    cryptoPath:  peerOrganizations/org2.alastria.com/users/Admin@org2.alastria.com/msp
+
+    peers:
+      - peer0.org2.alastria.com
+
+    certificateAuthorities:
+      - ca_peerOrg2
+
 
   # Orderer Org name
   ordererorg:
@@ -214,13 +227,27 @@ peers:
       # Certificate location absolute path
       path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/coreAdm.alastria.com/tlsca/tlsca.coreAdm.alastria.com-cert.pem
 
-  # peer0.org1.alastria.com:
-  #   url: grpcs://127.0.0.1:8051
-  #   eventUrl: grpcs://127.0.0.1:8053
-  #   grpcOptions:
-  #     ssl-target-name-override: peer0.org1.alastria.com
-  #   tlsCACerts:
-  #     path: ${GOPATH}/hf-2orgs/crypto-config/peerOrganizations/org1.alastria.com/tlsca/tlsca.org1.alastria.com-cert.pem
+  peer0.org1.alastria.com:
+   url: grpcs://127.0.0.1:8051
+
+   eventUrl: grpcs://127.0.0.1:8053
+
+   grpcOptions:
+     ssl-target-name-override: peer0.org1.alastria.com
+
+   tlsCACerts:
+     path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org1.alastria.com/tlsca/tlsca.org1.alastria.com-cert.pem
+
+  peer0.org2.alastria.com:
+   url: grpcs://127.0.0.1:9051
+
+   eventUrl: grpcs://127.0.0.1:9053
+
+   grpcOptions:
+     ssl-target-name-override: peer0.org2.alastria.com
+
+   tlsCACerts:
+     path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org2.alastria.com/tlsca/tlsca.org2.alastria.com-cert.pem
 
 #
 # Fabric-CA is a special kind of Certificate Authority provided by Hyperledger Fabric which allows

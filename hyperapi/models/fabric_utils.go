@@ -10,6 +10,9 @@ import (
 	"github.com/hyperledger/fabric-sdk-go/third_party/github.com/hyperledger/fabric/common/cauthdsl"
     "github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
 	"github.com/hyperledger/fabric-sdk-go/pkg/config"
+    //"github.com/hyperledger/fabric-sdk-go/pkg/context/api/core"
+    "github.com/hyperledger/fabric-sdk-go/pkg/fabric-client/peer"
+    "github.com/hyperledger/fabric-sdk-go/api/apiconfig"
 	resmgmt "github.com/hyperledger/fabric-sdk-go/api/apitxn/resmgmtclient"
 	packager "github.com/hyperledger/fabric-sdk-go/pkg/fabric-client/ccpackager/gopackager"
 )
@@ -53,7 +56,7 @@ func init(){
     sdk, _ = fabsdk.New(config.FromFile(hyperledger_config_yaml))
     chClient, _ = sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg(orgName)).Channel(channelID)
     createChaincodeFirstTime()
-    //createChaincodeLuaExecutorFirstTime()
+    createChaincodeLuaExecutorFirstTime()
 }
 
 func createChaincodeLuaExecutorFirstTime(){
@@ -88,7 +91,7 @@ func createChaincodeLuaExecutorFirstTime(){
 	fmt.Println("Instalado chaincode en peer")
 
 	// Set up chaincode policy to 'any of two msps'
-	ccPolicy:= cauthdsl.SignedByAnyMember([]string{"org1MSP", "coreAdmMSP"})
+	ccPolicy:= cauthdsl.SignedByAnyMember([]string{"org1MSP", "coreAdmMSP", "org2MSP"})
 	instantciateCReq := resmgmt.InstantiateCCRequest{Name: luaExecutorccID, Path: luaExecutorPath, Version: version, Args: initArgs, Policy: ccPolicy}
 	// Instanciación del chaincode
 	err = clientResMgmt.InstantiateCC(channelID, instantciateCReq)
@@ -128,7 +131,7 @@ func createChaincodeFirstTime(){
 	fmt.Println("Instalado chaincode en peer")
 
 	// Set up chaincode policy to 'any of two msps'
-	ccPolicy:= cauthdsl.SignedByAnyMember([]string{"org1MSP", "coreAdmMSP"})
+	ccPolicy:= cauthdsl.SignedByAnyMember([]string{"org1MSP", "coreAdmMSP", "org2MSP"})
 
     exeucuteLuaInitArgs := [][]byte{[]byte("init"), []byte(luaExecutorccID)}
     fmt.Println(exeucuteLuaInitArgs)
@@ -256,14 +259,30 @@ func fabric_validate_code(LuaChaincodeId string) string{
     return string(value)
 }
 
-func fabric_execute_code(LuaChaincodeId string) string{
+func fabric_execute_code(LuaChaincodeId string) []ExecutionResponse{
+    code := fabric_query_code(LuaChaincodeId)
+    var executionResponse []ExecutionResponse
+    var i = 0
     invokeArgs := [][]byte{[]byte(LuaChaincodeId)}
-    value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "exectuteCC", Args: invokeArgs})
-	if err != nil {
-		fmt.Println("Failed to execute lua chaincode: %s", err)
-	}
-	fmt.Println("response value: ", string(value))
-
-    return string(value)
+    for i < len(code.Targets) {
+        var execution ExecutionResponse
+        peers, err := sdk.Config().PeersConfig(code.Targets[i])
+        if err != nil {
+            fmt.Println("Failed to get organization peers: %s", err)
+        }
+        peer0, err := peer.New(sdk.Config(), peer.FromPeerConfig(&apiconfig.NetworkPeer{PeerConfig: peers[0]}))
+        if err != nil {
+            fmt.Println("Failed to get peer: %s", err)
+        }
+        value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "exectuteCC", Args: invokeArgs}, apitxn.WithProposalProcessor(peer0))
+        if err != nil {
+            fmt.Println("Failed to execute lua chaincode: %s", err)
+        }
+        fmt.Println("response value: ", string(value))
+        execution.orgName = code.Targets[i]
+        execution.executionResult = string(value)
+        executionResponse = append(executionResponse , execution)
+    }
+	return executionResponse 
 }
 

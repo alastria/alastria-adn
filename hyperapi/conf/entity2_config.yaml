@@ -33,7 +33,7 @@ client:
 
   # Which organization does this application instance belong to? The value must be the name of an org
   # defined under "organizations"
-  organization: org2
+  organization: org1
 
   logging:
     level: debug
@@ -97,7 +97,7 @@ channels:
 
     # Required. list of peers from participating orgs
     peers:
-      peer0.coreAdm.alastria.com:
+      peer0.org1.alastria.com:
         # [Optional]. will this peer be sent transaction proposals for endorsement? The peer must
         # have the chaincode installed. The app can also use this property to decide which peers
         # to send the chaincode install request. Default: true
@@ -120,14 +120,14 @@ channels:
 # list of participating organizations in this network
 #
 organizations:
-  coreAdm:
-    mspid: coreAdmMSP
+  org2:
+    mspid: org2MSP
 
     # Needed to load users crypto keys and certs for this org (absolute path or relative to global crypto path, DEV mode)
-    cryptoPath:  peerOrganizations/coreAdm.alastria.com/users/Admin@coreAdm.alastria.com/msp
+    cryptoPath:  "peerOrganizations/org2.alastria.com/users/Admin@org2.alastria.com/msp"
 
     peers:
-      - peer0.coreAdm.alastria.com
+      - peer0.org2.alastria.com
 
     # [Optional]. Certificate Authorities issue certificates for identification purposes in a Fabric based
     # network. Typically certificates provisioning is done in a separate process outside of the
@@ -135,7 +135,7 @@ organizations:
     # dynamic certificate management (enroll, revoke, re-enroll). The following section is only for
     # Fabric-CA servers.
     certificateAuthorities:
-      - ca_peerCoreAdm
+      - ca_peerOrg2
 
     # [Optional]. If the application is going to make requests that are reserved to organization
     # administrators, including creating/updating channels, installing/instantiating chaincodes, it
@@ -145,15 +145,27 @@ organizations:
     # this way. The SDK should allow applications to set the org admin identity via APIs, and only use
     # this route as an alternative when it exists.
     adminPrivateKey:
-      path: "peerOrganizations/coreAdm.alastria.com/users/Admin@coreAdm.alastria.com/msp/keystore"
+      path: "peerOrganizations/org2.alastria.com/users/Admin@org2.alastria.com/msp/keystore"
     signedCert:
-      path: "peerOrganizations/coreAdm.alastria.com/users/Admin@coreAdm.alastria.com/msp/signcerts"
+      path: "peerOrganizations/org2.alastria.com/users/Admin@org2.alastria.com/msp/signcerts"
 
   # the profile will contain public information about organizations other than the one it belongs to.
   # These are necessary information to make transaction lifecycles work, including MSP IDs and
   # peers with a public URL to send transaction proposals. The file will not contain private
   # information reserved for members of the organization, such as admin key and certificate,
   # fabric-ca registrar enroll ID and secret, etc.
+  coreAdm:
+    mspid: coreAdmMSP
+
+    # Needed to load users crypto keys and certs for this org (absolute path or relative to global crypto path, DEV mode)
+    cryptoPath:  peerOrganizations/coreAdm.alastria.com/users/Admin@coreAdm.alastria.com/msp
+
+    peers:
+      - peer0.coreAdm.alastria.com
+
+    certificateAuthorities:
+      - ca_peerCoreAdm
+        
   org1:
     mspid: org1MSP
 
@@ -165,23 +177,6 @@ organizations:
 
     certificateAuthorities:
       - ca_peerOrg1
-
-  # the profile will contain public information about organizations other than the one it belongs to.
-  # These are necessary information to make transaction lifecycles work, including MSP IDs and
-  # peers with a public URL to send transaction proposals. The file will not contain private
-  # information reserved for members of the organization, such as admin key and certificate,
-  # fabric-ca registrar enroll ID and secret, etc.
-  org2:
-    mspid: org2MSP
-
-    # Needed to load users crypto keys and certs for this org (absolute path or relative to global crypto path, DEV mode)
-    cryptoPath:  peerOrganizations/org2.alastria.com/users/Admin@org2.alastria.com/msp
-
-    peers:
-      - peer0.org2.alastria.com
-
-    certificateAuthorities:
-      - ca_peerOrg2
 
 
   # Orderer Org name
@@ -232,13 +227,27 @@ peers:
       # Certificate location absolute path
       path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/coreAdm.alastria.com/tlsca/tlsca.coreAdm.alastria.com-cert.pem
 
-  # peer0.org1.alastria.com:
-  #   url: grpcs://127.0.0.1:8051
-  #   eventUrl: grpcs://127.0.0.1:8053
-  #   grpcOptions:
-  #     ssl-target-name-override: peer0.org1.alastria.com
-  #   tlsCACerts:
-  #     path: ${GOPATH}/hf-2orgs/crypto-config/peerOrganizations/org1.alastria.com/tlsca/tlsca.org1.alastria.com-cert.pem
+  peer0.org1.alastria.com:
+   url: grpcs://127.0.0.1:8051
+
+   eventUrl: grpcs://127.0.0.1:8053
+
+   grpcOptions:
+     ssl-target-name-override: peer0.org1.alastria.com
+
+   tlsCACerts:
+     path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org1.alastria.com/tlsca/tlsca.org1.alastria.com-cert.pem
+
+  peer0.org2.alastria.com:
+   url: grpcs://127.0.0.1:9051
+
+   eventUrl: grpcs://127.0.0.1:9053
+
+   grpcOptions:
+     ssl-target-name-override: peer0.org2.alastria.com
+
+   tlsCACerts:
+     path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org2.alastria.com/tlsca/tlsca.org2.alastria.com-cert.pem
 
 #
 # Fabric-CA is a special kind of Certificate Authority provided by Hyperledger Fabric which allows
