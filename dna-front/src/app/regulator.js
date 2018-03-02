@@ -9,6 +9,7 @@ function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
   $scope.modalAssign = false;
   $scope.modalShowCode = false;
   $scope.modalLUA = false;
+  $scope.modalShowExecution = false;
   $scope.modalModifyCode = false;
   $scope.btnExecute = true;
   $scope.countCC = '';
@@ -20,6 +21,12 @@ function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
     $scope.dataLoaded = true;
     // pooling = $interval(getLUAChainCodes(), 3000);
   };
+
+  String.prototype.replaceAll = function (search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+  };
+
 
   function getTargets() {
     $scope.antistress = true;
@@ -54,9 +61,12 @@ function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
   function composeSendData(name, luaCode) {
     var sendBody = {
       Name: name,
-      SourceCode: luaCode.replace('\n', '\\n'),
+       SourceCode: luaCode.replaceAll('\n', '\\n'),
+      //SourceCode: luaCode,
       Targets: saveTargets()
     };
+    console.log(sendBody);
+    
     return sendBody;
   }
 
@@ -104,6 +114,7 @@ function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
     $log.debug('Getting Chaincode info');
     remresRegulator.getChainCode(chaincodeId)
     .then(function (chaincodeData) {
+      console.log(chaincodeData);
       $scope.chaincode = chaincodeData;
       $scope.modalShowCode = true;
       $scope.antistress = false;
@@ -129,27 +140,33 @@ function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
     }
   }
 
-  $scope.openModifyModal = function (chaincodeId) {
-    $scope.antistress = true;
-    $log.debug('Getting Chaincode info');
-    remresRegulator.getChainCode(chaincodeId)
-    .then(function (chaincodeData) {
-      getTargets();
-      $scope.chaincode = chaincodeData;
-      $scope.modalModifyCode = true;
-      $scope.antistress = false;
-    }, function (err) {
-      $scope.antistress = false;
-      $log.error('Error -> ' + err);
-    });
-  };
+  // $scope.openModifyModal = function (chaincodeId) {
+  //   $scope.antistress = true;
+  //   $log.debug('Getting Chaincode info');
+  //   remresRegulator.getChainCode(chaincodeId)
+  //   .then(function (chaincodeData) {
+  //     getTargets();
+  //     $scope.chaincode = chaincodeData;
+  //     $scope.modalModifyCode = true;
+  //     $scope.antistress = false;
+  //   }, function (err) {
+  //     $scope.antistress = false;
+  //     $log.error('Error -> ' + err);
+  //   });
+  // };
 
   $scope.executeChaincode = function (Id) {
     $scope.antistress = true;
     remresRegulator.executeChaincode(Id)
     .then(function (executed) {
       console.log(executed);
-      $scope.antistress = false;
+      if (executed !== null) {
+        $scope.results = executed;
+        $scope.modalShowExecution = true;
+        $scope.antistress = false;
+      } else {
+        $scope.antistress = false;
+      }
     }, function(err) {
       $scope.antistress = false;
       $log.error('Error -> ' + err);
@@ -182,6 +199,8 @@ function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
       $scope.modalShowCode = false;
     } else if ($scope.modalModifyCode === true) {
       $scope.modalModifyCode = false;
+    } else if ($scope.modalShowExecution = true) {
+      $scope.modalShowExecution = false;
     }
   };
 }

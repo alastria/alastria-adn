@@ -18,7 +18,19 @@ angular
                       '</div>' +
                       '<div class="modal-body">' +
                         '<label for="fileName">File name:</label>' +
-                        '<input id="fileName" type="text" class="form-control" placeholder="File name" value="{{chaincode.Name}}" readonly>' +
+                        '<input id="fileName" type="text" class="form-control" placeholder="File name" value="{{chaincode.Name}}" readonly><br/>' +
+                        '<div class="col-md-12">' +
+                          '<div class="col-md-2">' +
+                            '<table class=""><tr><th>Name</th></tr><tr ng-repeat="target in chaincode.Targets"><td>{{target}}</td></tr></table>' +
+                          '</div>' +
+                          '<div class="col-md-2">' +
+                            '<table class=""><tr><th>Validated</th></tr><tr ng-repeat="val in chaincode.Validations track by $index">' +
+                              '<td ng-show="val === true"><span class="glyphicon glyphicon-ok"></span></td>' +
+                              '<td ng-show="val !== true"><span class="glyphicon glyphicon-remove"></span></td>' +
+                            '</tr></table>' +
+                          '<br/<br/></div>' +
+                          '<div class="col-md-8"></div>' +
+                        '</div><br/<br/>' +
                         '<label for="LUAcode" style="text-align:center">Code:</label>' +
                         '<textarea rows="10" id="LUAcode" class="form-control" style="box-sizing: border-box;resize: none" placeholder="Insert LUA code here..." readonly>{{chaincode.SourceCode}}</textarea>' +
                       '</div>' +
