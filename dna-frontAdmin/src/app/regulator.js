@@ -2,7 +2,7 @@
 
 'use strict';
 
-function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
+function RegulatorController($scope, $log, $interval, remresRegulator) {
   var vm = this;
   $scope.dataLoaded = false;
   $scope.antistress = false;
@@ -16,10 +16,10 @@ function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
   var pooling;
 
   vm.$onInit = function () {
-    changeClass();
+    $scope.antistress = true;
     getLUAChainCodes();
     $scope.dataLoaded = true;
-    // pooling = $interval(getLUAChainCodes(), 3000);
+    pooling = $interval(getLUAChainCodes, 3000);
   };
 
   String.prototype.replaceAll = function (search, replacement) {
@@ -27,19 +27,18 @@ function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
     return target.replace(new RegExp(search, 'g'), replacement);
   };
 
-
   function getTargets() {
     $scope.antistress = true;
     remresRegulator.getAllUsers()
     .then(function (allTargets) {
-      if (allTargets !== null) {
-        $scope.targets = []
-        for (var i=0; i<allTargets.length; i++) {
-          $scope.targets.push({Id: allTargets[i]});
-        }
+      if (allTargets === null) {
+        $scope.targets = [];
         $scope.antistress = false;
       } else {
-        $scope.targets = []
+        $scope.targets = [];
+        for (var i = 0; i < allTargets.length; i++) {
+          $scope.targets.push({Id: allTargets[i]});
+        }
         $scope.antistress = false;
       }
     }, function (err) {
@@ -61,12 +60,9 @@ function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
   function composeSendData(name, luaCode) {
     var sendBody = {
       Name: name,
-       SourceCode: luaCode.replaceAll('\n', '\\n'),
-      //SourceCode: luaCode,
+      SourceCode: luaCode.replaceAll('\n', '\\n'),
       Targets: saveTargets()
     };
-    console.log(sendBody);
-    
     return sendBody;
   }
 
@@ -83,24 +79,17 @@ function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
     });
   };
 
-  function changeClass() {
-    if ($state.router.urlRouter.location === '/regulator') {
-      $scope.class = 'noNav';
-    }
-  }
-
   function getLUAChainCodes() {
     $log.debug('Getting LUA ChainCode´s list');
-    $scope.antistress = true;
     remresRegulator.listLUAChainCode()
     .then(function (LUAList) {
-      if (LUAList !== null) {
+      if (LUAList === null) {
+        $scope.countCC = 0;
+        $scope.antistress = false;
+      } else {
         calculateProgress(LUAList);
         $scope.countCC = Object.keys(LUAList).length; // obtain number of chaincodes
         $scope.chaincodes = LUAList;
-        $scope.antistress = false;
-      } else {
-        $scope.countCC = 0;
         $scope.antistress = false;
       }
     }, function (err) {
@@ -114,7 +103,6 @@ function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
     $log.debug('Getting Chaincode info');
     remresRegulator.getChainCode(chaincodeId)
     .then(function (chaincodeData) {
-      console.log(chaincodeData);
       $scope.chaincode = chaincodeData;
       $scope.modalShowCode = true;
       $scope.antistress = false;
@@ -159,18 +147,18 @@ function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
     $scope.antistress = true;
     remresRegulator.executeChaincode(Id)
     .then(function (executed) {
-      console.log(executed);
-      if (executed !== null) {
+      if (executed === null) {
+        $scope.antistress = false;
+      } else {
+        $interval.cancel(pooling);
         $scope.results = executed;
         $scope.modalShowExecution = true;
         $scope.antistress = false;
-      } else {
-        $scope.antistress = false;
       }
-    }, function(err) {
+    }, function (err) {
       $scope.antistress = false;
       $log.error('Error -> ' + err);
-    })
+    });
   };
 
   // $scope.modifyChaincode = function (ccID, ccName, ccCode) {
@@ -199,7 +187,7 @@ function RegulatorController($scope, $log, $state, $interval, remresRegulator) {
       $scope.modalShowCode = false;
     } else if ($scope.modalModifyCode === true) {
       $scope.modalModifyCode = false;
-    } else if ($scope.modalShowExecution = true) {
+    } else if ($scope.modalShowExecution === true) {
       $scope.modalShowExecution = false;
     }
   };

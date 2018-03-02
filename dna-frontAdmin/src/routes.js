@@ -10,17 +10,6 @@ function routesConfig($stateProvider, $urlRouterProvider, $locationProvider) {
   $stateProvider
     .state('regulator', {
       url: '/regulator',
-      component: 'regulator',
-      params: {data: null}
-    })
-    .state('intervener', {
-      url: '/intervener',
-      component: 'intervener',
-      params: {data: null}
-    })
-    .state('register', {
-      url: '/register',
-      component: 'registerIntervener',
-      params: {data: null}
+      component: 'regulator'
     });
 }

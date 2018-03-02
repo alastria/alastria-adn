@@ -29,7 +29,7 @@ angular
                             '</thead>' +
                             '<tbody>' +
                               '<tr ng-repeat="target in targets">' +
-                                '<td style="width:10%; text-align:center"><input type="checkbox" ng-model="target.selected" value="{{target.Id}}" required></td>' +
+                                '<td style="width:10%; text-align:center"><input type="checkbox" ng-model="target.selected" value="{{target.Id}}"></td>' +
                                 '<td style="width:90%; margin-left:30px">{{target.Id}}</td>' +
                               '</tr>' +
                             '</tbody>' +

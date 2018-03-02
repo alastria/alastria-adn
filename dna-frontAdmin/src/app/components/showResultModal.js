@@ -11,7 +11,7 @@ angular
                   '<div class="modal-dialog" role="document">' +
                     '<div class="modal-content">' +
                       '<div class="modal-header">' +
-                      '<h3 class="modal-title">Upload LUA Code</h3>' +
+                      '<h3 class="modal-title">Result Execution Chaincode</h3>' +
                       '<button type="button" ng-click="close()" class="close" data-dismiss="modal" aria-label="Close">' +
                         '<span aria-hidden="true">&times;</span>' +
                       '</button>' +

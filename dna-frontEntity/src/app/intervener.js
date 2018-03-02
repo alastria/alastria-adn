@@ -2,28 +2,28 @@
 
 'use strict';
 
-function IntervenerController ($scope, $log, $interval,remresIntervener) {
+function IntervenerController($scope, $log, $interval, remresIntervener) {
   var vm = this;
   $scope.antistress = false;
   $scope.msgApproved = false;
-  var pooling;
+  // var pooling;
 
   vm.$onInit = function () {
     getLUAChainCodes();
     // pooling = $interval(getLUAChainCodes(), 3000);
-  }
+  };
 
   function getLUAChainCodes() {
     $log.debug('Getting LUA ChainCode´s list');
     $scope.antistress = true;
     remresIntervener.listLUAChainCode()
     .then(function (LUAList) {
-      if (LUAList !== null){
-        $scope.countCC = Object.keys(LUAList).length; // obtain number of chaincodes
-        $scope.chaincodes = LUAList;
+      if (LUAList === null) {
+        $scope.countCC = 0;
         $scope.antistress = false;
       } else {
-        $scope.countCC = 0;
+        $scope.countCC = Object.keys(LUAList).length; // obtain number of chaincodes
+        $scope.chaincodes = LUAList;
         $scope.antistress = false;
       }
     }, function (err) {
@@ -36,12 +36,12 @@ function IntervenerController ($scope, $log, $interval,remresIntervener) {
     $scope.antistress = true;
     remresIntervener.valdateChaincode(Id)
     .then(function (approved) {
-      if (approved === 'update success!' ) {
+      if (approved === 'update success!') {
         $scope.approve = 'Chaincode ' + Id + ' approved succesfully';
       }
       $scope.msgApproved = true;
       $scope.antistress = false;
-    }, function(err) {
+    }, function (err) {
       $scope.antistress = false;
       $log.error('Error -> ' + err);
     });
@@ -68,7 +68,6 @@ function IntervenerController ($scope, $log, $interval,remresIntervener) {
       $scope.msgApproved = false;
     }
   };
-
 }
 
 angular

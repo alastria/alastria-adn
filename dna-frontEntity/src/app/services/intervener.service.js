@@ -49,16 +49,16 @@ angular
 
     intervenerService.valdateChaincode = function (chaincode) {
       var promise = $http({
-        method: 'PUT', 
+        method: 'PUT',
         url: '/v1/luaChaincode/' + chaincode
       })
-      .then(function(response) {
+      .then(function (response) {
         return response.data;
-      }, function(Error) {
+      }, function (Error) {
         return Error.data;
-      })
+      });
       return promise;
-    }
+    };
 
     return intervenerService;
   });
