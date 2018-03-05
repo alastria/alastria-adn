@@ -13,13 +13,11 @@ function RegulatorController($scope, $log, $interval, remresRegulator) {
   $scope.modalModifyCode = false;
   $scope.btnExecute = true;
   $scope.countCC = '';
-  var pooling;
 
   vm.$onInit = function () {
     $scope.antistress = true;
     getLUAChainCodes();
     $scope.dataLoaded = true;
-    pooling = $interval(getLUAChainCodes, 3000);
   };
 
   String.prototype.replaceAll = function (search, replacement) {
