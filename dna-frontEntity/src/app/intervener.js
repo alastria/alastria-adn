@@ -6,16 +6,16 @@ function IntervenerController($scope, $log, $interval, remresIntervener) {
   var vm = this;
   $scope.antistress = false;
   $scope.msgApproved = false;
-  // var pooling;
+  var pooling;
 
   vm.$onInit = function () {
+    $scope.antistress = true;
     getLUAChainCodes();
-    // pooling = $interval(getLUAChainCodes(), 3000);
+    pooling = $interval(getLUAChainCodes, 3000);
   };
 
   function getLUAChainCodes() {
     $log.debug('Getting LUA ChainCode´s list');
-    $scope.antistress = true;
     remresIntervener.listLUAChainCode()
     .then(function (LUAList) {
       if (LUAList === null) {
@@ -37,7 +37,7 @@ function IntervenerController($scope, $log, $interval, remresIntervener) {
     remresIntervener.valdateChaincode(Id)
     .then(function (approved) {
       if (approved === 'update success!') {
-        $scope.approve = 'Chaincode ' + Id + ' approved succesfully';
+        $scope.approve = 'Chaincode approved succesfully';
       }
       $scope.msgApproved = true;
       $scope.antistress = false;

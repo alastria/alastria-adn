@@ -1,4 +1,4 @@
-<div ng-class="class" ng-show="dataLoaded">
+<div class="title" ng-show="dataLoaded">
 
 
     <!-- Antistress -->
@@ -10,8 +10,8 @@
      <!-- modal Show code of ChainCode -->
      <modal-showcode></modal-showcode>
 
-     <!-- modal Modify code of ChainCode -->
-     <modal-modify></modal-modify>
+     <!-- modal Modify code of ChainCode
+     <modal-modify></modal-modify> -->
 
      <!-- modal Show Result of ChainCode -->
      <modal-result></modal-result>
@@ -20,7 +20,13 @@
   <div class="container">
     <div class="raw">
       <div class="col-md-12">
-        <p></p>
+        <!-- message success -->
+        <div class="alert alert-success" role="alert" ng-show="msgApproved">
+            <button type="button" class="close" ng-click="close()" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            {{approve}}
+          </div>
+        <div class="col-md-1"></div>
+        <!-- <p></p> -->
       </div>
 
       <!-- Upload File -->

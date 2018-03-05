@@ -72,7 +72,10 @@ function RegulatorController($scope, $log, $interval, remresRegulator) {
     .then(function (Id) {
       $log.info('ID ' + JSON.stringify(Id) + 'Created successfuly');
       getLUAChainCodes();
+      $scope.approve = 'Chaincode created succesfully';
+      $scope.msgApproved = true;
       $scope.modalLUA = false;
+      $scope.antistress = false;
     }, function (err) {
       $scope.antistress = false;
       $log.error('Error -> ' + err);
@@ -150,7 +153,6 @@ function RegulatorController($scope, $log, $interval, remresRegulator) {
       if (executed === null) {
         $scope.antistress = false;
       } else {
-        $interval.cancel(pooling);
         $scope.results = executed;
         $scope.modalShowExecution = true;
         $scope.antistress = false;
@@ -189,6 +191,8 @@ function RegulatorController($scope, $log, $interval, remresRegulator) {
       $scope.modalModifyCode = false;
     } else if ($scope.modalShowExecution === true) {
       $scope.modalShowExecution = false;
+    } else if ($scope.msgApproved === true) {
+      $scope.msgApproved = false;
     }
   };
 }
