@@ -138,7 +138,7 @@ func (t *LExecutionChaincode) invoke(stub shim.ChaincodeStubInterface, args []st
 		logger.Error(err.Error())
 		return shim.Error(err.Error())
 	}
-	jsonResp := "{" + "LuaResult\":\"" + string(luaFuncResult) + "\"}"
+	jsonResp := "{\"LuaResult\":\"" + string(luaFuncResult) + "\"}"
 	logger.Debug("[Lua Execution Chaincode][invoke]Query Response:\n", jsonResp)
 
 	return shim.Success([]byte(jsonResp))
