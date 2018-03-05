@@ -13,18 +13,20 @@ function RegulatorController($scope, $log, $interval, remresRegulator) {
   $scope.modalModifyCode = false;
   $scope.btnExecute = true;
   $scope.countCC = '';
+  // var polling;
 
   vm.$onInit = function () {
     $scope.antistress = true;
     getLUAChainCodes();
     $scope.dataLoaded = true;
+    // polling = $interval(getLUAChainCodes, 3000);
   };
 
   String.prototype.replaceAll = function (search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
   };
-
+  
   function getTargets() {
     $scope.antistress = true;
     remresRegulator.getAllUsers()
@@ -68,12 +70,11 @@ function RegulatorController($scope, $log, $interval, remresRegulator) {
     $scope.antistress = true;
     remresRegulator.createLuaChaincode(composeSendData(name, luaCode))
     .then(function (Id) {
-      $log.info('ID ' + JSON.stringify(Id) + 'Created successfuly');
+      $log.info('ID ' + angular.toJson(Id) + 'Created successfuly');
       getLUAChainCodes();
       $scope.approve = 'Chaincode created succesfully';
       $scope.msgApproved = true;
       $scope.modalLUA = false;
-      $scope.antistress = false;
     }, function (err) {
       $scope.antistress = false;
       $log.error('Error -> ' + err);

@@ -6,12 +6,12 @@ function IntervenerController($scope, $log, $interval, remresIntervener) {
   var vm = this;
   $scope.antistress = false;
   $scope.msgApproved = false;
-  var pooling;
+  // var pooling;
 
   vm.$onInit = function () {
     $scope.antistress = true;
     getLUAChainCodes();
-    pooling = $interval(getLUAChainCodes, 3000);
+    // pooling = $interval(getLUAChainCodes, 3000);
   };
 
   function getLUAChainCodes() {
