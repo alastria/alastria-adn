@@ -147,6 +147,7 @@ func (t *ManagementChaincode) getAllChaincodes(stub shim.ChaincodeStubInterface)
 	mapChaincodes := make(map[string]CodeStore)
 	json.Unmarshal(state, &codeList)
 	i := 0
+	alias := getAlias(stub)
 	for i < len(codeList) {
 		contract, err := stub.GetState(codeList[i])
 		if err != nil {
@@ -159,10 +160,12 @@ func (t *ManagementChaincode) getAllChaincodes(stub shim.ChaincodeStubInterface)
 		if error != nil {
 			return shim.Error(err.Error())
 		}
-		mapChaincodes[codeList[i]] = contractStore
+		// if not alias(regulator) or alias is one of the chaincode targets
+		if _, ok := contractStore.Target[alias]; alias == "" || ok {
+			mapChaincodes[codeList[i]] = contractStore
+		}
 		i++
 	}
-
 	dataToReturn, errData := json.Marshal(mapChaincodes)
 	if errData != nil {
 		return shim.Error(err.Error())
