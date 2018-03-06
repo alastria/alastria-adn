@@ -20,7 +20,7 @@ FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 
 
 function pullDockerImages(){
-  local FABRIC_TAG="x86_64-1.0.5"
+  local FABRIC_TAG="x86_64-1.0.6"
   for IMAGES in peer orderer couchdb ccenv tools ca; do
       echo "==> FABRIC IMAGE: $IMAGES"
       echo
