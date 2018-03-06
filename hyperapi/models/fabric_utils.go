@@ -195,7 +195,6 @@ func fabric_query_user(uid string) string {
 
 func fabric_query_codes() []LuaChaincode {
 	var luaCodes []LuaChaincode
-	var luaCode LuaChaincode
 	var codeStores map[string]CodeStore
 
 	invokeArgs := [][]byte{[]byte("")}
@@ -211,6 +210,7 @@ func fabric_query_codes() []LuaChaincode {
 
 	if string(value) != "null" {
 		for key, value := range codeStores {
+	        var luaCode LuaChaincode
 			luaCode.LuaChaincodeId = key
 			luaCode.Name = value.Name
 			luaCode.SourceCode = value.Source
