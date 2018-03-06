@@ -1,0 +1,50 @@
+<div class="title">
+
+  <!-- Antistress -->
+  <preloader></preloader>
+
+  <!-- modal Show code of ChainCode -->
+  <modal-showcode></modal-showcode>
+  
+    <div class="col-md-12">
+
+      <!-- message success -->
+        <div class="alert alert-success" role="alert" ng-show="msgApproved">
+            <button type="button" class="close" ng-click="close()" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            {{approve}}
+          </div>
+        <div class="col-md-1"></div>
+
+        <!-- body -->
+        <div class="col-md-10">
+          <h1>{{countCC}} ChainCode to approve</h1>
+          <div class="panel panel-primary">
+              <div class="panel-heading">
+            </div>
+            <div class="panel-body">
+              <table class="table" style="width:100%">
+                <thead>
+                  <tr>
+                    <th style="width:30%" scope="col">ChainCode ID</th>
+                    <th style="width:30%" scope="col">Chaincode Name</th>
+                    <th style="width:20%" scope="col">View</th>
+                    <th style="width:20%" scope="col">Approve</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="chaincode in chaincodes">
+                    <td style="width:30%" scope="row" style="padding-top: 15px;">{{chaincode.LuaChaincodeId}}</td>
+                    <td style="width:30%" scope="row" style="padding-top: 15px;">{{chaincode.Name}}</td>
+                    <td style="width:20%"><button class="btn btn-primary" ng-click="getInfoChaincode(chaincode.LuaChaincodeId)">View code</button></td>
+                    <td style="width:20%"><button class="btn btn-primary" ng-click="approveChaincode(chaincode.LuaChaincodeId)">Approve</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- end body -->
+
+        <div class="col-md-1"></div>
+      </div>
+</div>

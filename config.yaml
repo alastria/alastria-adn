@@ -1,0 +1,170 @@
+name: "global-trade-network"
+x-type: "hlfv1"
+x-loggingLevel: info
+description: "The network to be in if you want to stay in the global trade business"
+version: 1.0.0
+
+client:
+  organization: coreAdm
+  logging:
+    level: debug
+  peer:
+    timeout:
+      connection: 3s
+      queryResponse: 45s
+      executeTxResponse: 30s
+  eventService:
+    timeout:
+      connection: 3s
+      registrationResponse: 3s
+  orderer:
+    timeout:
+      connection: 3s
+      response: 5s
+
+
+  # Needed to load users crypto keys and certs.
+  cryptoconfig:
+    path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config
+  credentialStore:
+    path: "/tmp/hfc-kvs"
+    cryptoStore:
+      path: /tmp/msp
+    wallet: wallet-name
+  BCCSP:
+    security:
+     enabled: true
+     default:
+      provider: "SW"
+     hashAlgorithm: "SHA2"
+     softVerify: true
+     ephemeral: false
+     level: 256
+
+channels:
+  channel:
+    orderers:
+      - orderer.alastria.com
+    peers:
+      peer0.coreAdm.alastria.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+      peer0.org1.alastria.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+      peer0.org2.alastria.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+# list of participating organizations in this network
+#
+organizations:
+  coreAdm:
+    mspid: coreAdmMSP
+    cryptoPath:  peerOrganizations/coreAdm.alastria.com/users/Admin@coreAdm.alastria.com/msp
+    peers:
+      - peer0.coreAdm.alastria.com
+    certificateAuthorities:
+      - ca_peerCoreAdm
+    adminPrivateKey:
+      path: "peerOrganizations/coreAdm.alastria.com/users/Admin@coreAdm.alastria.com/msp/keystore"
+    signedCert:
+      path: "peerOrganizations/coreAdm.alastria.com/users/Admin@coreAdm.alastria.com/msp/signcerts"
+  org1:
+    mspid: org1MSP
+    cryptoPath:  peerOrganizations/org1.alastria.com/users/Admin@org1.alastria.com/msp
+    peers:
+      - peer0.org1.alastria.com
+    certificateAuthorities:
+      - ca_peerOrg1
+  org2:
+    mspid: org2MSP
+    cryptoPath:  peerOrganizations/org2.alastria.com/users/Admin@org2.alastria.com/msp
+    peers:
+      - peer0.org2.alastria.com
+    certificateAuthorities:
+      - ca_peerOrg2
+
+  # Orderer Org name
+  ordererorg:
+      # Membership Service Provider ID for this organization
+      mspID: "OrdererOrg"
+
+      # Needed to load users crypto keys and certs for this org (absolute path or relative to global crypto path, DEV mode)
+      cryptoPath: ordererOrganizations/alastria.com/users/Admin@alastria.com/msp
+orderers:
+  orderer.alastria.com:
+    url: grpcs://127.0.0.1:7050
+    grpcOptions:
+      ssl-target-name-override: orderer.alastria.com
+      grpc-max-send-message-length: 15
+    tlsCACerts:
+      path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/ordererOrganizations/alastria.com/tlsca/tlsca.alastria.com-cert.pem
+
+#
+# List of peers to send various requests to, including endorsement, query
+# and event listener registration.
+#
+peers:
+  peer0.coreAdm.alastria.com:
+    url: grpcs://127.0.0.1:7051
+    eventUrl: grpcs://127.0.0.1:7053
+    grpcOptions:
+      ssl-target-name-override: peer0.coreAdm.alastria.com
+      grpc.http2.keepalive_time: 15
+    tlsCACerts:
+      path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/coreAdm.alastria.com/tlsca/tlsca.coreAdm.alastria.com-cert.pem
+
+  peer0.org2.alastria.com:
+    url: grpcs://127.0.0.1:9051
+    eventUrl: grpcs://127.0.0.1:9053
+    grpcOptions:
+      ssl-target-name-override: peer0.org2.alastria.com
+    tlsCACerts:
+      path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org2.alastria.com/tlsca/tlsca.org2.alastria.com-cert.pem
+  peer0.org1.alastria.com:
+    url: grpcs://127.0.0.1:8051
+    eventUrl: grpcs://127.0.0.1:8053
+    grpcOptions:
+      ssl-target-name-override: peer0.org1.alastria.com
+    tlsCACerts:
+      path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org1.alastria.com/tlsca/tlsca.org1.alastria.com-cert.pem
+
+#
+# Fabric-CA is a special kind of Certificate Authority provided by Hyperledger Fabric which allows
+# certificate management to be done via REST APIs. Application may choose to use a standard
+# Certificate Authority instead of Fabric-CA, in which case this section would not be specified.
+#
+certificateAuthorities:
+  ca_peerCoreAdm:
+    url: https://127.0.0.1:7054
+    # the properties specified under this object are passed to the 'http' client verbatim when
+    # making the request to the Fabric-CA server
+    httpOptions:
+      verify: true
+    registrar:
+      enrollId: admin
+      enrollSecret: adminpw
+    # [Optional] The optional name of the CA.
+    caName: ca_peercoreAdm
+  ca_peerOrg1:
+    url: https://127.0.0.1:8054
+    httpOptions:
+      verify: true
+    registrar:
+      enrollId: admin
+      enrollSecret: adminpw
+    caName: ca_peerOrg1
+  ca_peerOrg2:
+    url: https://127.0.0.1:9054
+    httpOptions:
+      verify: true
+    registrar:
+      enrollId: admin
+      enrollSecret: adminpw
+    caName: ca_peerOrg2

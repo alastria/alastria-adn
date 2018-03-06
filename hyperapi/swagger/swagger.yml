@@ -1,0 +1,189 @@
+swagger: "2.0"
+info:
+  title: beego Test API
+  description: beego has a very cool tools to autogenerate documents for your API
+  version: 1.0.0
+  termsOfService: http://beego.me/
+  contact:
+    email: astaxie@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+basePath: /v1
+paths:
+  /luaChaincode/:
+    get:
+      tags:
+      - luaChaincode
+      description: get all luaChaincodes
+      operationId: LuaChaincodeController.GetAll
+      responses:
+        "200":
+          description: '{luaChaincode} models.LuaChaincode'
+        "403":
+          description: :luaChaincodeId is empty
+    post:
+      tags:
+      - luaChaincode
+      description: create LuaChaincodePost
+      operationId: LuaChaincodeController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The luaChaincode content
+        required: true
+        schema:
+          $ref: '#/definitions/.LuaChaincodePost'
+      responses:
+        "200":
+          description: '{string} models.LuaChaincode.Id'
+        "403":
+          description: body is empty
+  /luaChaincode/{luaChaincodeId}:
+    get:
+      tags:
+      - luaChaincode
+      description: find luaChaincode by luaChaincodeid
+      operationId: LuaChaincodeController.Get
+      parameters:
+      - in: path
+        name: luaChaincodeId
+        description: the luaChaincodeid you want to get
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{luaChaincode} models.LuaChaincode'
+        "403":
+          description: :luaChaincodeId is empty
+    put:
+      tags:
+      - luaChaincode
+      description: update the luaChaincode, validate chaincode
+      operationId: LuaChaincodeController.Update
+      parameters:
+      - in: path
+        name: luaChaincodeId
+        description: The luaChaincodeid you want to validate
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{luaChaincode} models.LuaChaincode'
+        "403":
+          description: :luaChaincodeId is empty
+    patch:
+      tags:
+      - luaChaincode
+      description: excute the lua luaChaincode
+      operationId: LuaChaincodeController.Execute
+      parameters:
+      - in: path
+        name: luaChaincodeId
+        description: The luaChaincodeid you want to execute
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{executionResponse} models.ExecutionResponse'
+        "403":
+          description: :executionResponse is empty
+  /user/:
+    get:
+      tags:
+      - user
+      description: get all Users
+      operationId: UserController.GetAll
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.User'
+    post:
+      tags:
+      - user
+      description: create users
+      operationId: UserController.CreateUser
+      parameters:
+      - in: body
+        name: body
+        description: body for user content
+        required: true
+        schema:
+          $ref: '#/definitions/.User'
+      responses:
+        "200":
+          description: '{int} models.User.Id'
+        "403":
+          description: body is empty
+  /user/{uid}:
+    get:
+      tags:
+      - user
+      description: get user by uid
+      operationId: UserController.Get
+      parameters:
+      - in: path
+        name: uid
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.User'
+        "403":
+          description: :uid is empty
+    put:
+      tags:
+      - user
+      description: update the user
+      operationId: UserController.Update
+      parameters:
+      - in: path
+        name: uid
+        description: The uid you want to update
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for user content
+        required: true
+        schema:
+          $ref: '#/definitions/.User'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.User'
+        "403":
+          description: :uid is not int
+    delete:
+      tags:
+      - user
+      description: delete the user
+      operationId: UserController.Delete
+      parameters:
+      - in: path
+        name: uid
+        description: The uid you want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: uid is empty
+definitions:
+  .LuaChaincodePost:
+    type: object
+  .User:
+    type: object
+tags:
+- name: luaChaincode
+  description: |
+    Operations about luaChaincode
+- name: user
+  description: |
+    Operations about Users
