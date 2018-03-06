@@ -2,7 +2,7 @@
 
 'use strict';
 
-function IntervenerController($scope, $log, $document, remresIntervener) {
+function IntervenerController($scope, $log, $window, remresIntervener) {
   $scope.haveUser = false;
   $scope.antistress = false;
 
@@ -15,8 +15,8 @@ function IntervenerController($scope, $log, $document, remresIntervener) {
     .then(function (registered) {
       $scope.user = registered;
       $scope.haveUser = true;
-      $document.getElementById('newUser').value = '';
       $scope.antistress = false;
+      $window.document.getElementById('registerUser').reset();
     }, function (err) {
       $log.error('Error -> ' + err);
     });
