@@ -22,11 +22,6 @@ function RegulatorController($scope, $log, $interval, remresRegulator) {
     // polling = $interval(getLUAChainCodes, 3000);
   };
 
-  String.prototype.replaceAll = function (search, replacement) {
-    var target = this;
-    return target.replace(new RegExp(search, 'g'), replacement);
-  };
-  
   function getTargets() {
     $scope.antistress = true;
     remresRegulator.getAllUsers()
@@ -60,7 +55,7 @@ function RegulatorController($scope, $log, $interval, remresRegulator) {
   function composeSendData(name, luaCode) {
     var sendBody = {
       Name: name,
-      SourceCode: luaCode.replaceAll('\n', '\\n'),
+      SourceCode: luaCode.replace(/\n/g, '\\n'),
       Targets: saveTargets()
     };
     return sendBody;
