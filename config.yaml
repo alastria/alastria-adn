@@ -25,7 +25,7 @@ client:
 
   # Needed to load users crypto keys and certs.
   cryptoconfig:
-    path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config
+    path: ${GOPATH}/src/alastria-dna/hf-testnet/crypto-config
   credentialStore:
     path: "/tmp/hfc-kvs"
     cryptoStore:
@@ -104,7 +104,7 @@ orderers:
       ssl-target-name-override: orderer.alastria.com
       grpc-max-send-message-length: 15
     tlsCACerts:
-      path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/ordererOrganizations/alastria.com/tlsca/tlsca.alastria.com-cert.pem
+      path: ${GOPATH}/src/alastria-dna/hf-testnet/crypto-config/ordererOrganizations/alastria.com/tlsca/tlsca.alastria.com-cert.pem
 
 #
 # List of peers to send various requests to, including endorsement, query
@@ -118,7 +118,7 @@ peers:
       ssl-target-name-override: peer0.coreAdm.alastria.com
       grpc.http2.keepalive_time: 15
     tlsCACerts:
-      path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/coreAdm.alastria.com/tlsca/tlsca.coreAdm.alastria.com-cert.pem
+      path: ${GOPATH}/src/alastria-dna/hf-testnet/crypto-config/peerOrganizations/coreAdm.alastria.com/tlsca/tlsca.coreAdm.alastria.com-cert.pem
 
   peer0.org2.alastria.com:
     url: grpcs://127.0.0.1:9051
@@ -126,14 +126,14 @@ peers:
     grpcOptions:
       ssl-target-name-override: peer0.org2.alastria.com
     tlsCACerts:
-      path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org2.alastria.com/tlsca/tlsca.org2.alastria.com-cert.pem
+      path: ${GOPATH}/src/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org2.alastria.com/tlsca/tlsca.org2.alastria.com-cert.pem
   peer0.org1.alastria.com:
     url: grpcs://127.0.0.1:8051
     eventUrl: grpcs://127.0.0.1:8053
     grpcOptions:
       ssl-target-name-override: peer0.org1.alastria.com
     tlsCACerts:
-      path: ${GOPATH}/src/github.com/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org1.alastria.com/tlsca/tlsca.org1.alastria.com-cert.pem
+      path: ${GOPATH}/src/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org1.alastria.com/tlsca/tlsca.org1.alastria.com-cert.pem
 
 #
 # Fabric-CA is a special kind of Certificate Authority provided by Hyperledger Fabric which allows
