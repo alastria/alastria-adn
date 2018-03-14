@@ -261,6 +261,7 @@ func createOrgFirstTime() {
 	if orgName != "coreAdm" {
 		targetList := fabric_query_users()
 		found := false
+		fmt.Println(targetList)
 		for i := 0; i < len(targetList); i++ {
 			if targetList[i] == orgName {
 				found = true
