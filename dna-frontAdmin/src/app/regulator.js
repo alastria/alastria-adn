@@ -2,7 +2,7 @@
 
 'use strict';
 
-function RegulatorController($scope, $log, $interval, remresRegulator) {
+function RegulatorController($scope, $log, $interval, remresRegulator, $window) {
   var vm = this;
   $scope.dataLoaded = false;
   $scope.antistress = false;
@@ -42,7 +42,7 @@ function RegulatorController($scope, $log, $interval, remresRegulator) {
     });
   }
 
-  function saveTargets() {
+  $scope.saveTargets = function () {
     $scope.targetArray = [];
     angular.forEach($scope.targets, function (target) {
       if (target.selected) {
@@ -50,13 +50,13 @@ function RegulatorController($scope, $log, $interval, remresRegulator) {
       }
     });
     return $scope.targetArray;
-  }
+  };
 
   function composeSendData(name, luaCode) {
     var sendBody = {
       Name: name,
       SourceCode: luaCode.replace(/\n/g, '\\n'),
-      Targets: saveTargets()
+      Targets: $scope.saveTargets()
     };
     return sendBody;
   }
@@ -69,6 +69,7 @@ function RegulatorController($scope, $log, $interval, remresRegulator) {
       getLUAChainCodes();
       $scope.approve = 'Chaincode created succesfully';
       $scope.msgApproved = true;
+      $window.document.getElementById('uploadCC').reset();
       $scope.modalLUA = false;
     }, function (err) {
       $scope.antistress = false;
@@ -139,6 +140,14 @@ function RegulatorController($scope, $log, $interval, remresRegulator) {
   //     $log.error('Error -> ' + err);
   //   });
   // };
+  //
+  // $scope.modifyChaincode = function (ccID, ccName, ccCode) {
+  //   var Id = ccID;
+  //   remresRegulator.updateLuaChaincode(Id)
+  //   .then(function (updated) {
+  //     console.log(updated);
+  //   })
+  // };
 
   $scope.executeChaincode = function (Id) {
     $scope.antistress = true;
@@ -157,19 +166,11 @@ function RegulatorController($scope, $log, $interval, remresRegulator) {
     });
   };
 
-  // $scope.modifyChaincode = function (ccID, ccName, ccCode) {
-  //   var Id = ccID;
-
-  //   remresRegulator.updateLuaChaincode(Id)
-  //   .then(function (updated) {
-  //     console.log(updated);
-  //   })
-  // };
-
   $scope.uploadlLUA = function () {
     $scope.antistress = true;
     // Open Uploader of LUA code
     getTargets();
+    $scope.saveTargets();
     $scope.modalLUA = true;
   };
 
@@ -177,17 +178,19 @@ function RegulatorController($scope, $log, $interval, remresRegulator) {
     // close model without saving
     if ($scope.modalLUA === true) {
       $scope.modalLUA = false;
+      $window.document.getElementById('uploadCC').reset();
     } else if ($scope.modalAssign === true) {
       $scope.modalAssign = false;
     } else if ($scope.modalShowCode === true) {
       $scope.modalShowCode = false;
-    } else if ($scope.modalModifyCode === true) {
-      $scope.modalModifyCode = false;
     } else if ($scope.modalShowExecution === true) {
       $scope.modalShowExecution = false;
     } else if ($scope.msgApproved === true) {
       $scope.msgApproved = false;
     }
+    // else if ($scope.modalModifyCode === true) {
+    //   $scope.modalModifyCode = false;
+    // }
   };
 }
 

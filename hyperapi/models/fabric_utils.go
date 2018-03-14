@@ -97,7 +97,8 @@ func createChaincodeLuaExecutorFirstTime() {
 	// Instanciación del chaincode
 	err = clientResMgmt.InstantiateCC(channelID, instantciateCReq)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("WARNING => Chaincode exists", luaExecutorccID)
+		// fmt.Println(err)
 	}
 }
 
@@ -139,7 +140,8 @@ func createChaincodeFirstTime() {
 	// Instanciación del chaincode
 	err = clientResMgmt.InstantiateCC(channelID, instantciateCReq)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("WARNING => Chaincode exists", ccID)
+		// fmt.Println(err)
 	}
 
 }
@@ -210,7 +212,7 @@ func fabric_query_codes() []LuaChaincode {
 
 	if string(value) != "null" {
 		for key, value := range codeStores {
-	        var luaCode LuaChaincode
+			var luaCode LuaChaincode
 			luaCode.LuaChaincodeId = key
 			luaCode.Name = value.Name
 			luaCode.SourceCode = value.Source
