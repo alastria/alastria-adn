@@ -59,6 +59,7 @@ func init() {
 	chClient, _ = sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg(orgName)).Channel(channelID)
 	createChaincodeFirstTime()
 	createChaincodeLuaExecutorFirstTime()
+	createOrgFirstTime()
 }
 
 func createChaincodeLuaExecutorFirstTime() {
@@ -210,7 +211,7 @@ func fabric_query_codes() []LuaChaincode {
 
 	if string(value) != "null" {
 		for key, value := range codeStores {
-	        var luaCode LuaChaincode
+			var luaCode LuaChaincode
 			luaCode.LuaChaincodeId = key
 			luaCode.Name = value.Name
 			luaCode.SourceCode = value.Source
@@ -250,10 +251,27 @@ func fabric_add_user(uid string) string {
 	invokeArgs := [][]byte{[]byte(uid)}
 	value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "registrar", Args: invokeArgs})
 	if err != nil {
-		fmt.Println("Failed to query values: %s", err)
+		fmt.Println("Failed to create Org: ", err)
 	}
-	fmt.Println("response value: ", string(value))
+	fmt.Println("Org created: ", string(value))
 	return string(value)
+}
+
+func createOrgFirstTime() {
+	if orgName != "coreAdm" {
+		targetList := fabric_query_users()
+		found := false
+		for i := 0; i < len(targetList); i++ {
+			if targetList[i] == orgName {
+				found = true
+			}
+		}
+		if !found {
+			fabric_add_user(orgName)
+		} else {
+			fmt.Println("OrgName: ", orgName)
+		}
+	}
 }
 
 func fabric_validate_code(LuaChaincodeId string) string {
