@@ -33,12 +33,12 @@ function replacePrivateKey () {
 
     echo # Replace key
 
-	# ARCH=`uname -s | grep Darwin`
-	# if [ "$ARCH" == "Darwin" ]; then
-	# 	OPTS="-it"
-	# else
-		OPTS="-i"
-	# fi
+	ARCH=`uname -s | grep Darwin`
+	if [ "$ARCH" == "Darwin" ]; then
+		OPTS="-it"
+	else
+	  OPTS="-i"
+	fi
 
 	cp docker-compose-template.yaml docker-compose.yaml
 
