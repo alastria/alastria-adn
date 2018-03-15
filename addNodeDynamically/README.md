@@ -1,3 +1,5 @@
+### DEMO COPIED FROM [https://github.com/rohitadivi/Reconfigure-BYFN](https://github.com/rohitadivi/Reconfigure-BYFN) with minor modifications.
+
 ### Using the BYFN which consists of two orgs and four peers for the task of adding a new org dynamically to an existing channel
 
 #### [Update your crypto tools to at least 1.1.0-rc1](http://hyperledger-fabric.readthedocs.io/en/v1.1.0-rc1/samples.html#binaries)
