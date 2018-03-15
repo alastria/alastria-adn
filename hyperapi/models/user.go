@@ -1,8 +1,8 @@
 package models
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
 )
 
 var (
@@ -16,17 +16,22 @@ func init() {
 }
 
 type User struct {
-	Id       string
+	Id string
 }
 
 func AddUser(u User) string {
-    return fabric_add_user(u.Id)
+	return fabric_add_user(u.Id)
 }
 
 func GetUser(uid string) (u *User, err error) {
-    //_ = fabric_query_user(uid)
-    fmt.Println("method not implemented")
+	//_ = fabric_query_user(uid)
+	fmt.Println("method not implemented")
 	return nil, errors.New("Not implemented")
+}
+
+func GetCurrentUser() string {
+	fmt.Println("...[GetCurrentUser]...")
+	return orgName
 }
 
 func GetAllUsers() []string {
@@ -34,7 +39,7 @@ func GetAllUsers() []string {
 }
 
 func UpdateUser(uid string, uu *User) (a *User, err error) {
-    fmt.Println("method not implemented")
+	fmt.Println("method not implemented")
 	//if u, ok := UserList[uid]; ok {
 	//	if uu.Id != "" {
 	//		u.Id = uu.Id
@@ -45,6 +50,6 @@ func UpdateUser(uid string, uu *User) (a *User, err error) {
 }
 
 func DeleteUser(uid string) {
-    fmt.Println("method not implemented")
+	fmt.Println("method not implemented")
 	//delete(UserList, uid)
 }

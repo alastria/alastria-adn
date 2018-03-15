@@ -5,7 +5,7 @@ angular
 /** @ngInject */
 function routesConfig($stateProvider, $urlRouterProvider, $locationProvider) {
   $locationProvider.html5Mode(true).hashPrefix('!');
-  $urlRouterProvider.otherwise('/register');
+  $urlRouterProvider.otherwise('/interventer');
 
   $stateProvider
   .state('register', {
@@ -13,9 +13,9 @@ function routesConfig($stateProvider, $urlRouterProvider, $locationProvider) {
     component: 'registerIntervener',
     params: {data: null}
   })
-    .state('intervener', {
-      url: '/intervener',
-      component: 'intervener',
-      params: {data: null}
-    });
+  .state('intervener', {
+    url: '/intervener',
+    component: 'intervener',
+    params: {data: null}
+  });
 }
