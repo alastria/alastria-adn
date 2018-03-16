@@ -55,11 +55,11 @@ func Test_Invoke(t *testing.T) {
 	scc := new(LExecutionChaincode)
 	stub := shim.NewMockStub("ex02", scc)
 	checkInit(t, stub, [][]byte{[]byte("init")})
-	luaFunction := `function execute()result = ServiceCall('http://35.176.99.163:8050/services/?token=yeahbaby23&database=0&command=manyrecords&index=0', 'GET')        return result    end `
+	luaFunction := `function execute()result = ServiceCall('http://35.176.234.1:8050/services/?token=yeahbaby23&database=0&command=manyrecords&index=0', 'GET')        return result    end `
 	checkInvoke(t, stub, luaFunction)
 	checkQuery(t, stub)
 	checkInvokeFail(t, stub)
 
-	luaFunctionFail := `function result = ServiceCall('http://35.176.99.163:8050/services/?token=yeahbaby23&database=0&command=manyrecords&index=0', 'GET')        return result    end `
+	luaFunctionFail := `function result = ServiceCall('http://35.176.234.1:8050/services/?token=yeahbaby23&database=0&command=manyrecords&index=0', 'GET')        return result    end `
 	checkInvokeFail2(t, stub, luaFunctionFail)
 }

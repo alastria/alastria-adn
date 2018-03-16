@@ -5,5 +5,5 @@
 angular
   .module('app')
   .component('navbar', {
-    // templateUrl: 'aspp/navbar.html'
+    templateUrl: 'aspp/navbar.html'
   });

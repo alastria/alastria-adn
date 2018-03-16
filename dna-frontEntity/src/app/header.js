@@ -9,7 +9,7 @@ function HeaderController($scope, $log, $document, remresIntervener) {
     remresIntervener.getCurrentUser()
     .then(function (res) {
       $scope.orgName = res;
-      $document[0].title = res + " Console";
+      $document[0].title = res + ' Console';
     }, function (err) {
       $log.error('Error -> ' + err);
     });
