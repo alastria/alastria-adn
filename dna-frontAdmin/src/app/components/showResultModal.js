@@ -7,7 +7,7 @@ angular
   .directive('modalResult', function () {
     return {
       restrict: 'E',
-      template: '<div class"fades" style="position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;display: block;overflow: hidden;-webkit-overflow-scrolling: touch;outline: 0; height: auto; padding-top:10%; background-color:rgba(0, 0, 0, .5);" ng-show="modalShowExecution">' +
+      template: '<div class"fades" style="position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;display: block;overflow-y: scroll;-webkit-overflow-scrolling: touch;outline: 0; height: auto; padding-top:10%; background-color:rgba(0, 0, 0, .5);" ng-show="modalShowExecution">' +
                   '<div class="modal-dialog" role="document">' +
                     '<div class="modal-content">' +
                       '<div class="modal-header">' +

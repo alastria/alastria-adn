@@ -9,7 +9,7 @@ angular
       restrict: 'E',
       template: '<div class"fades" style="position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1050;display: block;overflow-y: scroll;outline: 0; height: auto; padding-top:10%; background-color:rgba(0, 0, 0, .5);" ng-show="modalLUA">' +
                   '<div class="modal-dialog" role="document">' +
-                    '<form name="uploadCC">' +
+                    '<form name="uploadCC" id="uploadCC">' +
                       '<div class="modal-content">' +
                         '<div class="modal-header">' +
                         '<h3 class="modal-title">Upload LUA Code</h3>' +
@@ -29,7 +29,7 @@ angular
                             '</thead>' +
                             '<tbody>' +
                               '<tr ng-repeat="target in targets">' +
-                                '<td style="width:10%; text-align:center"><input type="checkbox" ng-model="target.selected" value="{{target.Id}}"></td>' +
+                                '<td style="width:10%; text-align:center"><input type="checkbox" ng-click="saveTargets()" ng-model="target.selected" value="{{target.Id}}"></td>' +
                                 '<td style="width:90%; margin-left:30px">{{target.Id}}</td>' +
                               '</tr>' +
                             '</tbody>' +
@@ -39,7 +39,7 @@ angular
                         '</div>' +
                         '<div class="modal-footer">' +
                           '<button type="button" ng-click="close()" class="btn btn-secondary" data-dismiss="modal">Close</button>' +
-                          '<button type="button" ng-click="sendLUACode(LUAname, LUAsource)" ng-disabled="uploadCC.$invalid" class="btn btn-primary">Assign ChainCode</button>' +
+                          '<button type="button" ng-click="sendLUACode(LUAname, LUAsource)" ng-disabled="uploadCC.$invalid || targetArray.length==0" class="btn btn-primary">Assign ChainCode</button>' +
                         '</div>' +
                       '</div>' +
                     '</form>' +

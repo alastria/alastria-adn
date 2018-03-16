@@ -30,6 +30,6 @@ function IntervenerController($scope, $log, $window, remresIntervener) {
 angular
   .module('app')
   .component('registerIntervener', {
-    // templateUrl: 'app/registerIntervener.html',
+    templateUrl: 'app/registerIntervener.html',
     controller: IntervenerController
   });

@@ -98,7 +98,8 @@ func createChaincodeLuaExecutorFirstTime() {
 	// Instanciación del chaincode
 	err = clientResMgmt.InstantiateCC(channelID, instantciateCReq)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("WARNING => Chaincode exists", luaExecutorccID)
+		// fmt.Println(err)
 	}
 }
 
@@ -140,7 +141,8 @@ func createChaincodeFirstTime() {
 	// Instanciación del chaincode
 	err = clientResMgmt.InstantiateCC(channelID, instantciateCReq)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("WARNING => Chaincode exists", ccID)
+		// fmt.Println(err)
 	}
 
 }
