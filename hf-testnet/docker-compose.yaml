@@ -94,8 +94,13 @@ services:
         - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
         - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
         - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
-    depends_on:
-      - orderer.alastria.com
-      - peer0.coreAdm.alastria.com
-      - peer0.org1.alastria.com
-      - peer0.org2.alastria.com
+    # depends_on:
+    #   - orderer.alastria.com
+    #   - peer0.coreAdm.alastria.com
+    #   - peer0.org1.alastria.com
+    #   - peer0.org2.alastria.com
+    extra_hosts:
+        - "orderer.alastria.com:52.29.56.48"
+        - "peer0.coreAdm.alastria.com:52.29.56.48"
+        - "peer0.org1.alastria.com:18.196.248.111"
+        - "peer0.org2.alastria.com:52.59.146.242"
