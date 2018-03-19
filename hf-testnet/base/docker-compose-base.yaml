@@ -30,6 +30,11 @@ services:
     - ../crypto-config/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/tls/:/var/hyperledger/orderer/tls
     ports:
       - 7050:7050
+    extra_hosts:
+        - "orderer.alastria.com:52.29.56.48"
+        - "peer0.coreAdm.alastria.com:52.29.56.48"
+        - "peer0.org1.alastria.com:18.196.248.111"
+        - "peer0.org2.alastria.com:52.59.146.242"
 
   peer0.coreAdm.alastria.com:
    container_name: peer0.coreAdm.alastria.com
@@ -50,6 +55,11 @@ services:
       - 7051:7051
       - 7052:7052
       - 7053:7053
+    extra_hosts:
+        - "orderer.alastria.com:52.29.56.48"
+        - "peer0.coreAdm.alastria.com:52.29.56.48"
+        - "peer0.org1.alastria.com:18.196.248.111"
+        - "peer0.org2.alastria.com:52.59.146.242"
 
   peer0.org1.alastria.com:
     container_name: peer0.org1.alastria.com
@@ -70,6 +80,11 @@ services:
       - 7051:7051
       - 7052:7052
       - 7053:7053
+    extra_hosts:
+        - "orderer.alastria.com:52.29.56.48"
+        - "peer0.coreAdm.alastria.com:52.29.56.48"
+        - "peer0.org1.alastria.com:18.196.248.111"
+        - "peer0.org2.alastria.com:52.59.146.242"
 
 
 
@@ -92,3 +107,8 @@ services:
       - 7051:7051
       - 7052:7052
       - 7053:7053
+    extra_hosts:
+        - "orderer.alastria.com:52.29.56.48"
+        - "peer0.coreAdm.alastria.com:52.29.56.48"
+        - "peer0.org1.alastria.com:18.196.248.111"
+        - "peer0.org2.alastria.com:52.59.146.242"
