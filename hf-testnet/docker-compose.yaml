@@ -8,10 +8,10 @@ services:
       - FABRIC_CA_SERVER_CA_NAME=ca-coreAdm
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.coreAdm.alastria.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/2a5d9fda22ea8423d73568178f2be2ead41950e692f39299e80738e68a923a13_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/871f2396ffa8efbdf7aa52e93fa278bea054eb51301764934f51e63d5c7a8e8c_sk
     ports:
       - "7054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.coreAdm.alastria.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/2a5d9fda22ea8423d73568178f2be2ead41950e692f39299e80738e68a923a13_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.coreAdm.alastria.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/871f2396ffa8efbdf7aa52e93fa278bea054eb51301764934f51e63d5c7a8e8c_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/coreAdm.alastria.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerCoreAdm
@@ -23,10 +23,10 @@ services:
       - FABRIC_CA_SERVER_CA_NAME=ca-org1
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.alastria.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/cd4e3b54fe04a07d8269db8ee11664bd6e1672fa9af2ca20b639cfa60b48c4b5_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/1747a0513efc282dbc9a7907451a5b5c1e63ec8846451d7e74c8a56f070354a1_sk
     ports:
       - "8054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.alastria.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/cd4e3b54fe04a07d8269db8ee11664bd6e1672fa9af2ca20b639cfa60b48c4b5_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.alastria.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/1747a0513efc282dbc9a7907451a5b5c1e63ec8846451d7e74c8a56f070354a1_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/org1.alastria.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerOrg1
@@ -38,10 +38,10 @@ services:
       - FABRIC_CA_SERVER_CA_NAME=ca-org2
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.alastria.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/8e789527ea6dda4853145914c2195eef19f97624aa874e6ac4ead566c3f3fa60_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/8d5968629262d720115b699ed96dc6fbad8ab3250b60c0c2cd9041d0bb1e855a_sk
     ports:
       - "9054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.alastria.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/8e789527ea6dda4853145914c2195eef19f97624aa874e6ac4ead566c3f3fa60_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.alastria.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/8d5968629262d720115b699ed96dc6fbad8ab3250b60c0c2cd9041d0bb1e855a_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/org2.alastria.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerOrg2
@@ -87,7 +87,7 @@ services:
       - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/coreAdm.alastria.com/peers/peer0.coreAdm.alastria.com/tls/ca.crt
       - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/coreAdm.alastria.com/users/Admin@coreAdm.alastria.com/msp
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
-    command: /bin/bash -c './scripts/configure.sh; sleep $TIMEOUT'
+    command: /bin/bash -c './scripts/configure.sh'
     volumes:
         - /var/run/:/host/var/run/
         - $GOPATH/src/github.com/hlf-go/example-chaincodes/:/opt/gopath/src/github.com/hyperledger/fabric/examples/chaincode/go
