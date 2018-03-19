@@ -228,9 +228,9 @@ peers:
       path: ${GOPATH}/src/alastria-dna/hf-testnet/crypto-config/peerOrganizations/coreAdm.alastria.com/tlsca/tlsca.coreAdm.alastria.com-cert.pem
 
   peer0.org1.alastria.com:
-   url: grpcs://18.196.248.111:8051
+   url: grpcs://18.196.248.111:7051
 
-   eventUrl: grpcs://18.196.248.111:8053
+   eventUrl: grpcs://18.196.248.111:7053
 
    grpcOptions:
      ssl-target-name-override: peer0.org1.alastria.com
@@ -239,9 +239,9 @@ peers:
      path: ${GOPATH}/src/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org1.alastria.com/tlsca/tlsca.org1.alastria.com-cert.pem
 
   peer0.org2.alastria.com:
-   url: grpcs://52.59.146.242:9051
+   url: grpcs://52.59.146.242:7051
 
-   eventUrl: grpcs://52.59.146.242:9053
+   eventUrl: grpcs://52.59.146.242:7053
 
    grpcOptions:
      ssl-target-name-override: peer0.org2.alastria.com
@@ -277,7 +277,7 @@ certificateAuthorities:
     # [Optional] The optional name of the CA.
     caName: ca_peercoreAdm
   ca_peerOrg1:
-    url: https://18.196.248.111:8054
+    url: https://18.196.248.111:7054
     # the properties specified under this object are passed to the 'http' client verbatim when
     # making the request to the Fabric-CA server
     httpOptions:

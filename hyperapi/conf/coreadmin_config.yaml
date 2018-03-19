@@ -239,9 +239,9 @@ peers:
      path: ${GOPATH}/src/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org1.alastria.com/tlsca/tlsca.org1.alastria.com-cert.pem
 
   peer0.org2.alastria.com:
-   url: grpcs://52.59.146.242:9051
+   url: grpcs://52.59.146.242:7051
 
-   eventUrl: grpcs://52.59.146.242:9053
+   eventUrl: grpcs://52.59.146.242:7053
 
    grpcOptions:
      ssl-target-name-override: peer0.org2.alastria.com
