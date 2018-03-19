@@ -67,9 +67,9 @@ services:
         - ../crypto-config/peerOrganizations/org1.alastria.com/peers/peer0.org1.alastria.com/msp:/etc/hyperledger/fabric/msp
         - ../crypto-config/peerOrganizations/org1.alastria.com/peers/peer0.org1.alastria.com/tls:/etc/hyperledger/fabric/tls
     ports:
-      - 8051:7051
-      - 8052:7052
-      - 8053:7053
+      - 7051:7051
+      - 7052:7052
+      - 7053:7053
 
 
 
@@ -89,6 +89,6 @@ services:
         - ../crypto-config/peerOrganizations/org2.alastria.com/peers/peer0.org2.alastria.com/msp:/etc/hyperledger/fabric/msp
         - ../crypto-config/peerOrganizations/org2.alastria.com/peers/peer0.org2.alastria.com/tls:/etc/hyperledger/fabric/tls
     ports:
-      - 9051:7051
-      - 9052:7052
-      - 9053:7053
+      - 7051:7051
+      - 7052:7052
+      - 7053:7053
