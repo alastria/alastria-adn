@@ -31,7 +31,7 @@ services:
       - ./crypto-config/peerOrganizations/org1.alastria.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerOrg1
 
-  ca1:
+  caOrg2:
     image: hyperledger/fabric-ca
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server

@@ -195,7 +195,7 @@ organizations:
 #
 orderers:
   orderer.alastria.com:
-    url: grpcs://127.0.0.1:7050
+    url: grpcs://52.29.56.48:7050
 
     # these are standard properties defined by the gRPC library
     # they will be passed in as-is to gRPC client constructor
@@ -214,10 +214,10 @@ orderers:
 peers:
   peer0.coreAdm.alastria.com:
     # this URL is used to send endorsement and query requests
-    url: grpcs://127.0.0.1:7051
+    url: grpcs://52.29.56.48:7051
 
     # this URL is used to connect the EventHub and registering event listeners
-    eventUrl: grpcs://127.0.0.1:7053
+    eventUrl: grpcs://52.29.56.48:7053
 
     grpcOptions:
       ssl-target-name-override: peer0.coreAdm.alastria.com
@@ -228,9 +228,9 @@ peers:
       path: ${GOPATH}/src/alastria-dna/hf-testnet/crypto-config/peerOrganizations/coreAdm.alastria.com/tlsca/tlsca.coreAdm.alastria.com-cert.pem
 
   peer0.org1.alastria.com:
-   url: grpcs://127.0.0.1:8051
+   url: grpcs://18.196.248.1111:7051
 
-   eventUrl: grpcs://127.0.0.1:8053
+   eventUrl: grpcs://18.196.248.111:7053
 
    grpcOptions:
      ssl-target-name-override: peer0.org1.alastria.com
@@ -239,9 +239,9 @@ peers:
      path: ${GOPATH}/src/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org1.alastria.com/tlsca/tlsca.org1.alastria.com-cert.pem
 
   peer0.org2.alastria.com:
-   url: grpcs://127.0.0.1:9051
+   url: grpcs://52.59.146.242:9051
 
-   eventUrl: grpcs://127.0.0.1:9053
+   eventUrl: grpcs://52.59.146.242:9053
 
    grpcOptions:
      ssl-target-name-override: peer0.org2.alastria.com
@@ -256,7 +256,7 @@ peers:
 #
 certificateAuthorities:
   ca_peerCoreAdm:
-    url: https://127.0.0.1:7054
+    url: https://52.29.56.48:7054
     # the properties specified under this object are passed to the 'http' client verbatim when
     # making the request to the Fabric-CA server
     httpOptions:
@@ -277,7 +277,7 @@ certificateAuthorities:
     # [Optional] The optional name of the CA.
     caName: ca_peercoreAdm
   ca_peerOrg1:
-    url: https://127.0.0.1:8054
+    url: https://18.196.248.111:7054
     # the properties specified under this object are passed to the 'http' client verbatim when
     # making the request to the Fabric-CA server
     httpOptions:
