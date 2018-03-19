@@ -25,41 +25,41 @@ services:
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: orderer
     volumes:
-    - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-    - ../crypto-config/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/msp:/var/hyperledger/orderer/msp
-    - ../crypto-config/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/tls/:/var/hyperledger/orderer/tls
+      - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+      - ../crypto-config/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/msp:/var/hyperledger/orderer/msp
+      - ../crypto-config/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/tls/:/var/hyperledger/orderer/tls
     ports:
       - 7050:7050
     extra_hosts:
-        - "orderer.alastria.com:52.29.56.48"
-        - "peer0.coreAdm.alastria.com:52.29.56.48"
-        - "peer0.org1.alastria.com:18.196.248.111"
-        - "peer0.org2.alastria.com:52.59.146.242"
+      - "orderer.alastria.com:52.29.56.48"
+      - "peer0.coreAdm.alastria.com:52.29.56.48"
+      - "peer0.org1.alastria.com:18.196.248.111"
+      - "peer0.org2.alastria.com:52.59.146.242"
 
   peer0.coreAdm.alastria.com:
-   container_name: peer0.coreAdm.alastria.com
-   extends:
-    file: peer-base.yaml
-    service: peer-base
-   environment:
-     - CORE_PEER_ID=peer0.coreAdm.alastria.com
-     - CORE_PEER_ADDRESS=peer0.coreAdm.alastria.com:7051
-     - CORE_PEER_CHAINCODELISTENADDRESS=peer0.coreAdm.alastria.com:7052
-     - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.coreAdm.alastria.com:7051
-     - CORE_PEER_LOCALMSPID=coreAdmMSP
-   volumes:
-       - /var/run/:/host/var/run/
-       - ../crypto-config/peerOrganizations/coreAdm.alastria.com/peers/peer0.coreAdm.alastria.com/msp:/etc/hyperledger/fabric/msp
-       - ../crypto-config/peerOrganizations/coreAdm.alastria.com/peers/peer0.coreAdm.alastria.com/tls:/etc/hyperledger/fabric/tls
-   ports:
+    container_name: peer0.coreAdm.alastria.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.coreAdm.alastria.com
+      - CORE_PEER_ADDRESS=peer0.coreAdm.alastria.com:7051
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.coreAdm.alastria.com:7052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.coreAdm.alastria.com:7051
+      - CORE_PEER_LOCALMSPID=coreAdmMSP
+    volumes:
+      - /var/run/:/host/var/run/
+      - ../crypto-config/peerOrganizations/coreAdm.alastria.com/peers/peer0.coreAdm.alastria.com/msp:/etc/hyperledger/fabric/msp
+      - ../crypto-config/peerOrganizations/coreAdm.alastria.com/peers/peer0.coreAdm.alastria.com/tls:/etc/hyperledger/fabric/tls
+    ports:
       - 7051:7051
       - 7052:7052
       - 7053:7053
     extra_hosts:
-        - "orderer.alastria.com:52.29.56.48"
-        - "peer0.coreAdm.alastria.com:52.29.56.48"
-        - "peer0.org1.alastria.com:18.196.248.111"
-        - "peer0.org2.alastria.com:52.59.146.242"
+      - "orderer.alastria.com:52.29.56.48"
+      - "peer0.coreAdm.alastria.com:52.29.56.48"
+      - "peer0.org1.alastria.com:18.196.248.111"
+      - "peer0.org2.alastria.com:52.59.146.242"
 
   peer0.org1.alastria.com:
     container_name: peer0.org1.alastria.com
@@ -73,18 +73,18 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.alastria.com:7051
       - CORE_PEER_LOCALMSPID=org1MSP
     volumes:
-        - /var/run/:/host/var/run/
-        - ../crypto-config/peerOrganizations/org1.alastria.com/peers/peer0.org1.alastria.com/msp:/etc/hyperledger/fabric/msp
-        - ../crypto-config/peerOrganizations/org1.alastria.com/peers/peer0.org1.alastria.com/tls:/etc/hyperledger/fabric/tls
+      - /var/run/:/host/var/run/
+      - ../crypto-config/peerOrganizations/org1.alastria.com/peers/peer0.org1.alastria.com/msp:/etc/hyperledger/fabric/msp
+      - ../crypto-config/peerOrganizations/org1.alastria.com/peers/peer0.org1.alastria.com/tls:/etc/hyperledger/fabric/tls
     ports:
       - 7051:7051
       - 7052:7052
       - 7053:7053
     extra_hosts:
-        - "orderer.alastria.com:52.29.56.48"
-        - "peer0.coreAdm.alastria.com:52.29.56.48"
-        - "peer0.org1.alastria.com:18.196.248.111"
-        - "peer0.org2.alastria.com:52.59.146.242"
+      - "orderer.alastria.com:52.29.56.48"
+      - "peer0.coreAdm.alastria.com:52.29.56.48"
+      - "peer0.org1.alastria.com:18.196.248.111"
+      - "peer0.org2.alastria.com:52.59.146.242"
 
 
 
@@ -100,15 +100,15 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.alastria.com:7051
       - CORE_PEER_LOCALMSPID=org2MSP
     volumes:
-        - /var/run/:/host/var/run/
-        - ../crypto-config/peerOrganizations/org2.alastria.com/peers/peer0.org2.alastria.com/msp:/etc/hyperledger/fabric/msp
-        - ../crypto-config/peerOrganizations/org2.alastria.com/peers/peer0.org2.alastria.com/tls:/etc/hyperledger/fabric/tls
+      - /var/run/:/host/var/run/
+      - ../crypto-config/peerOrganizations/org2.alastria.com/peers/peer0.org2.alastria.com/msp:/etc/hyperledger/fabric/msp
+      - ../crypto-config/peerOrganizations/org2.alastria.com/peers/peer0.org2.alastria.com/tls:/etc/hyperledger/fabric/tls
     ports:
       - 7051:7051
       - 7052:7052
       - 7053:7053
     extra_hosts:
-        - "orderer.alastria.com:52.29.56.48"
-        - "peer0.coreAdm.alastria.com:52.29.56.48"
-        - "peer0.org1.alastria.com:18.196.248.111"
-        - "peer0.org2.alastria.com:52.59.146.242"
+      - "orderer.alastria.com:52.29.56.48"
+      - "peer0.coreAdm.alastria.com:52.29.56.48"
+      - "peer0.org1.alastria.com:18.196.248.111"
+      - "peer0.org2.alastria.com:52.59.146.242"
