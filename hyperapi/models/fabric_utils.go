@@ -109,7 +109,7 @@ func createChaincodeLuaExecutorFirstTime() {
 	fmt.Println("Instalado chaincode en peer")
 	fmt.Println("Instalado chaincode en peer")
 
-	if orgName == "orgAdm" {
+	if orgName == "coreAdm" {
 		ccPolicy := cauthdsl.SignedByAnyMember([]string{"org1MSP", "org2MSP"})
 		instantciateCReq := resmgmt.InstantiateCCRequest{Name: luaExecutorccID, Path: luaExecutorPath, Version: version, Args: initArgs, Policy: ccPolicy}
 		// Instanciación del chaincode
@@ -165,7 +165,7 @@ func createChaincodeFirstTime() {
 		}
 		listPeers = append(listPeers, peer0)
 	}
-	if orgName == "orgAdm" {
+	if orgName == "coreAdm" {
 		// Set up chaincode policy to 'any of two msps'
 		ccPolicy := cauthdsl.SignedByAnyMember([]string{"org1MSP", "org2MSP"})
 		exeucuteLuaInitArgs := [][]byte{[]byte("init"), []byte(luaExecutorccID)}
