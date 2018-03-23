@@ -1,0 +1,23 @@
+FROM golang
+
+RUN apt-get update && apt-get install -y git curl
+
+ENV GOPATH /go
+ENV PATH /go/bin:$PATH:/usr/local/go/bin
+
+RUN mkdir -p /go/src/github.com/alastria && \
+    cd /go/src/github.com/alastria/ && \
+    git clone https://github.com/alastria/monitor
+RUN cd /go/src/github.com/alastria/monitor && \
+    LATEST_TAG=`git describe --tags \`git rev-list --tags --max-count=1\`` && \
+    git checkout tags/$LATEST_TAG
+
+RUN cd $GOPATH # && go get -d github.com/alastria/monitor
+
+RUN go get -fix -t -u -v github.com/astaxie/beego && \
+    go get -fix -t -u -v github.com/beego/bee
+
+RUN curl https://glide.sh/get | sh
+RUN cd /go/src/github.com/alastria/monitor && glide install
+
+WORKDIR /go/src/github.com/alastria/monitor

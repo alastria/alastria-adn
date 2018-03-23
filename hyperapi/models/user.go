@@ -30,7 +30,6 @@ func GetUser(uid string) (u *User, err error) {
 }
 
 func GetCurrentUser() string {
-	fmt.Println("...[GetCurrentUser]...")
 	return orgName
 }
 
