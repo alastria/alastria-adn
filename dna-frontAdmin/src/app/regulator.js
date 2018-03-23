@@ -153,7 +153,9 @@ function RegulatorController($scope, $log, $interval, remresRegulator, $window) 
     $scope.antistress = true;
     remresRegulator.executeChaincode(Id)
     .then(function (executed) {
-      if (executed === null) {
+      if (executed === '' || executed === null) {
+        $scope.failExecutingChaincode = 'Failure when executing chaincode.'
+        $scope.msgError = true;
         $scope.antistress = false;
       } else {
         $scope.results = executed;
@@ -187,6 +189,8 @@ function RegulatorController($scope, $log, $interval, remresRegulator, $window) 
       $scope.modalShowExecution = false;
     } else if ($scope.msgApproved === true) {
       $scope.msgApproved = false;
+    } else if ($scope.msgError === true) {
+      $scope.msgError = false;
     }
     // else if ($scope.modalModifyCode === true) {
     //   $scope.modalModifyCode = false;
