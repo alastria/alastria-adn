@@ -20,7 +20,7 @@ FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 
 
 function pullDockerImages(){
-  local FABRIC_TAG="x86_64-1.0.5"
+  local FABRIC_TAG="x86_64-1.0.6"
   for IMAGES in peer orderer couchdb ccenv tools ca; do
       echo "==> FABRIC IMAGE: $IMAGES"
       echo
@@ -60,7 +60,7 @@ function replacePrivateKey () {
 function generateCerts(){
 
     if [ ! -f $GOPATH/bin/cryptogen ]; then
-        go get -tags "nopkcs11" github.com/hyperledger/fabric/common/tools/cryptogen
+        go get github.com/hyperledger/fabric/common/tools/cryptogen
     fi
     
     echo
@@ -83,7 +83,7 @@ function generateChannelArtifacts(){
 	fi
 
 	if [ ! -f $GOPATH/bin/configtxgen ]; then
-        go get -tags "nopkcs11" github.com/hyperledger/fabric/common/configtx/tool/configtxgen
+        go get github.com/hyperledger/fabric/common/configtx/tool/configtxgen
     fi
 
     echo
@@ -114,32 +114,32 @@ function startNetwork() {
 }
 
 function cleanNetwork() {
-    cd $PROJECT_DIR
+    # cd $PROJECT_DIR
     
-    if [ -d ./channel-artifacts ]; then
-            rm -rf ./channel-artifacts
-    fi
+    # if [ -d ./channel-artifacts ]; then
+    #         rm -rf ./channel-artifacts
+    # fi
 
-    if [ -d ./crypto-config ]; then
-            rm -rf ./crypto-config
-    fi
+    # if [ -d ./crypto-config ]; then
+    #         rm -rf ./crypto-config
+    # fi
 
-    if [ -d ./tools ]; then
-            rm -rf ./tools
-    fi
+    # if [ -d ./tools ]; then
+    #         rm -rf ./tools
+    # fi
 
-    if [ -f ./docker-compose.yaml ]; then
-        rm ./docker-compose.yaml
-    fi
+    # if [ -f ./docker-compose.yaml ]; then
+    #     rm ./docker-compose.yaml
+    # fi
 
-    if [ -f ./docker-compose.yamlt ]; then
-        rm ./docker-compose.yamlt
-    fi
+    # if [ -f ./docker-compose.yamlt ]; then
+    #     rm ./docker-compose.yamlt
+    # fi
 
     # This operations removes all docker containers and images regardless
     #
     docker rm -f $(docker ps -aq)
-    docker rmi -f $(docker images -q)
+    # docker rmi -f $(docker images -q)
     
     # This removes containers used to support the running chaincode.
     #docker rm -f $(docker ps --filter "name=dev" --filter "name=peer0.org1.alastria.com" --filter "name=cli" --filter "name=orderer.alastria.com" -q)
@@ -164,8 +164,8 @@ case $COMMAND in
         generateCerts
         generateChannelArtifacts
         replacePrivateKey
-        pullDockerImages
-        startNetwork
+        #pullDockerImages
+        #startNetwork
         ;;
     "status")
         networkStatus

@@ -33,7 +33,7 @@ client:
 
   # Which organization does this application instance belong to? The value must be the name of an org
   # defined under "organizations"
-  organization: org1
+  organization: org2
 
   logging:
     level: debug
@@ -97,7 +97,7 @@ channels:
 
     # Required. list of peers from participating orgs
     peers:
-      peer0.org1.alastria.com:
+      peer0.org2.alastria.com:
         # [Optional]. will this peer be sent transaction proposals for endorsement? The peer must
         # have the chaincode installed. The app can also use this property to decide which peers
         # to send the chaincode install request. Default: true
@@ -120,14 +120,14 @@ channels:
 # list of participating organizations in this network
 #
 organizations:
-  org1:
-    mspid: org1MSP
+  org2:
+    mspid: org2MSP
 
     # Needed to load users crypto keys and certs for this org (absolute path or relative to global crypto path, DEV mode)
-    cryptoPath:  "peerOrganizations/org1.alastria.com/users/Admin@org1.alastria.com/msp"
+    cryptoPath:  "peerOrganizations/org2.alastria.com/users/Admin@org2.alastria.com/msp"
 
     peers:
-      - peer0.org1.alastria.com
+      - peer0.org2.alastria.com
 
     # [Optional]. Certificate Authorities issue certificates for identification purposes in a Fabric based
     # network. Typically certificates provisioning is done in a separate process outside of the
@@ -135,7 +135,7 @@ organizations:
     # dynamic certificate management (enroll, revoke, re-enroll). The following section is only for
     # Fabric-CA servers.
     certificateAuthorities:
-      - ca_peerOrg1
+      - ca_peerOrg2
 
     # [Optional]. If the application is going to make requests that are reserved to organization
     # administrators, including creating/updating channels, installing/instantiating chaincodes, it
@@ -145,9 +145,9 @@ organizations:
     # this way. The SDK should allow applications to set the org admin identity via APIs, and only use
     # this route as an alternative when it exists.
     adminPrivateKey:
-      path: "peerOrganizations/org1.alastria.com/users/Admin@org1.alastria.com/msp/keystore"
+      path: "peerOrganizations/org2.alastria.com/users/Admin@org2.alastria.com/msp/keystore"
     signedCert:
-      path: "peerOrganizations/org1.alastria.com/users/Admin@org1.alastria.com/msp/signcerts"
+      path: "peerOrganizations/org2.alastria.com/users/Admin@org2.alastria.com/msp/signcerts"
 
   # the profile will contain public information about organizations other than the one it belongs to.
   # These are necessary information to make transaction lifecycles work, including MSP IDs and
@@ -166,17 +166,17 @@ organizations:
     certificateAuthorities:
       - ca_peerCoreAdm
         
-  org2:
-    mspid: org2MSP
+  org1:
+    mspid: org1MSP
 
     # Needed to load users crypto keys and certs for this org (absolute path or relative to global crypto path, DEV mode)
-    cryptoPath:  peerOrganizations/org2.alastria.com/users/Admin@org2.alastria.com/msp
+    cryptoPath:  peerOrganizations/org1.alastria.com/users/Admin@org1.alastria.com/msp
 
     peers:
-      - peer0.org2.alastria.com
+      - peer0.org1.alastria.com
 
     certificateAuthorities:
-      - ca_peerOrg2
+      - ca_peerOrg1
 
 
   # Orderer Org name
@@ -195,7 +195,7 @@ organizations:
 #
 orderers:
   orderer.alastria.com:
-    url: grpcs://127.0.0.1:7050
+    url: grpcs://52.29.56.48:7050
 
     # these are standard properties defined by the gRPC library
     # they will be passed in as-is to gRPC client constructor
@@ -214,10 +214,10 @@ orderers:
 peers:
   peer0.coreAdm.alastria.com:
     # this URL is used to send endorsement and query requests
-    url: grpcs://127.0.0.1:7051
+    url: grpcs://52.29.56.48:7051
 
     # this URL is used to connect the EventHub and registering event listeners
-    eventUrl: grpcs://127.0.0.1:7053
+    eventUrl: grpcs://52.29.56.48:7053
 
     grpcOptions:
       ssl-target-name-override: peer0.coreAdm.alastria.com
@@ -228,9 +228,9 @@ peers:
       path: ${GOPATH}/src/alastria-dna/hf-testnet/crypto-config/peerOrganizations/coreAdm.alastria.com/tlsca/tlsca.coreAdm.alastria.com-cert.pem
 
   peer0.org1.alastria.com:
-   url: grpcs://127.0.0.1:8051
+   url: grpcs://18.196.248.111:7051
 
-   eventUrl: grpcs://127.0.0.1:8053
+   eventUrl: grpcs://18.196.248.111:7053
 
    grpcOptions:
      ssl-target-name-override: peer0.org1.alastria.com
@@ -239,9 +239,9 @@ peers:
      path: ${GOPATH}/src/alastria-dna/hf-testnet/crypto-config/peerOrganizations/org1.alastria.com/tlsca/tlsca.org1.alastria.com-cert.pem
 
   peer0.org2.alastria.com:
-   url: grpcs://127.0.0.1:9051
+   url: grpcs://52.59.146.242:7051
 
-   eventUrl: grpcs://127.0.0.1:9053
+   eventUrl: grpcs://52.59.146.242:7053
 
    grpcOptions:
      ssl-target-name-override: peer0.org2.alastria.com
@@ -256,7 +256,7 @@ peers:
 #
 certificateAuthorities:
   ca_peerCoreAdm:
-    url: https://127.0.0.1:7054
+    url: https://52.29.56.48:7054
     # the properties specified under this object are passed to the 'http' client verbatim when
     # making the request to the Fabric-CA server
     httpOptions:
@@ -277,7 +277,7 @@ certificateAuthorities:
     # [Optional] The optional name of the CA.
     caName: ca_peercoreAdm
   ca_peerOrg1:
-    url: https://127.0.0.1:8054
+    url: https://18.196.248.111:7054
     # the properties specified under this object are passed to the 'http' client verbatim when
     # making the request to the Fabric-CA server
     httpOptions:
