@@ -6,3 +6,9 @@ To run the api backend for the whole infrastructure, we need to:
 * terminal 3: cd hyperapi && go run main.go conf/entity2.conf
 
 For the first time running the application you have to run the server with createChaincodeFirstTime() and createChaincodeLuaExecutorFirstTime() uncommented in order to install all the chaincodes we need to run this demo
+
+
+DISTRIBUTED CERTIFICATIONS
+
+According to our sdk confs we need following certifications for each entity
+
