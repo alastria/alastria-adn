@@ -161,10 +161,10 @@ function dockerCli(){
 verifyArg
 case $COMMAND in
     "start")
-        generateCerts
-        generateChannelArtifacts
-        replacePrivateKey
-        #pullDockerImages
+        #generateCerts
+        #generateChannelArtifacts
+        #replacePrivateKey
+        pullDockerImages
         #startNetwork
         ;;
     "status")
