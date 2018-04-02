@@ -1,8 +1,24 @@
-API Backend is a middleware to exchange information from front-end to hyperledger fabric chaincode and vice versa.
-To run the api backend for the whole infrastructure, we need to:
+#  Alastria DNA - Admin Console
 
-* terminal 1: cd hyperapi && go run main.go conf/coreAdm.conf
-* terminal 2: cd hyperapi && go run main.go conf/entity1.conf
-* terminal 3: cd hyperapi && go run main.go conf/entity2.conf
+Admin console is installed once a time by the network admin.
 
-For the first time running the application you have to run the server with createChaincodeFirstTime() and createChaincodeLuaExecutorFirstTime() uncommented in order to install all the chaincodes we need to run this demo
+## Configuration
+
+If we need to change the port in which the app is deployed, we need to change the target field of the following files:
+### /conf/browsersync-dist.conf.js
+
+var middleware = proxyMiddleware('/v1', { **target: 'http://localhost:8083/'**, changeOrigin: 'localhost'});
+
+### /conf/browsersync.conf.js
+
+var middleware = proxyMiddleware('/v1', { **target: 'http://localhost:8083/'**, changeOrigin: 'localhost'});
+
+The default port is **8083**
+
+## Run Dna Alastria FrontEnd for the admin
+``` bash
+cd ./dna-frontAdmin
+npm install
+bower install
+gulp serve
+```

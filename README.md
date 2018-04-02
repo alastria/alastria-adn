@@ -6,7 +6,7 @@ Install prerequisites
  - Docker and Docker Compose
  - Go version 1.9.x [install](https://golang.org/doc/install)
  - Npm and Node.js [install](https://docs.npmjs.com/getting-started/installing-node)
- - npm install -g gulp-cli bower
+ - npm install -g gulp-cli bower (It must be installed like normal user, not like root user)
 
 ``` bash
 go get github.com/hyperledger/fabric
@@ -45,20 +45,26 @@ cd ./hf-testnet
 ```
 
 ## Run Dna Alastria FrontEnd for the admin
+
 ``` bash
 cd ./dna-frontAdmin
 npm install
 bower install
 gulp serve
 ```
+For more information about Admin console please click [here](https://github.com/alastria/alastria-dna/blob/develop/dna-frontAdmin/README.md).
+
 ## Run Dna Alastria FrontEnd for the entity
+
 You need to clone the folder if you need more entities
+
 ``` bash
 cd ./dna-frontEntity
 npm install
 bower install
 gulp serve
 ```
+For more information about Entity console please click [here](https://github.com/alastria/alastria-dna/blob/develop/dna-frontEntity/README.md).
 
 ## Run the API Dna Alastria [Backend](hyperapi/README.md)
 
