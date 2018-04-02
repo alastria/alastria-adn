@@ -175,9 +175,9 @@ This 4 steps create the whole hf-testnet distributed.
 
 ## Upload the LUA Chaincode (for the monitor)
 
- A query for a rest service written in Lua Language. This piece of code make a query to the [Alastria's Monitor](https://github.com/alastria/monitor).
+ A query for a rest service written in Lua Language. This piece of code make a query to the [Alastria's Monitor](https://github.com/alastria/monitor). For the Alastria DNA Distributed's example, the monitor is running in the localhost:8443 (in AWS from inside of a container the localhost is mapped to IP 172.18.0.1 and mask 255.255.0.0)
 ```
 function execute()
-  return ServiceCall('https://172.18.0.14:8443/v1/monitor/status', 'GET')
+  return ServiceCall('https://172.18.0.1:8443/v1/monitor/status', 'GET')
 end
 ```
