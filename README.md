@@ -1,7 +1,14 @@
 #  Alastria DNA
 Decentraliced network administration for Alastria platform.
 
-Install prerequisites
+## Limitations
+ - This is a WIP prototype which is defined on a fixed quorum network, this is,  a network of 2 validator nodes and an admin node. So does in the hyperledger fabric layer, we have 3 nodes in the same channel in the hyperledger fabric. If a new node is joined in this network, currently new hyperledger fabric crypto materials should be generated and a new network has to be definied and restarted (However we are wokring on an automatically hot node installation solution).
+
+ - This demo has not a login process and a secure accessing control.
+
+  ​
+
+## Install prerequisites
  - Docker and Docker Compose
  - Go version 1.9.x [install](https://golang.org/doc/install)
  - Npm and Node.js [install](https://docs.npmjs.com/getting-started/installing-node)
@@ -10,7 +17,7 @@ Install prerequisites
 ``` bash
 go get github.com/hyperledger/fabric
 go get github.com/hyperledger/fabric-sdk-go
-````
+​````
 
 
 Hyperledger fabric is an _Active_ Hyperledger project. Information on what _Active_ entails can be found in
@@ -20,7 +27,7 @@ So Make sure you're working on the same release/commits
 * Release Hyperledger Fabric v1.0.6
 * Hyperledger Fabric Client SDK for Go v1.0.0-alpha2
 
-``` bash
+​``` bash
 cd $GOPATH/src/github.com/hyperledger/fabric
 git checkout 70f3f2
 cd $GOPATH/src/github.com/hyperledger/fabric-sdk-go
@@ -92,7 +99,7 @@ In this script the following functions of *start* and *clean* have been commente
 - #replacePrivateKey
 - #startNetwork
 - And the *clean* function now only removes the containers, leaving the docker images intact.
-In this way we do not rebuild our crypto materials.
+  In this way we do not rebuild our crypto materials.
 
 With all this and assuming that we have the machines and the source code and all the dependencies installed in each machine, we proceed with the creation of the 
 Hyperledger network.
@@ -102,7 +109,7 @@ Hyperledger network.
 
     docker-compose -f docker-compose.yaml up -d caCoreAdm orderer.alastria.com peer0.coreAdm.alastria.com
 
-  
+
 ### 2. In the node1 ec2 machine
 
     docker-compose -f docker-compose.yaml up -d caOrg1 peer0.org1.alastria.com
