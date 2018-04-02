@@ -33,14 +33,14 @@ function replacePrivateKey () {
 
     echo # Replace key
 
-	# ARCH=`uname -s | grep Darwin`
-	# if [ "$ARCH" == "Darwin" ]; then
-	# 	OPTS="-it"
-	# else
-		OPTS="-i"
-	# fi
+    # ARCH=`uname -s | grep Darwin`
+    # if [ "$ARCH" == "Darwin" ]; then
+    #   OPTS="-it"
+    # else
+        OPTS="-i"
+    # fi
 
-	cp docker-compose-template.yaml docker-compose.yaml
+    cp docker-compose-template.yaml docker-compose.yaml
 
     CURRENT_DIR=$PWD
     cd crypto-config/peerOrganizations/coreAdm.alastria.com/ca/
@@ -64,12 +64,12 @@ function generateCerts(){
     fi
     
     echo
-	echo "##########################################################"
-	echo "##### Generate certificates using cryptogen tool #########"
-	echo "##########################################################"
-	if [ -d ./crypto-config ]; then
-		rm -rf ./crypto-config
-	fi
+    echo "##########################################################"
+    echo "##### Generate certificates using cryptogen tool #########"
+    echo "##########################################################"
+    if [ -d ./crypto-config ]; then
+        rm -rf ./crypto-config
+    fi
 
     $GOPATH/bin/cryptogen generate --config=./crypto-config.yaml
     echo
@@ -79,24 +79,24 @@ function generateCerts(){
 function generateChannelArtifacts(){
 
     if [ ! -d ./channel-artifacts ]; then
-		mkdir channel-artifacts
-	fi
+        mkdir channel-artifacts
+    fi
 
-	if [ ! -f $GOPATH/bin/configtxgen ]; then
+    if [ ! -f $GOPATH/bin/configtxgen ]; then
         go get github.com/hyperledger/fabric/common/configtx/tool/configtxgen
     fi
 
     echo
-	echo "#################################################################"
-	echo "### Generating channel configuration transaction 'channel.tx' ###"
-	echo "#################################################################"
+    echo "#################################################################"
+    echo "### Generating channel configuration transaction 'channel.tx' ###"
+    echo "#################################################################"
 
     $GOPATH/bin/configtxgen -profile AlastriaOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
 
     echo
-	echo "#################################################################"
-	echo "#######    Generating anchor peer update for Org1MSP   ##########"
-	echo "#################################################################"
+    echo "#################################################################"
+    echo "#######    Generating anchor peer update for Org1MSP   ##########"
+    echo "#################################################################"
     $GOPATH/bin/configtxgen -profile Channel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID "channel"
 
 }
@@ -180,4 +180,3 @@ case $COMMAND in
         echo "Useage: networkOps.sh start | status | clean | cli "
         exit 1;
 esac
-

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego"
+	fab "github.com/hyperledger/fabric-sdk-go/api/apifabclient"
 	"github.com/hyperledger/fabric-sdk-go/api/apitxn"
 	"github.com/hyperledger/fabric-sdk-go/pkg/config"
 	"github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
@@ -23,7 +24,7 @@ type CodeStore struct {
 	Name     string
 	Source   string
 	Target   map[string]bool
-	Approved int  // autoincrement with the  approvement of a party
+	Approved int  // autoincrement with the	approvement of a party
 	Verified bool // If approved == map.length -> TRUE
 }
 
@@ -59,6 +60,9 @@ func init() {
 	chClient, _ = sdk.NewClient(fabsdk.WithUser("Admin"), fabsdk.WithOrg(orgName)).Channel(channelID)
 	createChaincodeFirstTime()
 	createChaincodeLuaExecutorFirstTime()
+	if orgName != "coreAdm" {
+		createOrgFirstTime()
+	}
 }
 
 func createChaincodeLuaExecutorFirstTime() {
@@ -74,6 +78,20 @@ func createChaincodeLuaExecutorFirstTime() {
 	ccPkg, err := packager.NewCCPackage(luaExecutorPath, chaincodePath)
 	if err != nil {
 		fmt.Print(err)
+	}
+	targets := [3]string{"org1", "org2", "coreAdm"}
+	var listPeers []fab.Peer
+
+	for _, target := range targets {
+		peers, err := sdk.Config().PeersConfig(target)
+		if err != nil {
+			fmt.Println("Error peers", err)
+		}
+		peer0, err := peer.New(sdk.Config(), peer.FromPeerConfig(&apiconfig.NetworkPeer{PeerConfig: peers[0]}))
+		if err != nil {
+			fmt.Println("Error peer0", err)
+		}
+		listPeers = append(listPeers, peer0)
 	}
 	fmt.Println("Creado el paquete")
 
@@ -91,13 +109,14 @@ func createChaincodeLuaExecutorFirstTime() {
 	fmt.Println("Instalado chaincode en peer")
 	fmt.Println("Instalado chaincode en peer")
 
-	// Set up chaincode policy to 'any of two msps'
-	ccPolicy := cauthdsl.SignedByAnyMember([]string{"org1MSP", "coreAdmMSP", "org2MSP"})
-	instantciateCReq := resmgmt.InstantiateCCRequest{Name: luaExecutorccID, Path: luaExecutorPath, Version: version, Args: initArgs, Policy: ccPolicy}
-	// Instanciación del chaincode
-	err = clientResMgmt.InstantiateCC(channelID, instantciateCReq)
-	if err != nil {
-		fmt.Println(err)
+	if orgName == "coreAdm" {
+		ccPolicy := cauthdsl.SignedByAnyMember([]string{"org1MSP", "coreAdmMSP", "org2MSP"})
+		instantciateCReq := resmgmt.InstantiateCCRequest{Name: luaExecutorccID, Path: luaExecutorPath, Version: version, Args: initArgs, Policy: ccPolicy}
+		// Instanciación del chaincode
+		err = clientResMgmt.InstantiateCC(channelID, instantciateCReq, resmgmt.WithTargets(listPeers...))
+		if err != nil {
+			fmt.Println("WARNING => Chaincode exists", luaExecutorccID)
+		}
 	}
 }
 
@@ -130,18 +149,33 @@ func createChaincodeFirstTime() {
 	fmt.Println("Instalado chaincode en peer")
 	fmt.Println("Instalado chaincode en peer")
 
-	// Set up chaincode policy to 'any of two msps'
-	ccPolicy := cauthdsl.SignedByAnyMember([]string{"org1MSP", "coreAdmMSP", "org2MSP"})
+	targets := [3]string{"org1", "org2", "coreAdm"}
+	var listPeers []fab.Peer
 
-	exeucuteLuaInitArgs := [][]byte{[]byte("init"), []byte(luaExecutorccID)}
-	fmt.Println(exeucuteLuaInitArgs)
-	instantciateCReq := resmgmt.InstantiateCCRequest{Name: ccID, Path: path, Version: version, Args: exeucuteLuaInitArgs, Policy: ccPolicy}
-	// Instanciación del chaincode
-	err = clientResMgmt.InstantiateCC(channelID, instantciateCReq)
-	if err != nil {
-		fmt.Println(err)
+	for _, target := range targets {
+		peers, err := sdk.Config().PeersConfig(target)
+		if err != nil {
+			fmt.Println("Error peers", err)
+		}
+		fmt.Println(len(peers))
+		peer0, err := peer.New(sdk.Config(), peer.FromPeerConfig(&apiconfig.NetworkPeer{PeerConfig: peers[0]}))
+		if err != nil {
+			fmt.Println("Error peers", err)
+		}
+		listPeers = append(listPeers, peer0)
 	}
-
+	if orgName == "coreAdm" {
+		// Set up chaincode policy to 'any of two msps'
+		ccPolicy := cauthdsl.SignedByAnyMember([]string{"org1MSP", "coreAdmMSP", "org2MSP"})
+		exeucuteLuaInitArgs := [][]byte{[]byte("init"), []byte(luaExecutorccID)}
+		fmt.Println(exeucuteLuaInitArgs)
+		instantciateCReq := resmgmt.InstantiateCCRequest{Name: ccID, Path: path, Version: version, Args: exeucuteLuaInitArgs, Policy: ccPolicy}
+		// Instanciación del chaincode
+		err = clientResMgmt.InstantiateCC(channelID, instantciateCReq, resmgmt.WithTargets(listPeers...))
+		if err != nil {
+			fmt.Println("WARNING => Chaincode exists", ccID)
+		}
+	}
 }
 
 func execute() {
@@ -210,7 +244,7 @@ func fabric_query_codes() []LuaChaincode {
 
 	if string(value) != "null" {
 		for key, value := range codeStores {
-	        var luaCode LuaChaincode
+			var luaCode LuaChaincode
 			luaCode.LuaChaincodeId = key
 			luaCode.Name = value.Name
 			luaCode.SourceCode = value.Source
@@ -250,10 +284,28 @@ func fabric_add_user(uid string) string {
 	invokeArgs := [][]byte{[]byte(uid)}
 	value, _, err := chClient.Execute(apitxn.Request{ChaincodeID: ccID, Fcn: "registrar", Args: invokeArgs})
 	if err != nil {
-		fmt.Println("Failed to query values: %s", err)
+		fmt.Println("Failed to create Org: ", err)
 	}
-	fmt.Println("response value: ", string(value))
+	fmt.Println("Org created: ", string(value))
 	return string(value)
+}
+
+func createOrgFirstTime() {
+	if orgName != "coreAdm" {
+		targetList := fabric_query_users()
+		found := false
+		fmt.Println(targetList)
+		for i := 0; i < len(targetList); i++ {
+			if targetList[i] == orgName {
+				found = true
+			}
+		}
+		if !found {
+			fabric_add_user(orgName)
+		} else {
+			fmt.Println("OrgName: ", orgName)
+		}
+	}
 }
 
 func fabric_validate_code(LuaChaincodeId string) string {

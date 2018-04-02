@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"hyperapi/models"
 	"encoding/json"
+	"hyperapi/models"
 
 	"github.com/astaxie/beego"
 )
@@ -89,5 +89,3 @@ func (u *UserController) Delete() {
 	u.Data["json"] = "delete success!"
 	u.ServeJSON()
 }
-
-

@@ -15,6 +15,20 @@
     },
     "basePath": "/v1",
     "paths": {
+        "/currentUser/": {
+            "get": {
+                "tags": [
+                    "currentUser"
+                ],
+                "description": "string models.User",
+                "operationId": "CurrentuserController.Get",
+                "responses": {
+                    "200": {
+                        "description": "{string} string"
+                    }
+                }
+            }
+        },
         "/luaChaincode/": {
             "get": {
                 "tags": [
@@ -44,7 +58,7 @@
                         "description": "The luaChaincode content",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/.LuaChaincodePost"
+                            "$ref": "#/definitions/models.LuaChaincodePost"
                         }
                     }
                 ],
@@ -124,7 +138,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "{executionResponse} models.ExecutionResponse"
+                        "description": "{ExecutionResponse} models.ExecutionResponse"
                     },
                     "403": {
                         "description": ":executionResponse is empty"
@@ -143,7 +157,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/.User"
+                            "$ref": "#/definitions/models.User"
                         }
                     }
                 }
@@ -161,7 +175,7 @@
                         "description": "body for user content",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/.User"
+                            "$ref": "#/definitions/models.User"
                         }
                     }
                 ],
@@ -195,7 +209,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/.User"
+                            "$ref": "#/definitions/models.User"
                         }
                     },
                     "403": {
@@ -223,7 +237,7 @@
                         "description": "body for user content",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/.User"
+                            "$ref": "#/definitions/models.User"
                         }
                     }
                 ],
@@ -231,7 +245,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/.User"
+                            "$ref": "#/definitions/models.User"
                         }
                     },
                     "403": {
@@ -266,11 +280,32 @@
         }
     },
     "definitions": {
-        ".LuaChaincodePost": {
-            "type": "object"
+        "models.LuaChaincodePost": {
+            "title": "LuaChaincodePost",
+            "type": "object",
+            "properties": {
+                "Name": {
+                    "type": "string"
+                },
+                "SourceCode": {
+                    "type": "string"
+                },
+                "Targets": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
         },
-        ".User": {
-            "type": "object"
+        "models.User": {
+            "title": "User",
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "string"
+                }
+            }
         }
     },
     "tags": [
@@ -280,6 +315,10 @@
         },
         {
             "name": "user",
+            "description": "Operations about Users\n"
+        },
+        {
+            "name": "currentUser",
             "description": "Operations about Users\n"
         }
     ]

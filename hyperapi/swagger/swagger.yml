@@ -11,6 +11,15 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 basePath: /v1
 paths:
+  /currentUser/:
+    get:
+      tags:
+      - currentUser
+      description: string models.User
+      operationId: CurrentuserController.Get
+      responses:
+        "200":
+          description: '{string} string'
   /luaChaincode/:
     get:
       tags:
@@ -33,7 +42,7 @@ paths:
         description: The luaChaincode content
         required: true
         schema:
-          $ref: '#/definitions/.LuaChaincodePost'
+          $ref: '#/definitions/models.LuaChaincodePost'
       responses:
         "200":
           description: '{string} models.LuaChaincode.Id'
@@ -85,7 +94,7 @@ paths:
         type: string
       responses:
         "200":
-          description: '{executionResponse} models.ExecutionResponse'
+          description: '{ExecutionResponse} models.ExecutionResponse'
         "403":
           description: :executionResponse is empty
   /user/:
@@ -98,7 +107,7 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/.User'
+            $ref: '#/definitions/models.User'
     post:
       tags:
       - user
@@ -110,7 +119,7 @@ paths:
         description: body for user content
         required: true
         schema:
-          $ref: '#/definitions/.User'
+          $ref: '#/definitions/models.User'
       responses:
         "200":
           description: '{int} models.User.Id'
@@ -132,7 +141,7 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/.User'
+            $ref: '#/definitions/models.User'
         "403":
           description: :uid is empty
     put:
@@ -151,12 +160,12 @@ paths:
         description: body for user content
         required: true
         schema:
-          $ref: '#/definitions/.User'
+          $ref: '#/definitions/models.User'
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/.User'
+            $ref: '#/definitions/models.User'
         "403":
           description: :uid is not int
     delete:
@@ -176,14 +185,31 @@ paths:
         "403":
           description: uid is empty
 definitions:
-  .LuaChaincodePost:
+  models.LuaChaincodePost:
+    title: LuaChaincodePost
     type: object
-  .User:
+    properties:
+      Name:
+        type: string
+      SourceCode:
+        type: string
+      Targets:
+        type: array
+        items:
+          type: string
+  models.User:
+    title: User
     type: object
+    properties:
+      Id:
+        type: string
 tags:
 - name: luaChaincode
   description: |
     Operations about luaChaincode
 - name: user
+  description: |
+    Operations about Users
+- name: currentUser
   description: |
     Operations about Users

@@ -22,9 +22,14 @@
       <div class="col-md-12">
         <!-- message success -->
         <div class="alert alert-success" role="alert" ng-show="msgApproved">
-            <button type="button" class="close" ng-click="close()" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            {{approve}}
-          </div>
+          <button type="button" class="close" ng-click="close()" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          {{approve}}
+        </div>
+        <!-- message Error -->
+        <div class="alert alert-danger" role="alert" ng-show="msgError">
+          <button type="button" class="close" ng-click="close()" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          {{failExecutingChaincode}}
+        </div>
         <div class="col-md-1"></div>
         <!-- <p></p> -->
       </div>

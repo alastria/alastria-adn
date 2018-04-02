@@ -1,0 +1,14 @@
+version: '3'
+services:
+  monitor:
+    build: monitor_dockerfile
+    image: monitor:v1
+    container_name: monitor
+    ports:
+      - "8443:8443"
+    restart: always
+    command: bee run -vendor=true -downdoc=true -gendoc=true
+networks:
+  default:
+    external:
+      name: hftestnet_default

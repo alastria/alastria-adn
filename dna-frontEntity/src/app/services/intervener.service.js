@@ -20,6 +20,19 @@ angular
       return promise;
     };
 
+    intervenerService.getCurrentUser = function () {
+      var promise = $http({
+        method: 'GET',
+        url: '/v1/currentUser'
+      })
+      .then(function (response) {
+        return response.data;
+      }, function (Error) {
+        return Error.data;
+      });
+      return promise;
+    };
+
     intervenerService.createUser = function (objectData) {
       var promise = $http({
         method: 'POST',
