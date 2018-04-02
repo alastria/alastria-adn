@@ -1,24 +1,32 @@
-#  Alastria DNA
+# Alastria DNA
+
 Decentraliced network administration for Alastria platform.
 
-Install prerequisites
- - Docker and Docker Compose
- - Go version 1.9.x [install](https://golang.org/doc/install)
- - Npm and Node.js [install](https://docs.npmjs.com/getting-started/installing-node)
- - npm install -g gulp-cli bower (It must be installed like normal user, not like root user)
+## What is for
+
+Alastria-DNA is an application designed on the blockchain platform of Hyperledger Fabric.
+
+This application is designed to decentrally distribute LUA code within a ChainCode, which will be interpreted in the destination node. Subsequently, it may be installed by the administrator within that node after acceptance by each of the destination nodes.
+
+## Install prerequisites
+
+- Docker and Docker Compose
+- Go version 1.9.x [install](https://golang.org/doc/install)
+- Npm and Node.js [install](https://docs.npmjs.com/getting-started/installing-node)
+- npm install -g gulp-cli bower
 
 ``` bash
 go get github.com/hyperledger/fabric
 go get github.com/hyperledger/fabric-sdk-go
-````
-
+```
 
 Hyperledger fabric is an _Active_ Hyperledger project. Information on what _Active_ entails can be found in
 the [Hyperledger Project Lifecycle document](https://wiki.hyperledger.org/community/project-lifecycle).
 
-So Make sure you're working on the same release/commits
-* Release Hyperledger Fabric v1.0.6
-* Hyperledger Fabric Client SDK for Go v1.0.0-alpha2
+So Make sure you are working on the same release/commits
+
+- Release Hyperledger Fabric v1.0.6
+- Hyperledger Fabric Client SDK for Go v1.0.0-alpha2
 
 ``` bash
 cd $GOPATH/src/github.com/hyperledger/fabric
@@ -28,6 +36,7 @@ git checkout b0efb7
 ```
 
 If you have Alastria-Dna in other directory, then you shoud link it into $GOPATH/src directory:
+
 ``` bash
 ln -s [Your path]/alastria-dna $GOPATH/src/github/
 ln -s [Your path]/alastria-dna/hyperapi $GOPATH/src/
@@ -51,6 +60,7 @@ npm install
 bower install
 gulp serve
 ```
+
 For more information about Admin console please click [here](https://github.com/alastria/alastria-dna/blob/develop/dna-frontAdmin/README.md).
 
 ## Run Dna Alastria FrontEnd for the entity
@@ -63,22 +73,23 @@ npm install
 bower install
 gulp serve
 ```
+
 For more information about Entity console please click [here](https://github.com/alastria/alastria-dna/blob/develop/dna-frontEntity/README.md).
 
 ## Run the API Dna Alastria [Backend](hyperapi/README.md)
 
 API Backend is a middleware to exchange information from front-end to hyperledger fabric chaincode and vice versa. To run the api backend for the whole infrastructure, we need to:
 
-
-* terminal 1$ ```cd hyperapi && go run main.go conf/coreAdm.conf```
-* terminal 2$ ```cd hyperapi && go run main.go conf/entity1.conf```
-* terminal 3$ ```cd hyperapi && go run main.go conf/entity2.conf```
+- terminal 1$ ```cd hyperapi && go run main.go conf/coreAdm.conf```
+- terminal 2$ ```cd hyperapi && go run main.go conf/entity1.conf```
+- terminal 3$ ```cd hyperapi && go run main.go conf/entity2.conf```
 
 For the first time running the application you have to run the server with ```createChaincodeFirstTime()``` and ```createChaincodeLuaExecutorFirstTime()``` uncommented in order to install all the chaincodes we need to run this demo
 
-# Alastria DNA Distributed (example)
+## Alastria DNA Distributed (example)
 
-To deploy the network in a distributed way we will need 3 EC2 machines. 
+To deploy the network in a distributed way we will need 3 EC2 machines.
+
 - admin
 - node 1 (Org1)
 - node 2 (Org2)
@@ -93,32 +104,39 @@ Here lies the Crypto Material generated for this example.
 This file is what we use to generate the containers.
 **hf-testnet/fabricOp-distributed.sh**
 In this script the following functions of *start* and *clean* have been commented for the example:
+
 - #generateCerts
 - #generateChannelArtifacts
 - #replacePrivateKey
 - #startNetwork
 - And the *clean* function now only removes the containers, leaving the docker images intact.
+
 In this way we do not rebuild our crypto materials.
 
-With all this and assuming that we have the machines and the source code and all the dependencies installed in each machine, we proceed with the creation of the 
-Hyperledger network.
+With all this and assuming that we have the machines and the source code and all the dependencies installed in each machine, we proceed with the creation of the Hyperledger network.
 
-### 1. In the admin ec2 machine:
+### 1. In the admin ec2 machine
 
-
+``` bash
     docker-compose -f docker-compose.yaml up -d caCoreAdm orderer.alastria.com peer0.coreAdm.alastria.com
+```
 
-  
 ### 2. In the node1 ec2 machine
 
+``` bash
     docker-compose -f docker-compose.yaml up -d caOrg1 peer0.org1.alastria.com
+```
 
 ### 3. In the node2 ec2 machine
 
+``` bash
     docker-compose -f docker-compose.yaml up -d caOrg2 peer0.org2.alastria.com
+```
 
 ### 4. Run the cli container in the admin ec2
 
+``` bash
     docker-compose -f docker-compose.yaml up cli
+```
 
 This 4 steps create the whole hf-testnet distributed.
