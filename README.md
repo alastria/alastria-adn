@@ -1,7 +1,22 @@
 #  Alastria DNA
 Decentraliced network administration for Alastria platform.
 
-Install prerequisites
+# How is works
+Alastria DNA use Hyperledger Fabric with dockers for the distributed legder solution. It's compose of tree main components all of them running in docker containers:
+
+-   Fabric CA (Certificate Authority), allow you to generate certificates per users, every single operations must be sign with a certificate.
+-   Fabric Peers, is the place where the ledger is store. One peer maybe part of many channels and every channel is inside the peer. So the peers its endorse and manage the ledger.
+-   Fabric Orderer,  the ordering service, it’s the heart of hyperledger, before anything to be commited it must pass the orderer, the main role is to provide order in operations.
+
+Alastria DNA has one orderer of type "solo" (only use for development, in production maybe you want to use with "kafka"), three members: one admin and two peers, all of them are part of one channel (is a private subnet for two o more members).
+
+The are three organizations, which manage the members admin, peer1, peer2.
+
+The organizations manage the members under a single MSP (Membership Service Provider). For Org1 we have Org1MSP, for Org2 we have Org2MSP and for coreAdm we have coreAdmMSP.
+
+In each member we execute a REST API using the Beego framework with the Hyperledger Fabric Client SDK, used to interact with a Hyperledger Fabric blockchain. Then we connect a FrontEnd written in NodeJS and angularJs in the client (References can be found later).
+
+##Install prerequisites
  - Docker and Docker Compose
  - Go version 1.9.x [install](https://golang.org/doc/install)
  - Npm and Node.js [install](https://docs.npmjs.com/getting-started/installing-node)
@@ -78,14 +93,23 @@ To deploy the network in a distributed way we will need 3 EC2 machines.
 - node 2 (Org2)
 
 **hyperapi / conf-distributed /**
+
 In the folder "hyperapi / conf-distributed /" we have an example of configuration files for the machines, in which the IP of each machine has been modified.
+
 **hf-testnet / base-distributed**
+
 In the base-distributed folder you can find the files docker-compose-base.yml and peer.yml with the extra_host and the IPs assigned to the peers.
+
 **hf-testnet/crypto-config-distributed**
+
 Here lies the Crypto Material generated for this example.
+
 **hf-testnet/docker-compose-distributed.yaml**
+
 This file is what we use to generate the containers.
+
 **hf-testnet/fabricOp-distributed.sh**
+
 In this script the following functions of *start* and *clean* have been commented for the example:
 - #generateCerts
 - #generateChannelArtifacts
