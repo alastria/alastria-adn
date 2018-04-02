@@ -175,7 +175,7 @@ This 4 steps create the whole hf-testnet distributed.
 
 ## Upload the LUA Chaincode (for the monitor)
 
- A rest service written in Lua Language. This piece of code make a query to the [Alastria's Monitor](https://github.com/alastria/monitor).
+ A query for a rest service written in Lua Language. This piece of code make a query to the [Alastria's Monitor](https://github.com/alastria/monitor).
 ```
 function execute()
   return ServiceCall('https://172.18.0.14:8443/v1/monitor/status', 'GET')
