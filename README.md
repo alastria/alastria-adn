@@ -2,18 +2,18 @@
 
 Decentraliced network administration for Alastria platform.
 
-
-## Install prerequisites
- - Docker and Docker Compose
- - Go version 1.9.x [install](https://golang.org/doc/install)
- - Npm and Node.js [install](https://docs.npmjs.com/getting-started/installing-node)
- - npm install -g gulp-cli bower
-
 ## What is for
 
 Alastria-DNA is an application designed on the blockchain platform of Hyperledger Fabric.
 
 This application is designed to decentrally distribute LUA code within a ChainCode, which will be interpreted in the destination node. Subsequently, it may be installed by the administrator within that node after acceptance by each of the destination nodes.
+
+## Install prerequisites
+
+- Docker and Docker Compose
+- Go version 1.9.x [install](https://golang.org/doc/install)
+- Npm and Node.js [install](https://docs.npmjs.com/getting-started/installing-node)
+- npm install -g gulp-cli bower
 
 ## Limitations
  - This is a WIP prototype which is defined on a fixed quorum network, this is,  a network of 2 validator nodes and an admin node. So does in the hyperledger fabric layer, we have 3 nodes in the same channel in the hyperledger fabric. If a new node is joined in this network, currently new hyperledger fabric crypto materials should be generated and a new network has to be definied and restarted (However we are wokring on an automatically hot node installation solution).
@@ -27,7 +27,6 @@ This application is designed to decentrally distribute LUA code within a ChainCo
 - Go version 1.9.x [install](https://golang.org/doc/install)
 - Npm and Node.js [install](https://docs.npmjs.com/getting-started/installing-node)
 - npm install -g gulp-cli bower
->>>>>>> 037bb1db82ecad5deb9eab96dda94c2d00b086b8
 
 ``` bash
 go get github.com/hyperledger/fabric
@@ -124,12 +123,8 @@ In this script the following functions of *start* and *clean* have been commente
 - #replacePrivateKey
 - #startNetwork
 - And the *clean* function now only removes the containers, leaving the docker images intact.
-<<<<<<< HEAD
   In this way we do not rebuild our crypto materials.
-=======
->>>>>>> 037bb1db82ecad5deb9eab96dda94c2d00b086b8
 
-In this way we do not rebuild our crypto materials.
 
 With all this and assuming that we have the machines and the source code and all the dependencies installed in each machine, we proceed with the creation of the Hyperledger network.
 
@@ -139,10 +134,6 @@ With all this and assuming that we have the machines and the source code and all
     docker-compose -f docker-compose.yaml up -d caCoreAdm orderer.alastria.com peer0.coreAdm.alastria.com
 ```
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 037bb1db82ecad5deb9eab96dda94c2d00b086b8
 ### 2. In the node1 ec2 machine
 
 ``` bash
